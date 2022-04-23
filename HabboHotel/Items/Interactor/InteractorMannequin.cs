@@ -2,14 +2,21 @@
 using System.Collections.Generic;
 using Plus.Communication.Packets.Outgoing.Rooms.Engine;
 using Plus.HabboHotel.GameClients;
+using Plus.Database;
 
 namespace Plus.HabboHotel.Items.Interactor;
 
 internal class InteractorMannequin : IFurniInteractor
 {
+    private readonly IDatabase _database;
     public void OnPlace(GameClient session, Item item) { }
 
     public void OnRemove(GameClient session, Item item) { }
+
+    public InteractorMannequin(IDatabase database)
+    {
+        _database = database;
+    }
 
     public void OnTrigger(GameClient session, Item item, int request, bool hasRights)
     {
@@ -41,7 +48,7 @@ internal class InteractorMannequin : IFurniInteractor
             var final = "";
             foreach (var str in newFig.Values) final += str + ".";
             session.GetHabbo().Look = final.TrimEnd('.');
-            using (var dbClient = PlusEnvironment.GetDatabaseManager().GetQueryReactor())
+            using (var dbClient = _database.GetQueryReactor())
             {
                 dbClient.SetQuery("UPDATE users SET look = @look, gender = @gender WHERE id = '" + session.GetHabbo().Id + "' LIMIT 1");
                 dbClient.AddParameter("look", session.GetHabbo().Look);
