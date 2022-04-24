@@ -26,6 +26,6 @@ internal class SetSoundSettingsEvent : IPacketEvent
                 volume += vol;
         }
         using var connection = _database.Connection();
-        connection.ExecuteAsync("UPDATE users SET volume = @volume WHERE id = @id LIMIT 1", new { volume = volume, id = session.GetHabbo().Id });
+        connection.Execute("UPDATE users SET volume = @volume WHERE id = @id LIMIT 1", new { volume = volume, id = session.GetHabbo().Id });
     }
 }
