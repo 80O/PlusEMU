@@ -1,5 +1,6 @@
 ﻿using Plus.Database;
 using Plus.HabboHotel.GameClients;
+using Dapper;
 
 namespace Plus.Communication.Packets.Incoming.Sound;
 
@@ -24,9 +25,7 @@ internal class SetSoundSettingsEvent : IPacketEvent
             else
                 volume += vol;
         }
-        using var dbClient = _database.GetQueryReactor();
-        dbClient.SetQuery("UPDATE users SET volume = @volume WHERE `id` = '" + session.GetHabbo().Id + "' LIMIT 1");
-        dbClient.AddParameter("volume", volume);
-        dbClient.RunQuery();
+        using var connection = _database.Connection();
+        connection.ExecuteAsync("UPDATE users SET volume = @volume WHERE id = @id LIMIT 1", new { volume = volume, id = session.GetHabbo().Id });
     }
 }
