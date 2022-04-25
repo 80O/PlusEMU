@@ -2,6 +2,8 @@
 using Plus.Database;
 using Plus.HabboHotel.GameClients;
 
+using Dapper;
+
 namespace Plus.Communication.Packets.Incoming.Avatar;
 
 internal class SaveWardrobeOutfitEvent : IPacketEvent
@@ -21,27 +23,22 @@ internal class SaveWardrobeOutfitEvent : IPacketEvent
         var look = packet.PopString();
         var gender = packet.PopString();
         look = _figureDataManager.ProcessFigure(look, gender, session.GetHabbo().GetClothing().GetClothingParts, true);
-        using var dbClient = _database.GetQueryReactor();
-        dbClient.SetQuery("SELECT null FROM `user_wardrobe` WHERE `user_id` = @id AND `slot_id` = @slot");
-        dbClient.AddParameter("id", session.GetHabbo().Id);
-        dbClient.AddParameter("slot", slotId);
-        if (dbClient.GetRow() != null)
+
+        using (var connection = _database.Connection())
         {
-            dbClient.SetQuery("UPDATE `user_wardrobe` SET `look` = @look, `gender` = @gender WHERE `user_id` = @id AND `slot_id` = @slot LIMIT 1");
-            dbClient.AddParameter("id", session.GetHabbo().Id);
-            dbClient.AddParameter("slot", slotId);
-            dbClient.AddParameter("look", look);
-            dbClient.AddParameter("gender", gender.ToUpper());
-            dbClient.RunQuery();
-        }
-        else
-        {
-            dbClient.SetQuery("INSERT INTO `user_wardrobe` (`user_id`,`slot_id`,`look`,`gender`) VALUES (@id,@slot,@look,@gender)");
-            dbClient.AddParameter("id", session.GetHabbo().Id);
-            dbClient.AddParameter("slot", slotId);
-            dbClient.AddParameter("look", look);
-            dbClient.AddParameter("gender", gender.ToUpper());
-            dbClient.RunQuery();
+            int rows = connection.Execute("SELECT null FROM `user_wardrobe` WHERE `user_id` = @id AND `slot_id` = @slot",
+                new { id = session.GetHabbo().Id, slot = slotId });
+
+            if (rows == 1)
+            {
+                connection.Execute("UPDATE `user_wardrobe` SET `look` = @look, `gender` = @gender WHERE `user_id` = @id AND `slot_id` = @slot LIMIT 1",
+                    new { look = look, gender = gender.ToUpper(), id = session.GetHabbo().Id, slot = slotId });
+            }
+            else
+            {
+                connection.Execute("INSERT INTO `user_wardrobe` (`user_id`,`slot_id`,`look`,`gender`) VALUES (@id,@slot,@look,@gender)",
+                    new { id = session.GetHabbo().Id, slot = slotId, look, gender = gender.ToUpper() });
+            }
         }
     }
 }
