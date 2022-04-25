@@ -208,7 +208,8 @@ public class PurchaseFromCatalogAsGiftEvent : IPacketEvent
                 receiver.SendPacket(new FurniListAddComposer(giveItem));
                 receiver.SendPacket(new FurniListUpdateComposer());
             }
-            if (habbo.Id != session.GetHabbo().Id && !string.IsNullOrWhiteSpace(giftMessage))
+
+            if (habbo.Id != session.GetHabbo().Id /*&& !string.IsNullOrWhiteSpace(giftMessage)*/)
             {
                 _achievementManager.ProgressAchievement(session, "ACH_GiftGiver", 1);
                 if (receiver != null)
