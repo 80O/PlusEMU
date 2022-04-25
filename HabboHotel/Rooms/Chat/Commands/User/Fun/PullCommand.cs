@@ -65,9 +65,9 @@ internal class PullCommand : IChatCommand
         {
             room.SendPacket(new ChatComposer(thisUser.VirtualId, "*pulls " + @params[1] + " to them*", 0, thisUser.LastBubble));
             if (thisUser.RotBody % 2 != 0) 
-                PullTarget(targetUser, thisUser.X, thisUser.Y, thisUser.RotBody-1);
+                PullTarget(targetUser, thisUser.X, thisUser.Y, thisUser.direction-1);
             else
-                PullTarget(targetUser, thisUser.X, thisUser.Y, thisUser.RotBody);
+                PullTarget(targetUser, thisUser.X, thisUser.Y, thisUser.direction);
             return;
         }
         session.SendWhisper("That user is not close enough to you to be pulled, try getting closer!");
