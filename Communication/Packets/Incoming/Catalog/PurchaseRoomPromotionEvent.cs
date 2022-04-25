@@ -5,6 +5,7 @@ using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Rooms;
 using Plus.HabboHotel.Rooms.Chat.Filter;
 using Plus.HabboHotel.Users.Messenger;
+using Dapper;
 
 namespace Plus.Communication.Packets.Incoming.Catalog;
 
@@ -40,17 +41,11 @@ public class PurchaseRoomPromotionEvent : IPacketEvent
             data.Promotion.Description = desc;
             data.Promotion.TimestampExpires += 7200;
         }
-        using (var dbClient = _database.GetQueryReactor())
+        using (var connection = _database.Connection())
         {
-            dbClient.SetQuery(
-                "REPLACE INTO `room_promotions` (`room_id`,`title`,`description`,`timestamp_start`,`timestamp_expire`,`category_id`) VALUES (@room_id, @title, @description, @start, @expires, @CategoryId)");
-            dbClient.AddParameter("room_id", roomId);
-            dbClient.AddParameter("title", name);
-            dbClient.AddParameter("description", desc);
-            dbClient.AddParameter("start", data.Promotion.TimestampStarted);
-            dbClient.AddParameter("expires", data.Promotion.TimestampExpires);
-            dbClient.AddParameter("CategoryId", categoryId);
-            dbClient.RunQuery();
+            connection.Execute(
+                "REPLACE INTO `room_promotions` (`room_id`,`title`,`description`,`timestamp_start`,`timestamp_expire`,`category_id`) VALUES (@room_id, @title, @description, @start, @expires, @CategoryId)",
+                new { room_id = roomId, title = name, description = desc, start = data.Promotion.TimestampStarted, expires = data.Promotion.TimestampExpires, CategoryId = categoryId});
         }
         if (!session.GetHabbo().GetBadgeComponent().HasBadge("RADZZ"))
             session.GetHabbo().GetBadgeComponent().GiveBadge("RADZZ", true, session);
