@@ -1,17 +1,18 @@
-﻿using Plus.HabboHotel.GameClients;
+﻿using System.Threading.Tasks;
+using Plus.HabboHotel.GameClients;
 
 namespace Plus.Communication.Packets.Incoming.Rooms.Avatar;
 
 internal class SitEvent : IPacketEvent
 {
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!session.GetHabbo().InRoom)
-            return;
+            return Task.CompletedTask;
         var user = session.GetHabbo().CurrentRoom.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
         if (user == null)
-            return;
-        if (user.Statusses.ContainsKey("lie") || user.IsLying || user.RidingHorse || user.IsWalking) return;
+            return Task.CompletedTask;
+        if (user.Statusses.ContainsKey("lie") || user.IsLying || user.RidingHorse || user.IsWalking) return Task.CompletedTask;
         if (!user.Statusses.ContainsKey("sit"))
         {
             if (user.RotBody % 2 == 0)
@@ -45,5 +46,6 @@ internal class SitEvent : IPacketEvent
             user.IsSitting = false;
             user.UpdateNeeded = true;
         }
+        return Task.CompletedTask;
     }
 }

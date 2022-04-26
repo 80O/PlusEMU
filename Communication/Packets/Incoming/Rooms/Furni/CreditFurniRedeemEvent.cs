@@ -1,4 +1,5 @@
-﻿using Plus.Communication.Packets.Outgoing.Inventory.Furni;
+﻿using System.Threading.Tasks;
+using Plus.Communication.Packets.Outgoing.Inventory.Furni;
 using Plus.Communication.Packets.Outgoing.Inventory.Purse;
 using Plus.Core.Settings;
 using Plus.Database;
@@ -21,24 +22,24 @@ internal class CreditFurniRedeemEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!session.GetHabbo().InRoom)
-            return;
+            return Task.CompletedTask;
         if (!_roomManager.TryGetRoom(session.GetHabbo().CurrentRoomId, out var room))
-            return;
+            return Task.CompletedTask;
         if (!room.CheckRights(session, true))
-            return;
+            return Task.CompletedTask;
         if (_settingsManager.TryGetValue("room.item.exchangeables.enabled") != "1")
         {
             session.SendNotification("The hotel managers have temporarilly disabled exchanging!");
-            return;
+            return Task.CompletedTask;
         }
         var exchange = room.GetRoomItemHandler().GetItem(packet.PopInt());
         if (exchange == null)
-            return;
+            return Task.CompletedTask;
         if (exchange.Data.InteractionType != InteractionType.Exchange)
-            return;
+            return Task.CompletedTask;
         var value = exchange.Data.BehaviourData;
         if (value > 0)
         {
@@ -54,5 +55,6 @@ internal class CreditFurniRedeemEvent : IPacketEvent
         session.SendPacket(new FurniListUpdateComposer());
         room.GetRoomItemHandler().RemoveFurniture(null, exchange.Id);
         session.GetHabbo().GetInventoryComponent().RemoveItem(exchange.Id);
+        return Task.CompletedTask;
     }
 }

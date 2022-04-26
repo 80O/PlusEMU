@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Inventory.Furni;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Items;
@@ -8,7 +9,7 @@ namespace Plus.Communication.Packets.Incoming.Inventory.Furni;
 
 internal class RequestFurniInventoryEvent : IPacketEvent
 {
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         var items = session.GetHabbo().GetInventoryComponent().GetWallAndFloor;
         var page = 0;
@@ -23,5 +24,6 @@ internal class RequestFurniInventoryEvent : IPacketEvent
                 page++;
             }
         }
+        return Task.CompletedTask;
     }
 }

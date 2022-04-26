@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Rooms.AI.Pets;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Rooms;
@@ -18,26 +19,26 @@ internal class RideHorseEvent : IPacketEvent
         _petLocale = petLocale;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!session.GetHabbo().InRoom)
-            return;
+            return Task.CompletedTask;
         if (!_roomManager.TryGetRoom(session.GetHabbo().CurrentRoomId, out var room))
-            return;
+            return Task.CompletedTask;
         var user = room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
         if (user == null)
-            return;
+            return Task.CompletedTask;
         var petId = packet.PopInt();
         var type = packet.PopBoolean();
         if (!room.GetRoomUserManager().TryGetPet(petId, out var pet))
-            return;
+            return Task.CompletedTask;
         if (pet.PetData == null)
-            return;
+            return Task.CompletedTask;
         if (pet.PetData.AnyoneCanRide == 0 && pet.PetData.OwnerId != user.UserId)
         {
             session.SendNotification(
                 "You are unable to ride this horse.\nThe owner of the pet has not selected for anyone to ride it.");
-            return;
+            return Task.CompletedTask;
         }
         if (type)
         {
@@ -92,5 +93,6 @@ internal class RideHorseEvent : IPacketEvent
                 session.SendNotification("Could not dismount this horse - You are not riding it!");
         }
         room.SendPacket(new PetHorseFigureInformationComposer(pet));
+        return Task.CompletedTask;
     }
 }

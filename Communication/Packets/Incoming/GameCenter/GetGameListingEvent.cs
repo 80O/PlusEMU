@@ -1,4 +1,5 @@
-﻿using Plus.Communication.Packets.Outgoing.GameCenter;
+﻿using System.Threading.Tasks;
+using Plus.Communication.Packets.Outgoing.GameCenter;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Games;
 
@@ -13,8 +14,9 @@ internal class GetGameListingEvent : IPacketEvent
         _gameDataManager = gameDataManager;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         session.SendPacket(new GameListComposer(_gameDataManager.GameData));
+        return Task.CompletedTask;
     }
 }

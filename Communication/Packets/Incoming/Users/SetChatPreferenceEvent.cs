@@ -1,4 +1,5 @@
-﻿using Plus.HabboHotel.GameClients;
+﻿using System.Threading.Tasks;
+using Plus.HabboHotel.GameClients;
 using Plus.Database;
 using Plus.Utilities;
 
@@ -13,7 +14,7 @@ internal class SetChatPreferenceEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         var chatPreference = packet.PopBoolean();
         session.GetHabbo().ChatPreference = chatPreference;
@@ -22,5 +23,6 @@ internal class SetChatPreferenceEvent : IPacketEvent
         dbClient.AddParameter("habboId", session.GetHabbo().Id);
         dbClient.AddParameter("chatPreference", ConvertExtensions.ToStringEnumValue(chatPreference));
         dbClient.RunQuery();
+        return Task.CompletedTask;
     }
 }

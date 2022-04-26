@@ -1,4 +1,5 @@
-﻿using Plus.Communication.Packets.Outgoing.Rooms.AI.Pets;
+﻿using System.Threading.Tasks;
+using Plus.Communication.Packets.Outgoing.Rooms.AI.Pets;
 using Plus.Communication.Packets.Outgoing.Rooms.Engine;
 using Plus.Database;
 using Plus.HabboHotel.GameClients;
@@ -18,21 +19,21 @@ internal class ApplyHorseEffectEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!session.GetHabbo().InRoom)
-            return;
+            return Task.CompletedTask;
         if (!_roomManager.TryGetRoom(session.GetHabbo().CurrentRoomId, out var room))
-            return;
+            return Task.CompletedTask;
         var itemId = packet.PopInt();
         var item = room.GetRoomItemHandler().GetItem(itemId);
         if (item == null)
-            return;
+            return Task.CompletedTask;
         var petId = packet.PopInt();
         if (!room.GetRoomUserManager().TryGetPet(petId, out var petUser))
-            return;
+            return Task.CompletedTask;
         if (petUser.PetData == null || petUser.PetData.OwnerId != session.GetHabbo().Id)
-            return;
+            return Task.CompletedTask;
         if (item.Data.InteractionType == InteractionType.HorseSaddle1)
         {
             petUser.PetData.Saddle = 9;
@@ -114,5 +115,6 @@ internal class ApplyHorseEffectEvent : IPacketEvent
         //Update the Pet and the Pet figure information.
         room.SendPacket(new UsersComposer(petUser));
         room.SendPacket(new PetHorseFigureInformationComposer(petUser));
+        return Task.CompletedTask;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Groups;
 using Plus.HabboHotel.Cache;
 using Plus.HabboHotel.Cache.Type;
@@ -18,14 +19,14 @@ internal class GetGroupMembersEvent : IPacketEvent
         _groupManager = groupManager;
         _cacheManager = cacheManager;
     }
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         var groupId = packet.PopInt();
         var page = packet.PopInt();
         var searchVal = packet.PopString();
         var requestType = packet.PopInt();
         if (!_groupManager.TryGetGroup(groupId, out var group))
-            return;
+            return Task.CompletedTask;
         var members = new List<UserCache>();
         switch (requestType)
         {
@@ -75,5 +76,6 @@ internal class GetGroupMembersEvent : IPacketEvent
         var finishIndex = members.Count;
         session.SendPacket(new GroupMembersComposer(group, members.Skip(startIndex).Take(finishIndex - startIndex).ToList(), members.Count, page,
             group.CreatorId == session.GetHabbo().Id || group.IsAdmin(session.GetHabbo().Id), requestType, searchVal));
+        return Task.CompletedTask;
     }
 }

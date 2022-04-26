@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Catalog;
 using Plus.Communication.Packets.Outgoing.Inventory.Purse;
 using Plus.Database;
@@ -17,18 +18,19 @@ public class RedeemVoucherEvent : IPacketEvent
         _voucherManager = voucherManager;
         _database = database;
     }
-    public void Parse(GameClient session, ClientPacket packet)
+
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         var code = packet.PopString().Replace("\r", "");
         if (!_voucherManager.TryGetVoucher(code, out var voucher))
         {
             session.SendPacket(new VoucherRedeemErrorComposer(0));
-            return;
+            return Task.CompletedTask;
         }
         if (voucher.CurrentUses >= voucher.MaxUses)
         {
             session.SendNotification("Oops, this voucher has reached the maximum usage limit!");
-            return;
+            return Task.CompletedTask;
         }
         DataRow row;
         using (var dbClient = _database.GetQueryReactor())
@@ -41,7 +43,7 @@ public class RedeemVoucherEvent : IPacketEvent
         if (row != null)
         {
             session.SendNotification("You've already used this voucher code, one per each user, sorry!");
-            return;
+            return Task.CompletedTask;
         }
         {
             using var dbClient = _database.GetQueryReactor();
@@ -62,5 +64,6 @@ public class RedeemVoucherEvent : IPacketEvent
             session.SendPacket(new HabboActivityPointNotificationComposer(session.GetHabbo().Duckets, voucher.Value));
         }
         session.SendPacket(new VoucherRedeemOkComposer());
+        return Task.CompletedTask;
     }
 }

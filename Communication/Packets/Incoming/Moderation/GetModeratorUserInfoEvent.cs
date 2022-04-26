@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Moderation;
 using Plus.Core.Language;
 using Plus.Database;
@@ -17,10 +18,10 @@ internal class GetModeratorUserInfoEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!session.GetHabbo().GetPermissions().HasRight("mod_tool"))
-            return;
+            return Task.CompletedTask;
         var userId = packet.PopInt();
         DataRow user;
         DataRow info;
@@ -31,7 +32,7 @@ internal class GetModeratorUserInfoEvent : IPacketEvent
             if (user == null)
             {
                 session.SendNotification(_languageManager.TryGetValue("user.not_found"));
-                return;
+                return Task.CompletedTask;
             }
             dbClient.SetQuery("SELECT `cfhs`,`cfhs_abusive`,`cautions`,`bans`,`trading_locked`,`trading_locks_count` FROM `user_info` WHERE `user_id` = '" + userId + "' LIMIT 1");
             info = dbClient.GetRow();
@@ -43,5 +44,6 @@ internal class GetModeratorUserInfoEvent : IPacketEvent
             }
         }
         session.SendPacket(new ModeratorUserInfoComposer(user, info));
+        return Task.CompletedTask;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Navigator;
 using Plus.Communication.Packets.Outgoing.Rooms.Settings;
 using Plus.Database;
@@ -18,12 +19,12 @@ internal class ModerateRoomEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!session.GetHabbo().GetPermissions().HasRight("mod_tool"))
-            return;
+            return Task.CompletedTask;
         if (!_roomManager.TryGetRoom(packet.PopInt(), out var room))
-            return;
+            return Task.CompletedTask;
         var setLock = packet.PopInt() == 1;
         var setName = packet.PopInt() == 1;
         var kickAll = packet.PopInt() == 1;
@@ -68,5 +69,6 @@ internal class ModerateRoomEvent : IPacketEvent
                 room.GetRoomUserManager().RemoveUserFromRoom(roomUser.GetClient(), true);
             }
         }
+        return Task.CompletedTask;
     }
 }

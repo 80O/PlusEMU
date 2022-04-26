@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Users;
 using Plus.Database;
 using Plus.HabboHotel.GameClients;
@@ -19,7 +20,7 @@ internal class CheckValidNameEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         bool inUse;
         var name = packet.PopString();
@@ -33,41 +34,42 @@ internal class CheckValidNameEvent : IPacketEvent
         if (letters.Any(chr => !allowedCharacters.Contains(chr)))
         {
             session.SendPacket(new NameChangeUpdateComposer(name, 4));
-            return;
+            return Task.CompletedTask;
         }
         if (_wordFilterManager.IsFiltered(name))
         {
             session.SendPacket(new NameChangeUpdateComposer(name, 4));
-            return;
+            return Task.CompletedTask;
         }
         if (!session.GetHabbo().GetPermissions().HasRight("mod_tool") && name.ToLower().Contains("mod") || name.ToLower().Contains("adm") || name.ToLower().Contains("admin") ||
             name.ToLower().Contains("m0d"))
         {
             session.SendPacket(new NameChangeUpdateComposer(name, 4));
-            return;
+            return Task.CompletedTask;
         }
         if (!name.ToLower().Contains("mod") && (session.GetHabbo().Rank == 2 || session.GetHabbo().Rank == 3))
         {
             session.SendPacket(new NameChangeUpdateComposer(name, 4));
-            return;
+            return Task.CompletedTask;
         }
         if (name.Length > 15)
         {
             session.SendPacket(new NameChangeUpdateComposer(name, 3));
-            return;
+            return Task.CompletedTask;
         }
         if (name.Length < 3)
         {
             session.SendPacket(new NameChangeUpdateComposer(name, 2));
-            return;
+            return Task.CompletedTask;
         }
         if (inUse)
         {
             ICollection<string> suggestions = new List<string>();
             for (var i = 100; i < 103; i++) suggestions.Add(i.ToString());
             session.SendPacket(new NameChangeUpdateComposer(name, 5, suggestions));
-            return;
+            return Task.CompletedTask;
         }
         session.SendPacket(new NameChangeUpdateComposer(name, 0));
+        return Task.CompletedTask;
     }
 }

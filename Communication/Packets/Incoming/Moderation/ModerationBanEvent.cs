@@ -1,4 +1,5 @@
-﻿using Plus.Database;
+﻿using System.Threading.Tasks;
+using Plus.Database;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Moderation;
 using Plus.Utilities;
@@ -18,10 +19,10 @@ internal class ModerationBanEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!session.GetHabbo().GetPermissions().HasRight("mod_soft_ban"))
-            return;
+            return Task.CompletedTask;
         var userId = packet.PopInt();
         var message = packet.PopString();
         var length = packet.PopInt() * 3600 + UnixTimestamp.GetNow();
@@ -35,12 +36,12 @@ internal class ModerationBanEvent : IPacketEvent
         if (habbo == null)
         {
             session.SendWhisper("An error occoured whilst finding that user in the database.");
-            return;
+            return Task.CompletedTask;
         }
         if (habbo.GetPermissions().HasRight("mod_tool") && !session.GetHabbo().GetPermissions().HasRight("mod_ban_any"))
         {
             session.SendWhisper("Oops, you cannot ban that user.");
-            return;
+            return Task.CompletedTask;
         }
         message = message ?? "No reason specified.";
         using (var dbClient = _database.GetQueryReactor())
@@ -60,5 +61,6 @@ internal class ModerationBanEvent : IPacketEvent
         var targetClient = _clientManager.GetClientByUsername(habbo.Username);
         if (targetClient != null)
             targetClient.Disconnect();
+        return Task.CompletedTask;
     }
 }

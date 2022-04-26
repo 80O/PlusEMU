@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Messenger;
 using Plus.Database;
 using Plus.HabboHotel.GameClients;
@@ -18,16 +19,16 @@ internal class SendRoomInviteEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (session.GetHabbo().TimeMuted > 0)
         {
             session.SendNotification("Oops, you're currently muted - you cannot send room invitations.");
-            return;
+            return Task.CompletedTask;
         }
         var amount = packet.PopInt();
         if (amount > 500)
-            return; // don't send at all
+            return Task.CompletedTask; // don't send at all
         var targets = new List<int>();
         for (var i = 0; i < amount; i++)
         {
@@ -50,5 +51,6 @@ internal class SendRoomInviteEvent : IPacketEvent
         using var connection = _database.Connection();
         connection.Execute("INSERT INTO `chatlogs_console_invitations` (`user_id`,`message`,`timestamp`) VALUES (@userId, @message, UNIX_TIMESTAMP())",
             new { userId = session.GetHabbo().Id, message = message });
+        return Task.CompletedTask;
     }
 }

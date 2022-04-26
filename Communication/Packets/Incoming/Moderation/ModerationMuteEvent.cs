@@ -1,4 +1,5 @@
-﻿using Plus.Database;
+﻿using System.Threading.Tasks;
+using Plus.Database;
 using Plus.HabboHotel.GameClients;
 
 namespace Plus.Communication.Packets.Incoming.Moderation;
@@ -12,10 +13,10 @@ internal class ModerationMuteEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!session.GetHabbo().GetPermissions().HasRight("mod_mute"))
-            return;
+            return Task.CompletedTask;
         var userId = packet.PopInt();
         packet.PopString(); //message
         double length = packet.PopInt() * 60;
@@ -25,12 +26,12 @@ internal class ModerationMuteEvent : IPacketEvent
         if (habbo == null)
         {
             session.SendWhisper("An error occoured whilst finding that user in the database.");
-            return;
+            return Task.CompletedTask;
         }
         if (habbo.GetPermissions().HasRight("mod_mute") && !session.GetHabbo().GetPermissions().HasRight("mod_mute_any"))
         {
             session.SendWhisper("Oops, you cannot mute that user.");
-            return;
+            return Task.CompletedTask;
         }
         using (var dbClient = _database.GetQueryReactor())
         {
@@ -41,5 +42,6 @@ internal class ModerationMuteEvent : IPacketEvent
             habbo.TimeMuted = length;
             habbo.GetClient().SendNotification("You have been muted by a moderator for " + length + " seconds!");
         }
+        return Task.CompletedTask;
     }
 }

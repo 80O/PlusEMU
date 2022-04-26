@@ -1,4 +1,5 @@
-﻿using Plus.Communication.Packets.Outgoing.Catalog;
+﻿using System.Threading.Tasks;
+using Plus.Communication.Packets.Outgoing.Catalog;
 using Plus.HabboHotel.Catalog;
 using Plus.HabboHotel.GameClients;
 
@@ -13,15 +14,16 @@ public class GetCatalogPageEvent : IPacketEvent
         _catalogManager = catalogManager;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         var pageId = packet.PopInt();
         packet.PopInt();
         var cataMode = packet.PopString();
         if (!_catalogManager.TryGetPage(pageId, out var page))
-            return;
+            return Task.CompletedTask;
         if (!page.Enabled || !page.Visible || page.MinimumRank > session.GetHabbo().Rank || page.MinimumVip > session.GetHabbo().VipRank && session.GetHabbo().Rank == 1)
-            return;
+            return Task.CompletedTask;
         session.SendPacket(new CatalogPageComposer(page, cataMode));
+        return Task.CompletedTask;
     }
 }

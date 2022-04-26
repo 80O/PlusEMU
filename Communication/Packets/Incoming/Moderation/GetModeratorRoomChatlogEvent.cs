@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Moderation;
 using Plus.Database;
 using Plus.HabboHotel.GameClients;
@@ -23,13 +24,13 @@ internal class GetModeratorRoomChatlogEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!session.GetHabbo().GetPermissions().HasRight("mod_tool"))
-            return;
+            return Task.CompletedTask;
         packet.PopInt(); //junk
         var roomId = packet.PopInt();
-        if (!_roomManager.TryGetRoom(roomId, out var room)) return;
+        if (!_roomManager.TryGetRoom(roomId, out var room)) return Task.CompletedTask;
         _chatlogManager.FlushAndSave();
         var chats = new List<ChatlogEntry>();
         using (var dbClient = _database.GetQueryReactor())
@@ -47,5 +48,6 @@ internal class GetModeratorRoomChatlogEvent : IPacketEvent
             }
         }
         session.SendPacket(new ModeratorRoomChatlogComposer(room, chats));
+        return Task.CompletedTask;
     }
 }

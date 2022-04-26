@@ -1,4 +1,5 @@
-﻿using Plus.Communication.Packets.Outgoing.Rooms.Action;
+﻿using System.Threading.Tasks;
+using Plus.Communication.Packets.Outgoing.Rooms.Action;
 using Plus.Database;
 using Plus.HabboHotel.Achievements;
 using Plus.HabboHotel.GameClients;
@@ -16,19 +17,19 @@ internal class IgnoreUserEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!session.GetHabbo().InRoom)
-            return;
+            return Task.CompletedTask;
         var room = session.GetHabbo().CurrentRoom;
         if (room == null)
-            return;
+            return Task.CompletedTask;
         var username = packet.PopString();
         var player = PlusEnvironment.GetGame().GetClientManager().GetClientByUsername(username)?.GetHabbo();
         if (player == null || player.GetPermissions().HasRight("mod_tool"))
-            return;
+            return Task.CompletedTask;
         if (session.GetHabbo().GetIgnores().TryGet(player.Id))
-            return;
+            return Task.CompletedTask;
         if (session.GetHabbo().GetIgnores().TryAdd(player.Id))
         {
             using (var dbClient = _database.GetQueryReactor())
@@ -41,5 +42,6 @@ internal class IgnoreUserEvent : IPacketEvent
             session.SendPacket(new IgnoreStatusComposer(1, player.Username));
             _achievementManager.ProgressAchievement(session, "ACH_SelfModIgnoreSeen", 1);
         }
+        return Task.CompletedTask;
     }
 }

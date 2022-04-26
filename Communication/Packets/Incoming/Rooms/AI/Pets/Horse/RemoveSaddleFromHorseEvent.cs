@@ -1,4 +1,5 @@
-﻿using Plus.Communication.Packets.Outgoing.Catalog;
+﻿using System.Threading.Tasks;
+using Plus.Communication.Packets.Outgoing.Catalog;
 using Plus.Communication.Packets.Outgoing.Inventory.Furni;
 using Plus.Communication.Packets.Outgoing.Rooms.AI.Pets;
 using Plus.Communication.Packets.Outgoing.Rooms.Engine;
@@ -23,16 +24,16 @@ internal class RemoveSaddleFromHorseEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!session.GetHabbo().InRoom)
-            return;
+            return Task.CompletedTask;
         if (!_roomManager.TryGetRoom(session.GetHabbo().CurrentRoomId, out var room))
-            return;
+            return Task.CompletedTask;
         if (!room.GetRoomUserManager().TryGetPet(packet.PopInt(), out var petUser))
-            return;
+            return Task.CompletedTask;
         if (petUser.PetData == null || petUser.PetData.OwnerId != session.GetHabbo().Id)
-            return;
+            return Task.CompletedTask;
 
         //Fetch the furniture Id for the pets current saddle.
         var saddleId = ItemUtility.GetSaddleId(petUser.PetData.Saddle);
@@ -46,7 +47,7 @@ internal class RemoveSaddleFromHorseEvent : IPacketEvent
 
         //Give the saddle back to the user.
         if (!_itemDataManager.GetItem(saddleId, out var itemData))
-            return;
+            return Task.CompletedTask;
         var item = ItemFactory.CreateSingleItemNullable(itemData, session.GetHabbo(), "", "");
         if (item != null)
         {
@@ -60,5 +61,6 @@ internal class RemoveSaddleFromHorseEvent : IPacketEvent
         //Update the Pet and the Pet figure information.
         room.SendPacket(new UsersComposer(petUser));
         room.SendPacket(new PetHorseFigureInformationComposer(petUser));
+        return Task.CompletedTask;
     }
 }

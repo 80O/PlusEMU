@@ -1,4 +1,5 @@
-﻿using Plus.Database;
+﻿using System.Threading.Tasks;
+using Plus.Database;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Items;
 using Plus.HabboHotel.Rooms;
@@ -16,22 +17,23 @@ internal class DeleteStickyNoteEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!session.GetHabbo().InRoom)
-            return;
+            return Task.CompletedTask;
         if (!_roomManager.TryGetRoom(session.GetHabbo().CurrentRoomId, out var room))
-            return;
+            return Task.CompletedTask;
         if (!room.CheckRights(session))
-            return;
+            return Task.CompletedTask;
         var item = room.GetRoomItemHandler().GetItem(packet.PopInt());
         if (item == null)
-            return;
+            return Task.CompletedTask;
         if (item.GetBaseItem().InteractionType == InteractionType.Postit || item.GetBaseItem().InteractionType == InteractionType.CameraPicture)
         {
             room.GetRoomItemHandler().RemoveFurniture(session, item.Id);
             using var dbClient = _database.GetQueryReactor();
             dbClient.RunQuery("DELETE FROM `items` WHERE `id` = '" + item.Id + "' LIMIT 1");
         }
+        return Task.CompletedTask;
     }
 }

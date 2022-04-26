@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Plus.Database;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Items;
@@ -20,15 +21,15 @@ internal class DeleteRoomEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         var roomId = packet.PopInt();
         if (roomId == 0)
-            return;
+            return Task.CompletedTask;
         if (!_roomManager.TryGetRoom(roomId, out var room))
-            return;
+            return Task.CompletedTask;
         if (room.OwnerId != session.GetHabbo().Id && !session.GetHabbo().GetPermissions().HasRight("room_delete_any"))
-            return;
+            return Task.CompletedTask;
         var itemsToRemove = new List<Item>();
         foreach (var item in room.GetRoomItemHandler().GetWallAndFloor.ToList())
         {
@@ -72,5 +73,6 @@ internal class DeleteRoomEvent : IPacketEvent
             dbClient.RunQuery("UPDATE `users` SET `home_room` = '0' WHERE `home_room` = '" + roomId + "'");
         }
         _roomManager.UnloadRoom(room.Id);
+        return Task.CompletedTask;
     }
 }

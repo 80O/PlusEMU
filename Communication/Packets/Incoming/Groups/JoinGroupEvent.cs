@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Catalog;
 using Plus.Communication.Packets.Outgoing.Groups;
 using Plus.Communication.Packets.Outgoing.Moderation;
@@ -18,17 +19,17 @@ internal class JoinGroupEvent : IPacketEvent
         _clientManager = clientManager;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!_groupManager.TryGetGroup(packet.PopInt(), out var group))
-            return;
+            return Task.CompletedTask;
         if (group.IsMember(session.GetHabbo().Id) || group.IsAdmin(session.GetHabbo().Id) || group.HasRequest(session.GetHabbo().Id) && group.Type == GroupType.Private)
-            return;
+            return Task.CompletedTask;
         var groups = _groupManager.GetGroupsForUser(session.GetHabbo().Id);
         if (groups.Count >= 1500)
         {
             session.SendPacket(new BroadcastMessageAlertComposer("Oops, it appears that you've hit the group membership limit! You can only join upto 1,500 groups."));
-            return;
+            return Task.CompletedTask;
         }
         group.AddMember(session.GetHabbo().Id);
         if (group.Type == GroupType.Locked)
@@ -48,5 +49,6 @@ internal class JoinGroupEvent : IPacketEvent
             else
                 session.SendPacket(new RefreshFavouriteGroupComposer(session.GetHabbo().Id));
         }
+        return Task.CompletedTask;
     }
 }

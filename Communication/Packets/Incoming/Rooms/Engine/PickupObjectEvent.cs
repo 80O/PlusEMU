@@ -1,4 +1,5 @@
-﻿using Plus.Database;
+﻿using System.Threading.Tasks;
+using Plus.Database;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Items;
 using Plus.HabboHotel.Quests;
@@ -18,20 +19,20 @@ internal class PickupObjectEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!session.GetHabbo().InRoom)
-            return;
+            return Task.CompletedTask;
         var room = session.GetHabbo().CurrentRoom;
         if (room == null)
-            return;
+            return Task.CompletedTask;
         packet.PopInt(); //unknown
         var itemId = packet.PopInt();
         var item = room.GetRoomItemHandler().GetItem(itemId);
         if (item == null)
-            return;
+            return Task.CompletedTask;
         if (item.GetBaseItem().InteractionType == InteractionType.Postit)
-            return;
+            return Task.CompletedTask;
         var itemRights = false;
         if (item.UserId == session.GetHabbo().Id || room.CheckRights(session, false))
             itemRights = true;
@@ -83,5 +84,6 @@ internal class PickupObjectEvent : IPacketEvent
             }
             _questManager.ProgressUserQuest(session, QuestType.FurniPick);
         }
+        return Task.CompletedTask;
     }
 }

@@ -1,4 +1,5 @@
-﻿using Plus.Communication.Packets.Outgoing.Groups;
+﻿using System.Threading.Tasks;
+using Plus.Communication.Packets.Outgoing.Groups;
 using Plus.Database;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Groups;
@@ -17,13 +18,13 @@ internal class UpdateGroupBadgeEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         var groupId = packet.PopInt();
         if (!_groupManager.TryGetGroup(groupId, out var group))
-            return;
+            return Task.CompletedTask;
         if (group.CreatorId != session.GetHabbo().Id)
-            return;
+            return Task.CompletedTask;
         var count = packet.PopInt();
         var badge = "";
         for (var i = 0; i < count; i++) badge += BadgePartUtility.WorkBadgeParts(i == 0, packet.PopInt().ToString(), packet.PopInt().ToString(), packet.PopInt().ToString());
@@ -33,5 +34,6 @@ internal class UpdateGroupBadgeEvent : IPacketEvent
             connection.Execute("UPDATE `groups` SET `badge` = @badge WHERE `id` = @groupId LIMIT 1", new { badge = group.Badge, groupId = group.Id });
         }
         session.SendPacket(new GroupInfoComposer(group, session));
+        return Task.CompletedTask;
     }
 }

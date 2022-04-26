@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Items;
 
@@ -6,19 +7,19 @@ namespace Plus.Communication.Packets.Incoming.Rooms.Furni;
 
 internal class SaveBrandingItemEvent : IPacketEvent
 {
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!session.GetHabbo().InRoom)
-            return;
+            return Task.CompletedTask;
         var room = session.GetHabbo().CurrentRoom;
         if (room == null)
-            return;
+            return Task.CompletedTask;
         if (!room.CheckRights(session, true) || !session.GetHabbo().GetPermissions().HasRight("room_item_save_branding_items"))
-            return;
+            return Task.CompletedTask;
         var itemId = packet.PopInt();
         var item = room.GetRoomItemHandler().GetItem(itemId);
         if (item == null)
-            return;
+            return Task.CompletedTask;
         if (item.Data.InteractionType == InteractionType.Background)
         {
             var data = packet.PopInt();
@@ -35,5 +36,6 @@ internal class SaveBrandingItemEvent : IPacketEvent
             Item.ExtraData = Convert.ToString(EffectId);*/
         }
         room.GetRoomItemHandler().SetFloorItem(session, item, item.GetX, item.GetY, item.Rotation, false, false, true);
+        return Task.CompletedTask;
     }
 }

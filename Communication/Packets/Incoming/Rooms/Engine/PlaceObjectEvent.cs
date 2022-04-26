@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Rooms.Notifications;
 using Plus.Core.Settings;
 using Plus.HabboHotel.Achievements;
@@ -23,34 +24,34 @@ internal class PlaceObjectEvent : IPacketEvent
         _achievementManager = achievementManager;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!session.GetHabbo().InRoom)
-            return;
+            return Task.CompletedTask;
         if (!_roomManager.TryGetRoom(session.GetHabbo().CurrentRoomId, out var room))
-            return;
+            return Task.CompletedTask;
         var rawData = packet.PopString();
         var data = rawData.Split(' ');
         if (!int.TryParse(data[0], out var itemId))
-            return;
+            return Task.CompletedTask;
         var hasRights = room.CheckRights(session, false, true);
         if (!hasRights)
         {
             session.SendPacket(new RoomNotificationComposer("furni_placement_error", "message", "${room.error.cant_set_not_owner}"));
-            return;
+            return Task.CompletedTask;
         }
         var item = session.GetHabbo().GetInventoryComponent().GetItem(itemId);
         if (item == null)
-            return;
+            return Task.CompletedTask;
         if (room.GetRoomItemHandler().GetWallAndFloor.Count() > Convert.ToInt32(_settingsManager.TryGetValue("room.item.placement_limit")))
         {
             session.SendNotification("You cannot have more than " + Convert.ToInt32(_settingsManager.TryGetValue("room.item.placement_limit")) + " items in a room!");
-            return;
+            return Task.CompletedTask;
         }
         if (item.Data.InteractionType == InteractionType.Exchange && room.OwnerId != session.GetHabbo().Id && !session.GetHabbo().GetPermissions().HasRight("room_item_place_exchange_anywhere"))
         {
             session.SendNotification("You cannot place exchange items in other people's rooms!");
-            return;
+            return Task.CompletedTask;
         }
 
         //TODO: Make neat.
@@ -62,7 +63,7 @@ internal class PlaceObjectEvent : IPacketEvent
                 if (moodData != null && room.GetRoomItemHandler().GetItem(moodData.ItemId) != null)
                 {
                     session.SendNotification("You can only have one background moodlight per room!");
-                    return;
+                    return Task.CompletedTask;
                 }
                 break;
             }
@@ -72,7 +73,7 @@ internal class PlaceObjectEvent : IPacketEvent
                 if (tonerData != null && room.GetRoomItemHandler().GetItem(tonerData.ItemId) != null)
                 {
                     session.SendNotification("You can only have one background toner per room!");
-                    return;
+                    return Task.CompletedTask;
                 }
                 break;
             }
@@ -81,7 +82,7 @@ internal class PlaceObjectEvent : IPacketEvent
                 if (room.GetRoomItemHandler().HopperCount > 0)
                 {
                     session.SendNotification("You can only have one hopper per room!");
-                    return;
+                    return Task.CompletedTask;
                 }
                 break;
             }
@@ -95,10 +96,10 @@ internal class PlaceObjectEvent : IPacketEvent
         if (!item.IsWallItem)
         {
             if (data.Length < 4)
-                return;
-            if (!int.TryParse(data[1], out var x)) return;
-            if (!int.TryParse(data[2], out var y)) return;
-            if (!int.TryParse(data[3], out var rotation)) return;
+                return Task.CompletedTask;
+            if (!int.TryParse(data[1], out var x)) return Task.CompletedTask;
+            if (!int.TryParse(data[2], out var y)) return Task.CompletedTask;
+            if (!int.TryParse(data[3], out var rotation)) return Task.CompletedTask;
             var roomItem = new Item(item.Id, room.RoomId, item.BaseItem, item.ExtraData, x, y, 0, rotation, session.GetHabbo().Id, item.GroupId, item.LimitedNo, item.LimitedTot, string.Empty, room);
             if (room.GetRoomItemHandler().SetFloorItem(session, roomItem, x, y, rotation, true, false, true))
             {
@@ -144,6 +145,7 @@ internal class PlaceObjectEvent : IPacketEvent
             else
                 session.SendPacket(new RoomNotificationComposer("furni_placement_error", "message", "${room.error.cant_set_item}"));
         }
+        return Task.CompletedTask;
     }
 
     private static bool TrySetWallItem(IReadOnlyList<string> data, out string position)

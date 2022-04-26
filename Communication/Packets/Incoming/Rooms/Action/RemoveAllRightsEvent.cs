@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Rooms.Engine;
 using Plus.Communication.Packets.Outgoing.Rooms.Permissions;
 using Plus.Communication.Packets.Outgoing.Rooms.Settings;
@@ -20,14 +21,14 @@ internal class RemoveAllRightsEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!session.GetHabbo().InRoom)
-            return;
+            return Task.CompletedTask;
         if (!_roomManager.TryGetRoom(session.GetHabbo().CurrentRoomId, out var instance))
-            return;
+            return Task.CompletedTask;
         if (!instance.CheckRights(session, true))
-            return;
+            return Task.CompletedTask;
         foreach (var userId in new List<int>(instance.UsersWithRights))
         {
             var user = instance.GetRoomUserManager().GetRoomUserByHabbo(userId);
@@ -50,5 +51,6 @@ internal class RemoveAllRightsEvent : IPacketEvent
         }
         if (instance.UsersWithRights.Count > 0)
             instance.UsersWithRights.Clear();
+        return Task.CompletedTask;
     }
 }

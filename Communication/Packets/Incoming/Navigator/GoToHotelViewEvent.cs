@@ -1,4 +1,5 @@
-﻿using Plus.HabboHotel.GameClients;
+﻿using System.Threading.Tasks;
+using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Rooms;
 
 namespace Plus.Communication.Packets.Incoming.Navigator;
@@ -12,14 +13,15 @@ internal class GoToHotelViewEvent : IPacketEvent
         _roomManager = roomManager;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (session.GetHabbo().InRoom)
         {
             if (!_roomManager.TryGetRoom(session.GetHabbo().CurrentRoomId, out var oldRoom))
-                return;
+                return Task.CompletedTask;
             if (oldRoom.GetRoomUserManager() != null)
                 oldRoom.GetRoomUserManager().RemoveUserFromRoom(session, true);
         }
+        return Task.CompletedTask;
     }
 }

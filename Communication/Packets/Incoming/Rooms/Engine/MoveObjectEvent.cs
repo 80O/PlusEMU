@@ -1,4 +1,5 @@
-﻿using Plus.Communication.Packets.Outgoing.Rooms.Engine;
+﻿using System.Threading.Tasks;
+using Plus.Communication.Packets.Outgoing.Rooms.Engine;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Items;
 using Plus.HabboHotel.Quests;
@@ -17,15 +18,15 @@ internal class MoveObjectEvent : IPacketEvent
         _questManager = questManager;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!session.GetHabbo().InRoom)
-            return;
+            return Task.CompletedTask;
         var itemId = packet.PopInt();
         if (itemId == 0)
-            return;
+            return Task.CompletedTask;
         if (!_roomManager.TryGetRoom(session.GetHabbo().CurrentRoomId, out var room))
-            return;
+            return Task.CompletedTask;
         Item item;
         if (room.Group != null)
         {
@@ -33,18 +34,18 @@ internal class MoveObjectEvent : IPacketEvent
             {
                 item = room.GetRoomItemHandler().GetItem(itemId);
                 if (item == null)
-                    return;
+                    return Task.CompletedTask;
                 session.SendPacket(new ObjectUpdateComposer(item, room.OwnerId));
-                return;
+                return Task.CompletedTask;
             }
         }
         else
         {
-            if (!room.CheckRights(session)) return;
+            if (!room.CheckRights(session)) return Task.CompletedTask;
         }
         item = room.GetRoomItemHandler().GetItem(itemId);
         if (item == null)
-            return;
+            return Task.CompletedTask;
         var x = packet.PopInt();
         var y = packet.PopInt();
         var rotation = packet.PopInt();
@@ -55,9 +56,10 @@ internal class MoveObjectEvent : IPacketEvent
         if (!room.GetRoomItemHandler().SetFloorItem(session, item, x, y, rotation, false, false, true))
         {
             room.SendPacket(new ObjectUpdateComposer(item, room.OwnerId));
-            return;
+            return Task.CompletedTask;
         }
         if (item.GetZ >= 0.1)
             _questManager.ProgressUserQuest(session, QuestType.FurniStack);
+        return Task.CompletedTask;
     }
 }

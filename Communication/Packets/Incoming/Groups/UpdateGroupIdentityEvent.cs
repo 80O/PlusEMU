@@ -1,4 +1,5 @@
-﻿using Plus.Communication.Packets.Outgoing.Groups;
+﻿using System.Threading.Tasks;
+using Plus.Communication.Packets.Outgoing.Groups;
 using Plus.Database;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Groups;
@@ -20,15 +21,15 @@ internal class UpdateGroupIdentityEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         var groupId = packet.PopInt();
         var name = _wordFilterManager.CheckMessage(packet.PopString());
         var description = _wordFilterManager.CheckMessage(packet.PopString());
         if (!_groupManager.TryGetGroup(groupId, out var group))
-            return;
+            return Task.CompletedTask;
         if (group.CreatorId != session.GetHabbo().Id)
-            return;
+            return Task.CompletedTask;
         using (var connection = _database.Connection())
         {
             connection.Execute("UPDATE `groups` SET `name`= @name, `desc` = @desc WHERE `id` = @groupId LIMIT 1",
@@ -37,5 +38,6 @@ internal class UpdateGroupIdentityEvent : IPacketEvent
         group.Name = name;
         group.Description = description;
         session.SendPacket(new GroupInfoComposer(group, session));
+        return Task.CompletedTask;
     }
 }

@@ -1,4 +1,5 @@
-﻿using Plus.Database;
+﻿using System.Threading.Tasks;
+using Plus.Database;
 using Plus.HabboHotel.GameClients;
 using Plus.Utilities;
 
@@ -13,7 +14,7 @@ internal class SetMessengerInviteStatusEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         var allowMessengerInvites = packet.PopBoolean();
         session.GetHabbo().AllowMessengerInvites = allowMessengerInvites;
@@ -22,5 +23,6 @@ internal class SetMessengerInviteStatusEvent : IPacketEvent
         dbClient.AddParameter("habboId", session.GetHabbo().Id);
         dbClient.AddParameter("ignoreInvites", ConvertExtensions.ToStringEnumValue(allowMessengerInvites));
         dbClient.RunQuery();
+        return Task.CompletedTask;
     }
 }

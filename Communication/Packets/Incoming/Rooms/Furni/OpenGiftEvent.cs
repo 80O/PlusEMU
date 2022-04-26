@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Threading;
+using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Rooms.Engine;
 using Plus.Communication.Packets.Outgoing.Rooms.Furni;
 using Plus.Database;
@@ -24,19 +25,19 @@ internal class OpenGiftEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!session.GetHabbo().InRoom)
-            return;
+            return Task.CompletedTask;
         var room = session.GetHabbo().CurrentRoom;
         if (room == null)
-            return;
+            return Task.CompletedTask;
         var presentId = packet.PopInt();
         var present = room.GetRoomItemHandler().GetItem(presentId);
         if (present == null)
-            return;
+            return Task.CompletedTask;
         if (present.UserId != session.GetHabbo().Id)
-            return;
+            return Task.CompletedTask;
         DataRow data;
         using (var dbClient = _database.GetQueryReactor())
         {
@@ -54,7 +55,7 @@ internal class OpenGiftEvent : IPacketEvent
                 dbClient.RunQuery("DELETE FROM `user_presents` WHERE `item_id` = '" + present.Id + "' LIMIT 1");
             }
             session.GetHabbo().GetInventoryComponent().RemoveItem(present.Id);
-            return;
+            return Task.CompletedTask;
         }
         if (!int.TryParse(present.ExtraData.Split(Convert.ToChar(5))[2], out var purchaserId))
         {
@@ -66,7 +67,7 @@ internal class OpenGiftEvent : IPacketEvent
                 dbClient.RunQuery("DELETE FROM `user_presents` WHERE `item_id` = '" + present.Id + "' LIMIT 1");
             }
             session.GetHabbo().GetInventoryComponent().RemoveItem(present.Id);
-            return;
+            return Task.CompletedTask;
         }
         var purchaser = _cacheManager.GenerateUser(purchaserId);
         if (purchaser == null)
@@ -79,7 +80,7 @@ internal class OpenGiftEvent : IPacketEvent
                 dbClient.RunQuery("DELETE FROM `user_presents` WHERE `item_id` = '" + present.Id + "' LIMIT 1");
             }
             session.GetHabbo().GetInventoryComponent().RemoveItem(present.Id);
-            return;
+            return Task.CompletedTask;
         }
         if (!_itemDataManger.GetItem(Convert.ToInt32(data["base_id"]), out var baseItem))
         {
@@ -91,12 +92,13 @@ internal class OpenGiftEvent : IPacketEvent
                 dbClient.RunQuery("DELETE FROM `user_presents` WHERE `item_id` = '" + present.Id + "' LIMIT 1");
             }
             session.GetHabbo().GetInventoryComponent().RemoveItem(present.Id);
-            return;
+            return Task.CompletedTask;
         }
         present.MagicRemove = true;
         room.SendPacket(new ObjectUpdateComposer(present, Convert.ToInt32(session.GetHabbo().Id)));
         var thread = new Thread(() => FinishOpenGift(session, baseItem, present, room, data));
         thread.Start();
+        return Task.CompletedTask;
     }
 
     private void FinishOpenGift(GameClient session, ItemData baseItem, Item present, Room room, DataRow row)
@@ -104,7 +106,6 @@ internal class OpenGiftEvent : IPacketEvent
         try
         {
             if (baseItem == null || present == null || room == null || row == null)
-                return;
             Thread.Sleep(1500);
             var itemIsInRoom = true;
             room.GetRoomItemHandler().RemoveFurniture(session, present.Id);

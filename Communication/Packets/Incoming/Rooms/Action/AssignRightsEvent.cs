@@ -1,4 +1,5 @@
-﻿using Plus.Communication.Packets.Outgoing.Rooms.Permissions;
+﻿using System.Threading.Tasks;
+using Plus.Communication.Packets.Outgoing.Rooms.Permissions;
 using Plus.Communication.Packets.Outgoing.Rooms.Settings;
 using Plus.Core.Language;
 using Plus.Database;
@@ -23,17 +24,17 @@ internal class AssignRightsEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         var userId = packet.PopInt();
         if (!_roomManager.TryGetRoom(session.GetHabbo().CurrentRoomId, out var room))
-            return;
+            return Task.CompletedTask;
         if (!room.CheckRights(session, true))
-            return;
+            return Task.CompletedTask;
         if (room.UsersWithRights.Contains(userId))
         {
             session.SendNotification(_languageManager.TryGetValue("room.rights.user.has_rights"));
-            return;
+            return Task.CompletedTask;
         }
         room.UsersWithRights.Add(userId);
         using (var dbClient = _database.GetQueryReactor())
@@ -55,5 +56,6 @@ internal class AssignRightsEvent : IPacketEvent
             if (user != null)
                 session.SendPacket(new FlatControllerAddedComposer(room.RoomId, user.Id, user.Username));
         }
+        return Task.CompletedTask;
     }
 }

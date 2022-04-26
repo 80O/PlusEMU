@@ -1,4 +1,5 @@
-﻿using Plus.Communication.Packets.Outgoing.Quests;
+﻿using System.Threading.Tasks;
+using Plus.Communication.Packets.Outgoing.Quests;
 using Plus.Database;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Quests;
@@ -16,11 +17,11 @@ internal class CancelQuestEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         var quest = _questManager.GetQuest(session.GetHabbo().GetStats().QuestId);
         if (quest == null)
-            return;
+            return Task.CompletedTask;
         using (var dbClient = _database.GetQueryReactor())
         {
             dbClient.RunQuery("DELETE FROM `user_quests` WHERE `user_id` = '" + session.GetHabbo().Id + "' AND `quest_id` = '" + quest.Id + "';" +
@@ -29,5 +30,6 @@ internal class CancelQuestEvent : IPacketEvent
         session.GetHabbo().GetStats().QuestId = 0;
         session.SendPacket(new QuestAbortedComposer());
         _questManager.GetList(session, null);
+        return Task.CompletedTask;
     }
 }

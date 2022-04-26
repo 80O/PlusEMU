@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Quests;
 using Plus.HabboHotel.Rooms;
@@ -16,18 +17,18 @@ internal class GiveHandItemEvent : IPacketEvent
         _questManager = questManager;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!session.GetHabbo().InRoom)
-            return;
+            return Task.CompletedTask;
         if (!_roomManager.TryGetRoom(session.GetHabbo().CurrentRoomId, out var room))
-            return;
+            return Task.CompletedTask;
         var user = room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
         if (user == null)
-            return;
+            return Task.CompletedTask;
         var targetUser = room.GetRoomUserManager().GetRoomUserByHabbo(packet.PopInt());
         if (targetUser == null)
-            return;
+            return Task.CompletedTask;
         if (!(Math.Abs(user.X - targetUser.X) >= 3 || Math.Abs(user.Y - targetUser.Y) >= 3) || session.GetHabbo().GetPermissions().HasRight("mod_tool"))
         {
             if (user.CarryItemId > 0 && user.CarryTimer > 0)
@@ -39,5 +40,6 @@ internal class GiveHandItemEvent : IPacketEvent
                 targetUser.DanceId = 0;
             }
         }
+        return Task.CompletedTask;
     }
 }

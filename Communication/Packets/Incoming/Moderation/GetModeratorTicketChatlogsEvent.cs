@@ -1,4 +1,5 @@
-﻿using Plus.Communication.Packets.Outgoing.Moderation;
+﻿using System.Threading.Tasks;
+using Plus.Communication.Packets.Outgoing.Moderation;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Moderation;
 using Plus.HabboHotel.Rooms;
@@ -14,15 +15,16 @@ internal class GetModeratorTicketChatlogsEvent : IPacketEvent
         _moderationManager = moderationManager;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!session.GetHabbo().GetPermissions().HasRight("mod_tickets"))
-            return;
+            return Task.CompletedTask;
         var ticketId = packet.PopInt();
         if (!_moderationManager.TryGetTicket(ticketId, out var ticket) || ticket.Room == null)
-            return;
+            return Task.CompletedTask;
         if (!RoomFactory.TryGetData(ticket.Room.Id, out var data))
-            return;
+            return Task.CompletedTask;
         session.SendPacket(new ModeratorTicketChatlogComposer(ticket, data, ticket.Timestamp));
+        return Task.CompletedTask;
     }
 }

@@ -1,4 +1,5 @@
-﻿using Plus.HabboHotel.GameClients;
+﻿using System.Threading.Tasks;
+using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Rooms;
 using Plus.HabboHotel.Rooms.PathFinding;
 
@@ -13,20 +14,20 @@ internal class LookToEvent : IPacketEvent
         _roomManager = roomManager;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!_roomManager.TryGetRoom(session.GetHabbo().CurrentRoomId, out var room))
-            return;
+            return Task.CompletedTask;
         var user = room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
         if (user == null)
-            return;
+            return Task.CompletedTask;
         if (user.IsAsleep)
-            return;
+            return Task.CompletedTask;
         user.UnIdle();
         var x = packet.PopInt();
         var y = packet.PopInt();
         if (x == user.X && y == user.Y || user.IsWalking || user.RidingHorse)
-            return;
+            return Task.CompletedTask;
         var rot = Rotation.Calculate(user.X, user.Y, x, y);
         user.SetRot(rot, false);
         user.UpdateNeeded = true;
@@ -39,5 +40,6 @@ internal class LookToEvent : IPacketEvent
                 horse.UpdateNeeded = true;
             }
         }
+        return Task.CompletedTask;
     }
 }

@@ -1,4 +1,5 @@
-﻿using Plus.Communication.Packets.Outgoing.Rooms.Engine;
+﻿using System.Threading.Tasks;
+using Plus.Communication.Packets.Outgoing.Rooms.Engine;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Rooms;
 
@@ -13,17 +14,17 @@ internal class MoveWallItemEvent : IPacketEvent
         _roomManager = roomManager;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!_roomManager.TryGetRoom(session.GetHabbo().CurrentRoomId, out var room))
-            return;
+            return Task.CompletedTask;
         if (!room.CheckRights(session))
-            return;
+            return Task.CompletedTask;
         var itemId = packet.PopInt();
         var wallPositionData = packet.PopString();
         var item = room.GetRoomItemHandler().GetItem(itemId);
         if (item == null)
-            return;
+            return Task.CompletedTask;
         try
         {
             var wallPos = room.GetRoomItemHandler().WallPositionCheck(":" + wallPositionData.Split(':')[1]);
@@ -31,9 +32,10 @@ internal class MoveWallItemEvent : IPacketEvent
         }
         catch
         {
-            return;
+            return Task.CompletedTask;
         }
         room.GetRoomItemHandler().UpdateItem(item);
         room.SendPacket(new ItemUpdateComposer(item, room.OwnerId));
+        return Task.CompletedTask;
     }
 }

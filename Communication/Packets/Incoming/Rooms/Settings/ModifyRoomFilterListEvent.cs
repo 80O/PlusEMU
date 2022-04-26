@@ -1,18 +1,19 @@
-﻿using Plus.HabboHotel.GameClients;
+﻿using System.Threading.Tasks;
+using Plus.HabboHotel.GameClients;
 
 namespace Plus.Communication.Packets.Incoming.Rooms.Settings;
 
 internal class ModifyRoomFilterListEvent : IPacketEvent
 {
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!session.GetHabbo().InRoom)
-            return;
+            return Task.CompletedTask;
         var instance = session.GetHabbo().CurrentRoom;
         if (instance == null)
-            return;
+            return Task.CompletedTask;
         if (!instance.CheckRights(session))
-            return;
+            return Task.CompletedTask;
         packet.PopInt(); //roomId
         var added = packet.PopBoolean();
         var word = packet.PopString();
@@ -20,5 +21,6 @@ internal class ModifyRoomFilterListEvent : IPacketEvent
             instance.GetFilter().AddFilter(word);
         else
             instance.GetFilter().RemoveFilter(word);
+        return Task.CompletedTask;
     }
 }

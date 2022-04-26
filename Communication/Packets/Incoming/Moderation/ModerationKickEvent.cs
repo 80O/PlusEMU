@@ -1,4 +1,5 @@
-﻿using Plus.Core.Language;
+﻿using System.Threading.Tasks;
+using Plus.Core.Language;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Rooms;
 
@@ -17,22 +18,23 @@ internal class ModerationKickEvent : IPacketEvent
         _roomManger = roomManager;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!session.GetHabbo().GetPermissions().HasRight("mod_kick"))
-            return;
+            return Task.CompletedTask;
         var userId = packet.PopInt();
         packet.PopString(); //message
         var client = _clientManager.GetClientByUserId(userId);
         if (client == null || client.GetHabbo() == null || client.GetHabbo().CurrentRoomId < 1 || client.GetHabbo().Id == session.GetHabbo().Id)
-            return;
+            return Task.CompletedTask;
         if (client.GetHabbo().Rank >= session.GetHabbo().Rank)
         {
             session.SendNotification(_languageManager.TryGetValue("moderation.kick.disallowed"));
-            return;
+            return Task.CompletedTask;
         }
         if (!_roomManger.TryGetRoom(session.GetHabbo().CurrentRoomId, out var room))
-            return;
+            return Task.CompletedTask;
         room.GetRoomUserManager().RemoveUserFromRoom(client, true);
+        return Task.CompletedTask;
     }
 }

@@ -1,4 +1,5 @@
-﻿using Plus.Communication.Packets.Outgoing.Navigator;
+﻿using System.Threading.Tasks;
+using Plus.Communication.Packets.Outgoing.Navigator;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Navigator;
 
@@ -13,9 +14,10 @@ internal class GetEventCategoriesEvent : IPacketEvent
         _navigatorManager = navigatorManager;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         var categories = _navigatorManager.GetEventCategories();
         session.SendPacket(new NavigatorFlatCatsComposer(categories));
+        return Task.CompletedTask;
     }
 }

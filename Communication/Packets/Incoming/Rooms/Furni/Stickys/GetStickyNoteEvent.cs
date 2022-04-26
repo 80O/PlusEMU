@@ -1,4 +1,5 @@
-﻿using Plus.Communication.Packets.Outgoing.Rooms.Furni.Stickys;
+﻿using System.Threading.Tasks;
+using Plus.Communication.Packets.Outgoing.Rooms.Furni.Stickys;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Items;
 using Plus.HabboHotel.Rooms;
@@ -14,15 +15,16 @@ internal class GetStickyNoteEvent : IPacketEvent
         _roomManager = roomManager;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!session.GetHabbo().InRoom)
-            return;
+            return Task.CompletedTask;
         if (!_roomManager.TryGetRoom(session.GetHabbo().CurrentRoomId, out var room))
-            return;
+            return Task.CompletedTask;
         var item = room.GetRoomItemHandler().GetItem(packet.PopInt());
         if (item == null || item.GetBaseItem().InteractionType != InteractionType.Postit)
-            return;
+            return Task.CompletedTask;
         session.SendPacket(new StickyNoteComposer(item.Id.ToString(), item.ExtraData));
+        return Task.CompletedTask;
     }
 }

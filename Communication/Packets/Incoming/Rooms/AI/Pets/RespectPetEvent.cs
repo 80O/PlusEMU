@@ -1,4 +1,5 @@
-﻿using Plus.Communication.Packets.Outgoing.Pets;
+﻿using System.Threading.Tasks;
+using Plus.Communication.Packets.Outgoing.Pets;
 using Plus.Communication.Packets.Outgoing.Rooms.Avatar;
 using Plus.HabboHotel.Achievements;
 using Plus.HabboHotel.GameClients;
@@ -20,30 +21,30 @@ internal class RespectPetEvent : IPacketEvent
         _questManager = questManager;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!session.GetHabbo().InRoom || session.GetHabbo().GetStats() == null || session.GetHabbo().GetStats().DailyPetRespectPoints == 0)
-            return;
+            return Task.CompletedTask;
         if (!_roomManager.TryGetRoom(session.GetHabbo().CurrentRoomId, out var room))
-            return;
+            return Task.CompletedTask;
         var thisUser = room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
         if (thisUser == null)
-            return;
+            return Task.CompletedTask;
         var petId = packet.PopInt();
         if (!session.GetHabbo().CurrentRoom.GetRoomUserManager().TryGetPet(petId, out var pet))
         {
             //Okay so, we've established we have no pets in this room by this virtual Id, let us check out users, maybe they're creeping as a pet?!
             var targetUser = session.GetHabbo().CurrentRoom.GetRoomUserManager().GetRoomUserByHabbo(petId);
             if (targetUser == null)
-                return;
+                return Task.CompletedTask;
 
             //Check some values first, please!
             if (targetUser.GetClient() == null || targetUser.GetClient().GetHabbo() == null)
-                return;
+                return Task.CompletedTask;
             if (targetUser.GetClient().GetHabbo().Id == session.GetHabbo().Id)
             {
                 session.SendWhisper("Oops, you cannot use this on yourself! (You haven't lost a point, simply reload!)");
-                return;
+                return Task.CompletedTask;
             }
 
             //And boom! Let us send some respect points.
@@ -64,15 +65,16 @@ internal class RespectPetEvent : IPacketEvent
             if (room.RespectNotificationsEnabled)
                 room.SendPacket(new RespectPetNotificationMessageComposer(targetUser.GetClient().GetHabbo(), targetUser));
             room.SendPacket(new CarryObjectComposer(thisUser.VirtualId, thisUser.CarryItemId));
-            return;
+            return Task.CompletedTask;
         }
         if (pet == null || pet.PetData == null || pet.RoomId != session.GetHabbo().CurrentRoomId)
-            return;
+            return Task.CompletedTask;
         session.GetHabbo().GetStats().DailyPetRespectPoints -= 1;
         _achievementManager.ProgressAchievement(session, "ACH_PetRespectGiver", 1);
         thisUser.CarryItemId = 999999999;
         thisUser.CarryTimer = 5;
         pet.PetData.OnRespect();
         room.SendPacket(new CarryObjectComposer(thisUser.VirtualId, thisUser.CarryItemId));
+        return Task.CompletedTask;
     }
 }

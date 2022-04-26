@@ -1,56 +1,34 @@
-﻿using System;
-using System.Buffers;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
-using NLog;
+﻿using NLog;
 using Plus.Communication.Attributes;
 using Plus.Communication.Packets.Incoming;
 using Plus.HabboHotel.GameClients;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Plus.Communication.Packets;
 
-public sealed class PacketManager : IPacketManager
+public sealed class PacketManager : IPacketManager, IDisposable
 {
     private static readonly ILogger Log = LogManager.GetLogger("Plus.Communication.Packets");
 
-    /// <summary>
-    ///     The task factory which is used for running Asynchronous tasks, in this case we use it to execute packets.
-    /// </summary>
-    private readonly TaskFactory _eventDispatcher = new(TaskCreationOptions.PreferFairness, TaskContinuationOptions.None);
-
-    /// <summary>
-    ///     Testing the Task code
-    /// </summary>
-    private readonly bool _ignoreTasks = true;
-
-    private readonly Dictionary<int, Type> _headerToPacketMapping = new();
     private readonly Dictionary<int, IPacketEvent> _incomingPackets = new();
     private readonly HashSet<Type> _handshakePackets = new();
+    private readonly Dictionary<int, string> _packetNames = new();
 
     /// <summary>
     ///     The maximum time a task can run for before it is considered dead
     ///     (can be used for debugging any locking issues with certain areas of code)
     /// </summary>
-    private readonly int _maximumRunTimeInSec = Debugger.IsAttached ? 300 : 30; // 5 minutes in debug. 30 seconds in release.
-    private readonly Dictionary<int, string> _packetNames = new();
-
-    /// <summary>
-    ///     Currently running tasks to keep track of what the current load is
-    /// </summary>
-    private readonly ConcurrentDictionary<int, Task> _runningTasks = new();
-
-    /// <summary>
-    ///     Should the handler throw errors or log and continue.
-    /// </summary>
-    private readonly bool _throwUserErrors = false;
+    private readonly TimeSpan _maximumRunTimeInSec; // 5 minutes in debug. 30 seconds in release.
+    private readonly CancellationTokenSource _cancellationTokenSource = new();
 
     public PacketManager(IEnumerable<IPacketEvent> incomingPackets)
     {
+        _maximumRunTimeInSec = Debugger.IsAttached ? TimeSpan.FromMinutes(30) : TimeSpan.FromSeconds(5);
         foreach (var packet in incomingPackets)
         {
             var field = typeof(ClientPacketHeader).GetField(packet.GetType().Name, BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
@@ -90,59 +68,36 @@ public sealed class PacketManager : IPacketManager
             return;
         }
 
-        if (!_ignoreTasks)
-            ExecutePacketAsync(session, packet, pak);
-        else
-            pak.Parse(session, packet);
+        ExecutePacketAsync(session, packet, pak);
     }
 
     private void ExecutePacketAsync(GameClient session, ClientPacket packet, IPacketEvent pak)
     {
-        var cancelSource = new CancellationTokenSource();
-        var token = cancelSource.Token;
-        var t = _eventDispatcher.StartNew(() =>
+        if (_cancellationTokenSource.IsCancellationRequested)
+            return;
+
+        Task.Run(async () =>
         {
-            pak.Parse(session, packet);
-            token.ThrowIfCancellationRequested();
-        }, token);
-        _runningTasks.TryAdd(t.Id, t);
-        try
+            var task = pak.Parse(session, packet);
+            await task.WaitAsync(_maximumRunTimeInSec, _cancellationTokenSource.Token);
+        }, _cancellationTokenSource.Token).ContinueWith(t =>
         {
-            if (!t.Wait(_maximumRunTimeInSec * 1000, token)) cancelSource.Cancel();
-        }
-        catch (AggregateException ex)
-        {
-            foreach (var e in ex.Flatten().InnerExceptions)
+            if (t.IsFaulted && t.Exception != null)
             {
-                if (_throwUserErrors)
-                    throw e;
-                else
+                foreach (var e in t.Exception.Flatten().InnerExceptions)
                 {
-                    //log.Fatal("Unhandled Error: " + e.Message + " - " + e.StackTrace);
+                    Log.Error("Error handling packet {packetId} for session {session} @ Habbo  {username}: {message} {stacktrace}", packet.Id, session.ConnectionId, session.GetHabbo()?.Username ?? string.Empty, e.Message, e.StackTrace);
                     session.Disconnect();
                 }
             }
-        }
-        catch (OperationCanceledException)
-        {
-            session.Disconnect();
-        }
-        finally
-        {
-            _runningTasks.TryRemove(t.Id, out var _);
-            cancelSource.Dispose();
-
-            //log.Debug("Event took " + (DateTime.Now - Start).Milliseconds + "ms to complete.");
-        }
+        });
     }
 
-    public void WaitForAllToComplete()
+    public void Dispose()
     {
-        foreach (var t in _runningTasks.Values.ToList()) t.Wait();
-    }
-
-    public void UnregisterAll()
-    {
-        _headerToPacketMapping.Clear();
+        _cancellationTokenSource.Cancel();
+        _incomingPackets.Clear();
+        _handshakePackets.Clear();
+        _packetNames.Clear();
     }
 }

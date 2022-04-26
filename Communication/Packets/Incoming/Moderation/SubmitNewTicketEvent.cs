@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Moderation;
 using Plus.Database;
 using Plus.HabboHotel.GameClients;
@@ -20,7 +21,7 @@ internal class SubmitNewTicketEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         // Run a quick check to see if we have any existing tickets.
         if (_moderationManager.UserHasTickets(session.GetHabbo().Id))
@@ -29,7 +30,7 @@ internal class SubmitNewTicketEvent : IPacketEvent
             if (pendingTicket != null)
             {
                 session.SendPacket(new CallForHelpPendingCallsComposer(pendingTicket));
-                return;
+                return Task.CompletedTask;
             }
         }
         var chats = new List<string>();
@@ -41,7 +42,7 @@ internal class SubmitNewTicketEvent : IPacketEvent
         if (reportedUser == null)
         {
             // User doesn't exist.
-            return;
+            return Task.CompletedTask;
         }
         var messagecount = packet.PopInt();
         for (var i = 0; i < messagecount; i++)
@@ -51,7 +52,7 @@ internal class SubmitNewTicketEvent : IPacketEvent
         }
         var ticket = new ModerationTicket(1, type, category, UnixTimestamp.GetNow(), 1, session.GetHabbo(), reportedUser, message, session.GetHabbo().CurrentRoom, chats);
         if (!_moderationManager.TryAddTicket(ticket))
-            return;
+            return Task.CompletedTask;
         using (var dbClient = _database.GetQueryReactor())
         {
             // TODO: Come back to this.
@@ -62,5 +63,6 @@ internal class SubmitNewTicketEvent : IPacketEvent
         }
         _clientManager.ModAlert("A new support ticket has been submitted!");
         _clientManager.SendPacket(new ModeratorSupportTicketComposer(session.GetHabbo().Id, ticket), "mod_tool");
+        return Task.CompletedTask;
     }
 }

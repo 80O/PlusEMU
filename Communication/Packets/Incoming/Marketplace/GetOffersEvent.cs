@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
+using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Marketplace;
 using Plus.Database;
 using Plus.HabboHotel.Catalog.Marketplace;
@@ -20,7 +21,7 @@ internal class GetOffersEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         var minCost = packet.PopInt();
         var maxCost = packet.PopInt();
@@ -98,5 +99,6 @@ internal class GetOffersEvent : IPacketEvent
             }
         }
         session.SendPacket(new MarketPlaceOffersComposer(dictionary, dictionary2));
+        return Task.CompletedTask;
     }
 }

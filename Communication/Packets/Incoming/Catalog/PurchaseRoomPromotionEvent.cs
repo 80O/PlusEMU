@@ -1,4 +1,5 @@
-﻿using Plus.Communication.Packets.Outgoing.Catalog;
+﻿using System.Threading.Tasks;
+using Plus.Communication.Packets.Outgoing.Catalog;
 using Plus.Communication.Packets.Outgoing.Rooms.Engine;
 using Plus.Database;
 using Plus.HabboHotel.GameClients;
@@ -20,7 +21,7 @@ public class PurchaseRoomPromotionEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         packet.PopInt(); //pageId
         packet.PopInt(); //itemId
@@ -30,9 +31,9 @@ public class PurchaseRoomPromotionEvent : IPacketEvent
         var desc = _wordFilterManager.CheckMessage(packet.PopString());
         var categoryId = packet.PopInt();
         if (!RoomFactory.TryGetData(roomId, out var data))
-            return;
+            return Task.CompletedTask;
         if (data.OwnerId != session.GetHabbo().Id)
-            return;
+            return Task.CompletedTask;
         if (data.Promotion == null)
             data.Promotion = new RoomPromotion(name, desc, categoryId);
         else
@@ -53,5 +54,6 @@ public class PurchaseRoomPromotionEvent : IPacketEvent
         if (session.GetHabbo().InRoom && session.GetHabbo().CurrentRoomId == roomId)
             session.GetHabbo().CurrentRoom?.SendPacket(new RoomEventComposer(data, data.Promotion));
         session.GetHabbo().GetMessenger().BroadcastAchievement(session.GetHabbo().Id, MessengerEventTypes.EventStarted, name);
+        return Task.CompletedTask;
     }
 }

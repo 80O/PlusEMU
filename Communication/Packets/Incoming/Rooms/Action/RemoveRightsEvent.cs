@@ -1,4 +1,5 @@
-﻿using Plus.Communication.Packets.Outgoing.Rooms.Permissions;
+﻿using System.Threading.Tasks;
+using Plus.Communication.Packets.Outgoing.Rooms.Permissions;
 using Plus.Communication.Packets.Outgoing.Rooms.Settings;
 using Plus.Database;
 using Plus.HabboHotel.GameClients;
@@ -17,14 +18,14 @@ internal class RemoveRightsEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!session.GetHabbo().InRoom)
-            return;
+            return Task.CompletedTask;
         if (!_roomManager.TryGetRoom(session.GetHabbo().CurrentRoomId, out var room))
-            return;
+            return Task.CompletedTask;
         if (!room.CheckRights(session, true))
-            return;
+            return Task.CompletedTask;
         var amount = packet.PopInt();
         for (var i = 0; i < amount && i <= 100; i++)
         {
@@ -50,5 +51,6 @@ internal class RemoveRightsEvent : IPacketEvent
                 session.SendPacket(new FlatControllerRemovedComposer(room, userId));
             }
         }
+        return Task.CompletedTask;
     }
 }

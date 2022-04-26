@@ -1,4 +1,5 @@
-﻿using Plus.Communication.Packets.Outgoing.Catalog;
+﻿using System.Threading.Tasks;
+using Plus.Communication.Packets.Outgoing.Catalog;
 using Plus.HabboHotel.Catalog.Pets;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Items;
@@ -15,13 +16,14 @@ public class GetSellablePetBreedsEvent : IPacketEvent
         _itemDataManager = itemDataManager;
         _petRaceManager = petRaceManager;
     }
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         var type = packet.PopString();
         var item = _itemDataManager.GetItemByName(type);
         if (item == null)
-            return;
+            return Task.CompletedTask;
         var petId = item.BehaviourData;
         session.SendPacket(new SellablePetBreedsComposer(type, petId, _petRaceManager.GetRacesForRaceId(petId)));
+        return Task.CompletedTask;
     }
 }

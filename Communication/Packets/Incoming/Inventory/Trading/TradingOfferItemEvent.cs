@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Inventory.Trading;
 using Plus.HabboHotel.GameClients;
 
@@ -6,37 +7,37 @@ namespace Plus.Communication.Packets.Incoming.Inventory.Trading;
 
 internal class TradingOfferItemEvent : IPacketEvent
 {
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!session.GetHabbo().InRoom)
-            return;
+            return Task.CompletedTask;
         var room = session.GetHabbo().CurrentRoom;
         if (room == null)
-            return;
+            return Task.CompletedTask;
         var roomUser = room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
         if (roomUser == null)
-            return;
+            return Task.CompletedTask;
         var itemId = packet.PopInt();
         if (!roomUser.IsTrading)
         {
             session.SendPacket(new TradingClosedComposer(session.GetHabbo().Id));
-            return;
+            return Task.CompletedTask;
         }
         if (!room.GetTrading().TryGetTrade(roomUser.TradeId, out var trade))
         {
             session.SendPacket(new TradingClosedComposer(session.GetHabbo().Id));
-            return;
+            return Task.CompletedTask;
         }
         var item = session.GetHabbo().GetInventoryComponent().GetItem(itemId);
         if (item == null)
-            return;
+            return Task.CompletedTask;
         if (!trade.CanChange)
-            return;
+            return Task.CompletedTask;
         var tradeUser = trade.Users[0];
         if (tradeUser.RoomUser != roomUser)
             tradeUser = trade.Users[1];
         if (tradeUser.OfferedItems.ContainsKey(item.Id))
-            return;
+            return Task.CompletedTask;
         trade.RemoveAccepted();
         if (tradeUser.OfferedItems.Count <= 499)
         {
@@ -45,5 +46,6 @@ internal class TradingOfferItemEvent : IPacketEvent
                 tradeUser.OfferedItems.Add(item.Id, item);
         }
         trade.SendPacket(new TradingUpdateComposer(trade));
+        return Task.CompletedTask;
     }
 }

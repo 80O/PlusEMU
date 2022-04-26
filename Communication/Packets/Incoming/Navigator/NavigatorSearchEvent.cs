@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Navigator.New;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Navigator;
@@ -14,7 +15,7 @@ internal class NavigatorSearchEvent : IPacketEvent
         _navigatorManager = navigatorManager;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         var category = packet.PopString();
         var search = packet.PopString();
@@ -33,10 +34,11 @@ internal class NavigatorSearchEvent : IPacketEvent
                 if (categories.Count > 0)
                 {
                     session.SendPacket(new NavigatorSearchResultSetComposer(category, search, categories, session, 2, 100));
-                    return;
+                    return Task.CompletedTask;
                 }
             }
         }
         session.SendPacket(new NavigatorSearchResultSetComposer(category, search, categories, session));
+        return Task.CompletedTask;
     }
 }

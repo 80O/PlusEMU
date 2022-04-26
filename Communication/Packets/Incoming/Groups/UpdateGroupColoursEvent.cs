@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Groups;
 using Plus.Communication.Packets.Outgoing.Rooms.Engine;
 using Plus.Database;
@@ -20,15 +21,15 @@ internal class UpdateGroupColoursEvent : IPacketEvent
         _groupManager = groupManager;
         _database = database;
     }
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         var groupId = packet.PopInt();
         var mainColour = packet.PopInt();
         var secondaryColour = packet.PopInt();
         if (!_groupManager.TryGetGroup(groupId, out var group))
-            return;
+            return Task.CompletedTask;
         if (group.CreatorId != session.GetHabbo().Id)
-            return;
+            return Task.CompletedTask;
         using (var connection = _database.Connection())
         {
             connection.Execute("UPDATE `groups` SET `colour1` = @colour1, `colour2` = @colour2 WHERE `id` = @groupId LIMIT 1",
@@ -49,5 +50,6 @@ internal class UpdateGroupColoursEvent : IPacketEvent
                 session.GetHabbo().CurrentRoom.SendPacket(new ObjectUpdateComposer(item, Convert.ToInt32(item.UserId)));
             }
         }
+        return Task.CompletedTask;
     }
 }

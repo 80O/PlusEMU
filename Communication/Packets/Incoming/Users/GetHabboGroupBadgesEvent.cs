@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Users;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Groups;
@@ -15,13 +16,13 @@ internal class GetHabboGroupBadgesEvent : IPacketEvent
         _groupManager = groupManager;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!session.GetHabbo().InRoom)
-            return;
+            return Task.CompletedTask;
         var room = session.GetHabbo().CurrentRoom;
         if (room == null)
-            return;
+            return Task.CompletedTask;
         var badges = new Dictionary<int, string>();
         foreach (var user in room.GetRoomUserManager().GetRoomUsers().ToList())
         {
@@ -44,5 +45,6 @@ internal class GetHabboGroupBadgesEvent : IPacketEvent
         }
         room.SendPacket(new HabboGroupBadgesComposer(badges));
         session.SendPacket(new HabboGroupBadgesComposer(badges));
+        return Task.CompletedTask;
     }
 }

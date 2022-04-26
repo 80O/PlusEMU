@@ -1,4 +1,5 @@
-﻿using Plus.Communication.Packets.Outgoing.Rooms.Avatar;
+﻿using System.Threading.Tasks;
+using Plus.Communication.Packets.Outgoing.Rooms.Avatar;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Quests;
 using Plus.HabboHotel.Rooms;
@@ -16,16 +17,16 @@ public class ActionEvent : IPacketEvent
         _questManager = questManager;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!session.GetHabbo().InRoom)
-            return;
+            return Task.CompletedTask;
         var action = packet.PopInt();
         if (!_roomManager.TryGetRoom(session.GetHabbo().CurrentRoomId, out var room))
-            return;
+            return Task.CompletedTask;
         var user = room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
         if (user == null)
-            return;
+            return Task.CompletedTask;
         if (user.DanceId > 0)
             user.DanceId = 0;
         if (session.GetHabbo().Effects().CurrentEffect > 0)
@@ -38,5 +39,6 @@ public class ActionEvent : IPacketEvent
             room.SendPacket(new SleepComposer(user, true));
         }
         _questManager.ProgressUserQuest(session, QuestType.SocialWave);
+        return Task.CompletedTask;
     }
 }

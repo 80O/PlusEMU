@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Navigator;
 using Plus.Communication.Packets.Outgoing.Rooms.Engine;
 using Plus.Communication.Packets.Outgoing.Rooms.Session;
@@ -28,26 +29,26 @@ internal class ChangeNameEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         var room = session.GetHabbo().CurrentRoom;
         if (room == null)
-            return;
+            return Task.CompletedTask;
         var user = room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Username);
         if (user == null)
-            return;
+            return Task.CompletedTask;
         var newName = packet.PopString();
         var oldName = session.GetHabbo().Username;
         if (newName == oldName)
         {
             session.GetHabbo().ChangeName(oldName);
             session.SendPacket(new UpdateUsernameComposer(newName));
-            return;
+            return Task.CompletedTask;
         }
         if (!CanChangeName(session.GetHabbo()))
         {
             session.SendNotification("Oops, it appears you currently cannot change your username!");
-            return;
+            return Task.CompletedTask;
         }
         bool inUse;
         using (var connection = _database.Connection())
@@ -58,22 +59,22 @@ internal class ChangeNameEvent : IPacketEvent
         var letters = newName.ToLower().ToCharArray();
         const string allowedCharacters = "abcdefghijklmnopqrstuvwxyz.,_-;:?!1234567890";
         if (letters.Any(chr => !allowedCharacters.Contains(chr)))
-            return;
+            return Task.CompletedTask;
         if (!session.GetHabbo().GetPermissions().HasRight("mod_tool") && newName.ToLower().Contains("mod") || newName.ToLower().Contains("adm") || newName.ToLower().Contains("admin")
             || newName.ToLower().Contains("m0d") || newName.ToLower().Contains("mob") || newName.ToLower().Contains("m0b"))
-            return;
+            return Task.CompletedTask;
         if (!newName.ToLower().Contains("mod") && (session.GetHabbo().Rank == 2 || session.GetHabbo().Rank == 3))
-            return;
+            return Task.CompletedTask;
         if (newName.Length > 15)
-            return;
+            return Task.CompletedTask;
         if (newName.Length < 3)
-            return;
+            return Task.CompletedTask;
         if (inUse)
-            return;
+            return Task.CompletedTask;
         if (!_clientManager.UpdateClientUsername(session, oldName, newName))
         {
             session.SendNotification("Oops! An issue occoured whilst updating your username.");
-            return;
+            return Task.CompletedTask;
         }
         session.GetHabbo().ChangingName = false;
         room.GetRoomUserManager().RemoveUserFromRoom(session, true);
@@ -95,6 +96,7 @@ internal class ChangeNameEvent : IPacketEvent
         }
         _achievementManager.ProgressAchievement(session, "ACH_Name", 1);
         session.SendPacket(new RoomForwardComposer(room.Id));
+        return Task.CompletedTask;
     }
 
     private static bool CanChangeName(Habbo habbo)

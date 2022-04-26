@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Inventory.Furni;
 using Plus.Communication.Packets.Outgoing.Marketplace;
 using Plus.Database;
@@ -18,7 +19,7 @@ internal class CancelOfferEvent : IPacketEvent
         _itemDataManager = itemDataManager;
         _database = database;
     }
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         DataRow row;
         var offerId = packet.PopInt();
@@ -32,17 +33,17 @@ internal class CancelOfferEvent : IPacketEvent
         if (row == null)
         {
             session.SendPacket(new MarketplaceCancelOfferResultComposer(offerId, false));
-            return;
+            return Task.CompletedTask;
         }
         if (Convert.ToInt32(row["user_id"]) != session.GetHabbo().Id)
         {
             session.SendPacket(new MarketplaceCancelOfferResultComposer(offerId, false));
-            return;
+            return Task.CompletedTask;
         }
         if (!_itemDataManager.GetItem(Convert.ToInt32(row["item_id"]), out var item))
         {
             session.SendPacket(new MarketplaceCancelOfferResultComposer(offerId, false));
-            return;
+            return Task.CompletedTask;
         }
 
         //PlusEnvironment.GetGame().GetCatalog().DeliverItems(Session, Item, 1, Convert.ToString(Row["extra_data"]), Convert.ToInt32(Row["limited_number"]), Convert.ToInt32(Row["limited_stack"]), Convert.ToInt32(Row["furni_id"]));
@@ -59,5 +60,6 @@ internal class CancelOfferEvent : IPacketEvent
         }
         session.GetHabbo().GetInventoryComponent().UpdateItems(true);
         session.SendPacket(new MarketplaceCancelOfferResultComposer(offerId, true));
+        return Task.CompletedTask;
     }
 }

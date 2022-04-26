@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using Plus.Database;
 using Plus.HabboHotel.GameClients;
 using Dapper;
@@ -16,13 +17,13 @@ internal class RemoveBuddyEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         var amount = packet.PopInt();
         if (amount > 100)
             amount = 100;
         else if (amount < 0)
-            return;
+            return Task.CompletedTask;
         using var connection = _database.Connection();
         for (var i = 0; i < amount; i++)
         {
@@ -42,5 +43,6 @@ internal class RemoveBuddyEvent : IPacketEvent
             }
             session.GetHabbo().GetMessenger().DestroyFriendship(id);
         }
+        return Task.CompletedTask;
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Rooms.Furni.YouTubeTelevisions;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Items.Televisions;
@@ -16,15 +17,15 @@ internal class YouTubeGetNextVideo : IPacketEvent
         _televisionManager = televisionManager;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!session.GetHabbo().InRoom)
-            return;
+            return Task.CompletedTask;
         var videos = _televisionManager.TelevisionList;
         if (videos.Count == 0)
         {
             session.SendNotification("Oh, it looks like the hotel manager haven't added any videos for you to watch! :(");
-            return;
+            return Task.CompletedTask;
         }
         var itemId = packet.PopInt();
         packet.PopInt(); //next
@@ -34,9 +35,10 @@ internal class YouTubeGetNextVideo : IPacketEvent
         if (item == null)
         {
             session.SendNotification("Oh, it looks like their was a problem getting the video.");
-            return;
+            return Task.CompletedTask;
         }
         session.SendPacket(new GetYouTubeVideoComposer(itemId, item.YouTubeId));
+        return Task.CompletedTask;
     }
 
     private static IEnumerable<TValue> RandomValues<TKey, TValue>(IDictionary<TKey, TValue> dict)

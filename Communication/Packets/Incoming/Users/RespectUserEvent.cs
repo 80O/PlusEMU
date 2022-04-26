@@ -1,4 +1,5 @@
-﻿using Plus.Communication.Packets.Outgoing.Rooms.Avatar;
+﻿using System.Threading.Tasks;
+using Plus.Communication.Packets.Outgoing.Rooms.Avatar;
 using Plus.Communication.Packets.Outgoing.Users;
 using Plus.HabboHotel.Achievements;
 using Plus.HabboHotel.GameClients;
@@ -20,18 +21,18 @@ internal class RespectUserEvent : IPacketEvent
         _questManager = questManager;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!session.GetHabbo().InRoom || session.GetHabbo().GetStats().DailyRespectPoints <= 0)
-            return;
+            return Task.CompletedTask;
         if (!_roomManager.TryGetRoom(session.GetHabbo().CurrentRoomId, out var room))
-            return;
+            return Task.CompletedTask;
         var user = room.GetRoomUserManager().GetRoomUserByHabbo(packet.PopInt());
         if (user == null || user.GetClient() == null || user.GetClient().GetHabbo().Id == session.GetHabbo().Id || user.IsBot)
-            return;
+            return Task.CompletedTask;
         var thisUser = room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
         if (thisUser == null)
-            return;
+            return Task.CompletedTask;
         _questManager.ProgressUserQuest(session, QuestType.SocialRespect);
         _achievementManager.ProgressAchievement(session, "ACH_RespectGiven", 1);
         _achievementManager.ProgressAchievement(user.GetClient(), "ACH_RespectEarned", 1);
@@ -41,5 +42,6 @@ internal class RespectUserEvent : IPacketEvent
         if (room.RespectNotificationsEnabled)
             room.SendPacket(new RespectNotificationComposer(user.GetClient().GetHabbo().Id, user.GetClient().GetHabbo().GetStats().Respect));
         room.SendPacket(new ActionComposer(thisUser.VirtualId, 7));
+        return Task.CompletedTask;
     }
 }

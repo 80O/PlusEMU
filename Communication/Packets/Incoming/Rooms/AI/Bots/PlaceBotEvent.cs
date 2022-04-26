@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Inventory.Bots;
 using Plus.Database;
 using Plus.HabboHotel.GameClients;
@@ -24,24 +25,24 @@ internal class PlaceBotEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!session.GetHabbo().InRoom)
-            return;
+            return Task.CompletedTask;
         if (!_roomManager.TryGetRoom(session.GetHabbo().CurrentRoomId, out var room))
-            return;
+            return Task.CompletedTask;
         if (!room.CheckRights(session, true))
-            return;
+            return Task.CompletedTask;
         var botId = packet.PopInt();
         var x = packet.PopInt();
         var y = packet.PopInt();
         if (!room.GetGameMap().CanWalk(x, y, false) || !room.GetGameMap().ValidTile(x, y))
         {
             session.SendNotification("You cannot place a bot here!");
-            return;
+            return Task.CompletedTask;
         }
         if (!session.GetHabbo().GetInventoryComponent().TryGetBot(botId, out var bot))
-            return;
+            return Task.CompletedTask;
         var botCount = 0;
         foreach (var user in room.GetRoomUserManager().GetUserList().ToList())
         {
@@ -52,7 +53,7 @@ internal class PlaceBotEvent : IPacketEvent
         if (botCount >= 5 && !session.GetHabbo().GetPermissions().HasRight("bot_place_any_override"))
         {
             session.SendNotification("Sorry; 5 bots per room only!");
-            return;
+            return Task.CompletedTask;
         }
 
         //TODO: Hmm, maybe not????
@@ -88,8 +89,9 @@ internal class PlaceBotEvent : IPacketEvent
         if (!session.GetHabbo().GetInventoryComponent().TryRemoveBot(botId, out var toRemove))
         {
             Console.WriteLine("Error whilst removing Bot: " + toRemove.Id);
-            return;
+            return Task.CompletedTask;
         }
         session.SendPacket(new BotInventoryComposer(session.GetHabbo().GetInventoryComponent().GetBots()));
+        return Task.CompletedTask;
     }
 }

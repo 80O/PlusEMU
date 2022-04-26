@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Inventory.Bots;
 using Plus.Database;
 using Plus.HabboHotel.GameClients;
@@ -16,22 +17,22 @@ internal class PickUpBotEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!session.GetHabbo().InRoom)
-            return;
+            return Task.CompletedTask;
         var botId = packet.PopInt();
         if (botId == 0)
-            return;
+            return Task.CompletedTask;
         var room = session.GetHabbo().CurrentRoom;
         if (room == null)
-            return;
+            return Task.CompletedTask;
         if (!room.GetRoomUserManager().TryGetBot(botId, out var botUser))
-            return;
+            return Task.CompletedTask;
         if (session.GetHabbo().Id != botUser.BotData.OwnerId && !session.GetHabbo().GetPermissions().HasRight("bot_place_any_override"))
         {
             session.SendWhisper("You can only pick up your own bots!");
-            return;
+            return Task.CompletedTask;
         }
         using (var dbClient = _database.GetQueryReactor())
         {
@@ -44,5 +45,6 @@ internal class PickUpBotEvent : IPacketEvent
             botUser.BotData.Look, botUser.BotData.Gender));
         session.SendPacket(new BotInventoryComposer(session.GetHabbo().GetInventoryComponent().GetBots()));
         room.GetRoomUserManager().RemoveBot(botUser.VirtualId, false);
+        return Task.CompletedTask;
     }
 }

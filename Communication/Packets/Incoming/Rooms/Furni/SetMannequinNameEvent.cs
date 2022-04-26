@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Plus.Database;
 using Plus.HabboHotel.GameClients;
 
@@ -13,16 +14,16 @@ internal class SetMannequinNameEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         var room = session.GetHabbo().CurrentRoom;
         if (room == null || !room.CheckRights(session, true))
-            return;
+            return Task.CompletedTask;
         var itemId = packet.PopInt();
         var name = packet.PopString();
         var item = session.GetHabbo().CurrentRoom.GetRoomItemHandler().GetItem(itemId);
         if (item == null)
-            return;
+            return Task.CompletedTask;
         if (item.ExtraData.Contains(Convert.ToChar(5)))
         {
             var flags = item.ExtraData.Split(Convert.ToChar(5));
@@ -38,5 +39,6 @@ internal class SetMannequinNameEvent : IPacketEvent
             dbClient.RunQuery();
         }
         item.UpdateState(true, true);
+        return Task.CompletedTask;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Plus.HabboHotel.Achievements;
 using Plus.HabboHotel.GameClients;
 
@@ -13,24 +14,24 @@ internal class BanUserEvent : IPacketEvent
         _achievementManager = achievementManager;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         var room = session.GetHabbo().CurrentRoom;
         if (room == null)
-            return;
+            return Task.CompletedTask;
         if (room.WhoCanBan == 0 && !room.CheckRights(session, true) && room.Group == null || room.WhoCanBan == 1 && !room.CheckRights(session) && room.Group == null ||
             room.Group != null && !room.CheckRights(session, false, true))
-            return;
+            return Task.CompletedTask;
         var userId = packet.PopInt();
         packet.PopInt(); //roomId
         var r = packet.PopString();
         var user = room.GetRoomUserManager().GetRoomUserByHabbo(Convert.ToInt32(userId));
         if (user == null || user.IsBot)
-            return;
+            return Task.CompletedTask;
         if (room.OwnerId == userId)
-            return;
+            return Task.CompletedTask;
         if (user.GetClient().GetHabbo().GetPermissions().HasRight("mod_tool"))
-            return;
+            return Task.CompletedTask;
         long time = 0;
         if (r.ToLower().Contains("hour"))
             time = 3600;
@@ -40,5 +41,6 @@ internal class BanUserEvent : IPacketEvent
             time = 78892200;
         room.GetBans().Ban(user, time);
         _achievementManager.ProgressAchievement(session, "ACH_SelfModBanSeen", 1);
+        return Task.CompletedTask;
     }
 }

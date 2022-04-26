@@ -1,4 +1,5 @@
-﻿using Plus.Communication.Packets.Outgoing.Rooms.Engine;
+﻿using System.Threading.Tasks;
+using Plus.Communication.Packets.Outgoing.Rooms.Engine;
 using Plus.Database;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Items;
@@ -16,23 +17,23 @@ internal class SetTonerEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!_roomManager.TryGetRoom(session.GetHabbo().CurrentRoomId, out var room))
-            return;
+            return Task.CompletedTask;
         if (!room.CheckRights(session, true))
-            return;
+            return Task.CompletedTask;
         if (room.TonerData == null)
-            return;
+            return Task.CompletedTask;
         var item = room.GetRoomItemHandler().GetItem(room.TonerData.ItemId);
         if (item == null || item.GetBaseItem().InteractionType != InteractionType.Toner)
-            return;
+            return Task.CompletedTask;
         packet.PopInt(); //id
         var int1 = packet.PopInt();
         var int2 = packet.PopInt();
         var int3 = packet.PopInt();
         if (int1 > 255 || int2 > 255 || int3 > 255)
-            return;
+            return Task.CompletedTask;
         using (var dbClient = _database.GetQueryReactor())
         {
             dbClient.SetQuery("UPDATE `room_items_toner` SET `enabled` = '1', `data1` = @data1, `data2` = @data2, `data3` = @data3 WHERE `id` = @itemId LIMIT 1");
@@ -48,5 +49,6 @@ internal class SetTonerEvent : IPacketEvent
         room.TonerData.Enabled = 1;
         room.SendPacket(new ObjectUpdateComposer(item, room.OwnerId));
         item.UpdateState();
+        return Task.CompletedTask;
     }
 }

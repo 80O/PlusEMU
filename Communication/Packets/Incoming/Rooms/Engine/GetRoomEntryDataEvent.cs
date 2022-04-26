@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Rooms.Chat;
 using Plus.Communication.Packets.Outgoing.Rooms.Engine;
 using Plus.HabboHotel.GameClients;
@@ -17,15 +18,15 @@ internal class GetRoomEntryDataEvent : IPacketEvent
         _questManager = questManager;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         var room = session.GetHabbo().CurrentRoom;
         if (room == null)
-            return;
+            return Task.CompletedTask;
         if (!room.GetRoomUserManager().AddAvatarToRoom(session))
         {
             room.GetRoomUserManager().RemoveUserFromRoom(session, false);
-            return; //TODO: Remove?
+            return Task.CompletedTask; //TODO: Remove?
         }
         room.SendObjects(session);
         if (session.GetHabbo().GetMessenger() != null)
@@ -41,5 +42,6 @@ internal class GetRoomEntryDataEvent : IPacketEvent
             room.GetWired().TriggerEvent(WiredBoxType.TriggerRoomEnter, session.GetHabbo());
         if (UnixTimestamp.GetNow() < session.GetHabbo().FloodTime && session.GetHabbo().FloodTime != 0)
             session.SendPacket(new FloodControlComposer((int)session.GetHabbo().FloodTime - (int)UnixTimestamp.GetNow()));
+        return Task.CompletedTask;
     }
 }

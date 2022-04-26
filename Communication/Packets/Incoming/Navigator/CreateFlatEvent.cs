@@ -1,4 +1,5 @@
-﻿using Plus.Communication.Packets.Outgoing.Navigator;
+﻿using System.Threading.Tasks;
+using Plus.Communication.Packets.Outgoing.Navigator;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Navigator;
 using Plus.HabboHotel.Rooms;
@@ -19,13 +20,13 @@ internal class CreateFlatEvent : IPacketEvent
         _navigatorManager = navigatorManager;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         var rooms = RoomFactory.GetRoomsDataByOwnerSortByName(session.GetHabbo().Id);
         if (rooms.Count >= 500)
         {
             session.SendPacket(new CanCreateRoomComposer(true, 500));
-            return;
+            return Task.CompletedTask;
         }
         var name = _wordFilterManager.CheckMessage(packet.PopString());
         var description = _wordFilterManager.CheckMessage(packet.PopString());
@@ -34,11 +35,11 @@ internal class CreateFlatEvent : IPacketEvent
         var maxVisitors = packet.PopInt(); //10 = min, 25 = max.
         var tradeSettings = packet.PopInt(); //2 = All can trade, 1 = owner only, 0 = no trading.
         if (name.Length < 3)
-            return;
+            return Task.CompletedTask;
         if (name.Length > 25)
-            return;
+            return Task.CompletedTask;
         if (!_roomManager.TryGetModel(modelName, out var model))
-            return;
+            return Task.CompletedTask;
         if (!_navigatorManager.TryGetSearchResultList(category, out var searchResultList))
             category = 36;
         if (searchResultList.CategoryType != NavigatorCategoryType.Category || searchResultList.RequiredRank > session.GetHabbo().Rank)
@@ -51,5 +52,6 @@ internal class CreateFlatEvent : IPacketEvent
         if (newRoom != null) session.SendPacket(new FlatCreatedComposer(newRoom.Id, name));
         if (session.GetHabbo() != null && session.GetHabbo().GetMessenger() != null)
             session.GetHabbo().GetMessenger().OnStatusChanged(true);
+        return Task.CompletedTask;
     }
 }

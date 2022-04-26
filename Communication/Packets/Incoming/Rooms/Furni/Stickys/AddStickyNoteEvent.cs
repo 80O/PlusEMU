@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Items;
 using Plus.HabboHotel.Rooms;
@@ -14,19 +15,19 @@ internal class AddStickyNoteEvent : IPacketEvent
         _roomManager = roomManager;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         var itemId = packet.PopInt();
         var locationData = packet.PopString();
         if (!session.GetHabbo().InRoom)
-            return;
+            return Task.CompletedTask;
         if (!_roomManager.TryGetRoom(session.GetHabbo().CurrentRoomId, out var room))
-            return;
+            return Task.CompletedTask;
         if (!room.CheckRights(session))
-            return;
+            return Task.CompletedTask;
         var item = session.GetHabbo().GetInventoryComponent().GetItem(itemId);
         if (item == null)
-            return;
+            return Task.CompletedTask;
         try
         {
             var wallPossition = WallPositionCheck(":" + locationData.Split(':')[1]);
@@ -38,6 +39,7 @@ internal class AddStickyNoteEvent : IPacketEvent
         {
             //TODO: Send a packet
         }
+        return Task.CompletedTask;
     }
 
     private static string WallPositionCheck(string wallPosition)

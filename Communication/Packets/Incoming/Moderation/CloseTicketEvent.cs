@@ -1,4 +1,5 @@
-﻿using Plus.Communication.Packets.Outgoing.Moderation;
+﻿using System.Threading.Tasks;
+using Plus.Communication.Packets.Outgoing.Moderation;
 using Plus.Database;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Moderation;
@@ -18,17 +19,17 @@ internal class CloseTicketEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!session.GetHabbo().GetPermissions().HasRight("mod_tool"))
-            return;
+            return Task.CompletedTask;
         var result = packet.PopInt(); // 1 = useless, 2 = abusive, 3 = resolved
         packet.PopInt(); //junk
         var ticketId = packet.PopInt();
         if (!_moderationManager.TryGetTicket(ticketId, out var ticket))
-            return;
+            return Task.CompletedTask;
         if (ticket.Moderator.Id != session.GetHabbo().Id)
-            return;
+            return Task.CompletedTask;
         var client = _clientManager.GetClientByUserId(ticket.Sender.Id);
         if (client != null) client.SendPacket(new ModeratorSupportTicketResponseComposer(result));
         if (result == 2)
@@ -38,5 +39,6 @@ internal class CloseTicketEvent : IPacketEvent
         }
         ticket.Answered = true;
         _clientManager.SendPacket(new ModeratorSupportTicketComposer(session.GetHabbo().Id, ticket), "mod_tool");
+        return Task.CompletedTask;
     }
 }

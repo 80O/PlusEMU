@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Moderation;
 using Plus.Communication.Packets.Outgoing.Rooms.Avatar;
 using Plus.Communication.Packets.Outgoing.Rooms.Engine;
@@ -28,27 +29,27 @@ internal class UpdateFigureDataEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         var gender = packet.PopString().ToUpper();
         var look = _figureManager.ProcessFigure(packet.PopString(), gender, session.GetHabbo().GetClothing().GetClothingParts, true);
         if (look == session.GetHabbo().Look)
-            return;
+            return Task.CompletedTask;
         if ((DateTime.Now - session.GetHabbo().LastClothingUpdateTime).TotalSeconds <= 2.0)
         {
             session.GetHabbo().ClothingUpdateWarnings += 1;
             if (session.GetHabbo().ClothingUpdateWarnings >= 25)
                 session.GetHabbo().SessionClothingBlocked = true;
-            return;
+            return Task.CompletedTask;
         }
         if (session.GetHabbo().SessionClothingBlocked)
-            return;
+            return Task.CompletedTask;
         session.GetHabbo().LastClothingUpdateTime = DateTime.Now;
         string[] allowedGenders = { "M", "F" };
         if (!allowedGenders.Contains(gender))
         {
             session.SendPacket(new BroadcastMessageAlertComposer("Sorry, you chose an invalid gender."));
-            return;
+            return Task.CompletedTask;
         }
         _questManager.ProgressUserQuest(session, QuestType.ProfileChangeLook);
         session.GetHabbo().Look = _figureManager.FilterFigure(look);
@@ -73,5 +74,6 @@ internal class UpdateFigureDataEvent : IPacketEvent
                 session.GetHabbo().CurrentRoom.SendPacket(new UserChangeComposer(roomUser, false));
             }
         }
+        return Task.CompletedTask;
     }
 }

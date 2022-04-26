@@ -309,8 +309,8 @@ public class PlusEnvironment : IPlusEnvironment
         GetGame().StopGameLoop();
         Thread.Sleep(2500);
         _connectionManager.Destroy(); //Stop listening.
-        GetGame().GetPacketManager().UnregisterAll(); //Unregister the packets.
-        GetGame().GetPacketManager().WaitForAllToComplete();
+        if (GetGame().GetPacketManager() is IDisposable disposable)
+            disposable.Dispose();
         GetGame().GetClientManager().CloseAll(); //Close all connections
         GetGame().GetRoomManager().Dispose(); //Stop the game loop.
         if (!Debugger.IsAttached)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Plus.HabboHotel.GameClients;
 using Plus.Utilities;
 using Plus.HabboHotel.Rooms;
@@ -14,17 +15,18 @@ internal class ApplySignEvent : IPacketEvent
         _roomManager = roomManager;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         var signId = packet.PopInt();
         if (!_roomManager.TryGetRoom(session.GetHabbo().CurrentRoomId, out var room))
-            return;
+            return Task.CompletedTask;
         var user = room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
         if (user == null)
-            return;
+            return Task.CompletedTask;
         user.UnIdle();
         user.SetStatus("sign", Convert.ToString(signId));
         user.UpdateNeeded = true;
         user.SignTime = UnixTimestamp.GetNow() + 5;
+        return Task.CompletedTask;
     }
 }

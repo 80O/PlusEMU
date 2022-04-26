@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing;
 using Plus.Communication.Packets.Outgoing.Rooms.Avatar;
 using Plus.Communication.Packets.Outgoing.Rooms.Engine;
@@ -13,29 +14,30 @@ namespace Plus.Communication.Packets.Incoming.Rooms.AI.Bots;
 internal class SaveBotActionEvent : IPacketEvent
 {
     private readonly IDatabase _database;
-    public SaveBotActionEvent(IDatabase database) { 
+    public SaveBotActionEvent(IDatabase database)
+    {
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!session.GetHabbo().InRoom)
-            return;
+            return Task.CompletedTask;
         var room = session.GetHabbo().CurrentRoom;
         if (room == null)
-            return;
+            return Task.CompletedTask;
         var botId = packet.PopInt();
         var actionId = packet.PopInt();
         var dataString = packet.PopString();
         if (actionId < 1 || actionId > 5)
-            return;
+            return Task.CompletedTask;
         if (!room.GetRoomUserManager().TryGetBot(botId, out var bot))
-            return;
+            return Task.CompletedTask;
         if (bot.BotData.OwnerId != session.GetHabbo().Id && !session.GetHabbo().GetPermissions().HasRight("bot_edit_any_override"))
-            return;
+            return Task.CompletedTask;
         var roomBot = bot.BotData;
         if (roomBot == null)
-            return;
+            return Task.CompletedTask;
         /* 1 = Copy looks
          * 2 = Setup Speech
          * 3 = Relax
@@ -132,17 +134,17 @@ internal class SaveBotActionEvent : IPacketEvent
                 if (dataString.Length == 0)
                 {
                     session.SendWhisper("Come on, atleast give the bot a name!");
-                    return;
+                    return Task.CompletedTask;
                 }
                 if (dataString.Length >= 16)
                 {
                     session.SendWhisper("Come on, the bot doesn't need a name that long!");
-                    return;
+                    return Task.CompletedTask;
                 }
                 if (dataString.Contains("<img src") || dataString.Contains("<font ") || dataString.Contains("</font>") || dataString.Contains("</a>") || dataString.Contains("<i>"))
                 {
                     session.SendWhisper("No HTML, please :<");
-                    return;
+                    return Task.CompletedTask;
                 }
                 bot.BotData.Name = dataString;
                 using (var dbClient = _database.GetQueryReactor())
@@ -155,5 +157,6 @@ internal class SaveBotActionEvent : IPacketEvent
                 break;
             }
         }
+        return Task.CompletedTask;
     }
 }

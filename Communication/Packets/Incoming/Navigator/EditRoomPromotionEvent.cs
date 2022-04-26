@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Rooms.Engine;
 using Plus.Database;
 using Plus.HabboHotel.GameClients;
@@ -20,19 +21,19 @@ internal class EditRoomPromotionEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         var roomId = packet.PopInt();
         var name = _wordFilterManager.CheckMessage(packet.PopString());
         var desc = _wordFilterManager.CheckMessage(packet.PopString());
         if (!RoomFactory.TryGetData(roomId, out var data))
-            return;
+            return Task.CompletedTask;
         if (data.OwnerId != session.GetHabbo().Id)
-            return;
+            return Task.CompletedTask;
         if (data.Promotion == null)
         {
             session.SendNotification("Oops, it looks like there isn't a room promotion in this room?");
-            return;
+            return Task.CompletedTask;
         }
         using (var dbClient = _database.GetQueryReactor())
         {
@@ -43,9 +44,10 @@ internal class EditRoomPromotionEvent : IPacketEvent
         }
         Room room;
         if (!_roomManager.TryGetRoom(Convert.ToInt32(roomId), out room))
-            return;
+            return Task.CompletedTask;
         data.Promotion.Name = name;
         data.Promotion.Description = desc;
         room.SendPacket(new RoomEventComposer(data, data.Promotion));
+        return Task.CompletedTask;
     }
 }

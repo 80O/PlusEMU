@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Rooms.Furni.YouTubeTelevisions;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Items.Televisions;
@@ -14,7 +15,7 @@ internal class YouTubeVideoInformationEvent : IPacketEvent
         _televisionManager = televisionManager;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         var itemId = packet.PopInt();
         var videoId = packet.PopString();
@@ -24,5 +25,6 @@ internal class YouTubeVideoInformationEvent : IPacketEvent
                 continue;
             session.SendPacket(new GetYouTubeVideoComposer(itemId, tele.YouTubeId));
         }
+        return Task.CompletedTask;
     }
 }

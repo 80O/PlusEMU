@@ -1,4 +1,5 @@
-﻿using Plus.HabboHotel.GameClients;
+﻿using System.Threading.Tasks;
+using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Quests;
 
 namespace Plus.Communication.Packets.Incoming.Messenger;
@@ -12,9 +13,10 @@ internal class RequestBuddyEvent : IPacketEvent
         _questManager = questManager;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (session.GetHabbo().GetMessenger().RequestBuddy(packet.PopString()))
             _questManager.ProgressUserQuest(session, QuestType.SocialFriend);
+        return Task.CompletedTask;
     }
 }

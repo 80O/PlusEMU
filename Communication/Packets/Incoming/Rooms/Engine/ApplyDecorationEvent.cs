@@ -1,4 +1,5 @@
-﻿using Plus.Communication.Packets.Outgoing.Rooms.Engine;
+﻿using System.Threading.Tasks;
+using Plus.Communication.Packets.Outgoing.Rooms.Engine;
 using Plus.Database;
 using Plus.HabboHotel.Achievements;
 using Plus.HabboHotel.GameClients;
@@ -23,19 +24,19 @@ internal class ApplyDecorationEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!session.GetHabbo().InRoom)
-            return;
+            return Task.CompletedTask;
         if (!_roomManager.TryGetRoom(session.GetHabbo().CurrentRoomId, out var room))
-            return;
+            return Task.CompletedTask;
         if (!room.CheckRights(session, true))
-            return;
+            return Task.CompletedTask;
         var item = session.GetHabbo().GetInventoryComponent().GetItem(packet.PopInt());
         if (item == null)
-            return;
+            return Task.CompletedTask;
         if (item.GetBaseItem() == null)
-            return;
+            return Task.CompletedTask;
         var decorationKey = string.Empty;
         switch (item.GetBaseItem().InteractionType)
         {
@@ -75,5 +76,6 @@ internal class ApplyDecorationEvent : IPacketEvent
         }
         session.GetHabbo().GetInventoryComponent().RemoveItem(item.Id);
         room.SendPacket(new RoomPropertyComposer(decorationKey, item.ExtraData));
+        return Task.CompletedTask;
     }
 }

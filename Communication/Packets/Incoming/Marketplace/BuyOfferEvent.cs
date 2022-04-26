@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
+using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Catalog;
 using Plus.Communication.Packets.Outgoing.Inventory.Furni;
 using Plus.Communication.Packets.Outgoing.Inventory.Purse;
@@ -26,7 +27,7 @@ internal class BuyOfferEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         var offerId = packet.PopInt();
         DataRow row;
@@ -40,36 +41,36 @@ internal class BuyOfferEvent : IPacketEvent
         if (row == null)
         {
             ReloadOffers(session);
-            return;
+            return Task.CompletedTask;
         }
         if (Convert.ToString(row["state"]) == "2")
         {
             session.SendNotification("Oops, this offer is no longer available.");
             ReloadOffers(session);
-            return;
+            return Task.CompletedTask;
         }
         if (_marketplace.FormatTimestamp() > Convert.ToDouble(row["timestamp"]))
         {
             session.SendNotification("Oops, this offer has expired..");
             ReloadOffers(session);
-            return;
+            return Task.CompletedTask;
         }
         if (!_itemDataManager.GetItem(Convert.ToInt32(row["item_id"]), out var item))
         {
             session.SendNotification("Item isn't in the hotel anymore.");
             ReloadOffers(session);
-            return;
+            return Task.CompletedTask;
         }
         {
             if (Convert.ToInt32(row["user_id"]) == session.GetHabbo().Id)
             {
                 session.SendNotification("To prevent average boosting you cannot purchase your own marketplace offers.");
-                return;
+                return Task.CompletedTask;
             }
             if (Convert.ToInt32(row["total_price"]) > session.GetHabbo().Credits)
             {
                 session.SendNotification("Oops, you do not have enough credits for this.");
-                return;
+                return Task.CompletedTask;
             }
             session.GetHabbo().Credits -= Convert.ToInt32(row["total_price"]);
             session.SendPacket(new CreditBalanceComposer(session.GetHabbo().Credits));
@@ -111,6 +112,7 @@ internal class BuyOfferEvent : IPacketEvent
             }
         }
         ReloadOffers(session);
+        return Task.CompletedTask;
     }
 
 

@@ -1,4 +1,5 @@
-﻿using Plus.Communication.Packets.Outgoing.Users;
+﻿using System.Threading.Tasks;
+using Plus.Communication.Packets.Outgoing.Users;
 using Plus.Database;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Groups;
@@ -17,7 +18,7 @@ internal class OpenPlayerProfileEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         var userId = packet.PopInt();
         packet.PopBoolean(); //IsMe?
@@ -25,7 +26,7 @@ internal class OpenPlayerProfileEvent : IPacketEvent
         if (targetData == null)
         {
             session.SendNotification("An error occured whilst finding that user's profile.");
-            return;
+            return Task.CompletedTask;
         }
         var groups = _groupManager.GetGroupsForUser(targetData.Id);
         int friendCount;
@@ -34,5 +35,6 @@ internal class OpenPlayerProfileEvent : IPacketEvent
             friendCount = connection.ExecuteScalar<int>("SELECT count(0) FROM messenger_friendships WHERE user_one_id = @userid OR user_two_id = @userid", new { userid = userId });
         }
         session.SendPacket(new ProfileInformationComposer(targetData, session, groups, friendCount));
+        return Task.CompletedTask;
     }
 }

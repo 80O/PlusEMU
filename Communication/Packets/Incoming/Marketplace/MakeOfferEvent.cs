@@ -1,4 +1,5 @@
-﻿using Plus.Communication.Packets.Outgoing.Marketplace;
+﻿using System.Threading.Tasks;
+using Plus.Communication.Packets.Outgoing.Marketplace;
 using Plus.Database;
 using Plus.HabboHotel.Catalog.Marketplace;
 using Plus.HabboHotel.Catalog.Utilities;
@@ -18,7 +19,7 @@ internal class MakeOfferEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         var sellingPrice = packet.PopInt();
         packet.PopInt(); //comission
@@ -27,17 +28,17 @@ internal class MakeOfferEvent : IPacketEvent
         if (item == null)
         {
             session.SendPacket(new MarketplaceMakeOfferResultComposer(0));
-            return;
+            return Task.CompletedTask;
         }
         if (!ItemUtility.IsRare(item))
         {
             session.SendNotification("Sorry, only Rares & LTDs can go be auctioned off in the Marketplace!");
-            return;
+            return Task.CompletedTask;
         }
         if (sellingPrice > 70000000 || sellingPrice == 0)
         {
             session.SendPacket(new MarketplaceMakeOfferResultComposer(0));
-            return;
+            return Task.CompletedTask;
         }
         var comission = _marketplaceManager.CalculateComissionPrice(sellingPrice);
         var totalPrice = sellingPrice + comission;
@@ -57,5 +58,6 @@ internal class MakeOfferEvent : IPacketEvent
         }
         session.GetHabbo().GetInventoryComponent().RemoveItem(itemId);
         session.SendPacket(new MarketplaceMakeOfferResultComposer(1));
+        return Task.CompletedTask;
     }
 }

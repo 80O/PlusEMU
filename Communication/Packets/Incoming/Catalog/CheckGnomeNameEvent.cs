@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Catalog;
 using Plus.Communication.Packets.Outgoing.Inventory.Furni;
 using Plus.Database;
@@ -23,27 +24,27 @@ internal class CheckGnomeNameEvent : IPacketEvent
         _itemDataManager = itemDataManager;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!session.GetHabbo().InRoom)
-            return;
+            return Task.CompletedTask;
         var room = session.GetHabbo().CurrentRoom;
         if (room == null)
-            return;
+            return Task.CompletedTask;
         var itemId = packet.PopInt();
         var item = room.GetRoomItemHandler().GetItem(itemId);
         if (item == null || item.Data == null || item.UserId != session.GetHabbo().Id || item.Data.InteractionType != InteractionType.GnomeBox)
-            return;
+            return Task.CompletedTask;
         var petName = packet.PopString();
         if (string.IsNullOrEmpty(petName))
         {
             session.SendPacket(new CheckGnomeNameComposer(petName, 1));
-            return;
+            return Task.CompletedTask;
         }
         if (!PetUtility.CheckPetName(petName))
         {
             session.SendPacket(new CheckGnomeNameComposer(petName, 1));
-            return;
+            return Task.CompletedTask;
         }
         var x = item.GetX;
         var y = item.GetY;
@@ -65,7 +66,7 @@ internal class CheckGnomeNameEvent : IPacketEvent
         if (pet == null)
         {
             session.SendNotification("Oops, an error occoured. Please report this!");
-            return;
+            return Task.CompletedTask;
         }
         var rndSpeechList = new List<RandomSpeech>();
         pet.RoomId = session.GetHabbo().CurrentRoomId;
@@ -91,6 +92,7 @@ internal class CheckGnomeNameEvent : IPacketEvent
                 session.SendPacket(new FurniListNotificationComposer(food.Id, 1));
             }
         }
+        return Task.CompletedTask;
     }
 
     private static string RandomClothing()

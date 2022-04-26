@@ -1,4 +1,5 @@
-﻿using Plus.Communication.Packets.Outgoing.Navigator;
+﻿using System.Threading.Tasks;
+using Plus.Communication.Packets.Outgoing.Navigator;
 using Plus.Communication.Packets.Outgoing.Rooms.Session;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Rooms;
@@ -16,17 +17,17 @@ internal class LetUserInEvent : IPacketEvent
         _clientManager = clientManager;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!_roomManager.TryGetRoom(session.GetHabbo().CurrentRoomId, out var room))
-            return;
+            return Task.CompletedTask;
         if (!room.CheckRights(session))
-            return;
+            return Task.CompletedTask;
         var name = packet.PopString();
         var accepted = packet.PopBoolean();
         var client = _clientManager.GetClientByUsername(name);
         if (client == null)
-            return;
+            return Task.CompletedTask;
         if (accepted)
         {
             client.GetHabbo().RoomAuthOk = true;
@@ -38,5 +39,6 @@ internal class LetUserInEvent : IPacketEvent
             client.SendPacket(new FlatAccessDeniedComposer(""));
             room.SendPacket(new FlatAccessDeniedComposer(client.GetHabbo().Username), true);
         }
+        return Task.CompletedTask;
     }
 }

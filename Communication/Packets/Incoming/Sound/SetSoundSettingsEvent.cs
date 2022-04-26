@@ -1,4 +1,5 @@
-﻿using Plus.Database;
+﻿using System.Threading.Tasks;
+using Plus.Database;
 using Plus.HabboHotel.GameClients;
 using Dapper;
 
@@ -13,7 +14,7 @@ internal class SetSoundSettingsEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         var volume = "";
         for (var i = 0; i < 3; i++)
@@ -27,5 +28,6 @@ internal class SetSoundSettingsEvent : IPacketEvent
         }
         using var connection = _database.Connection();
         connection.Execute("UPDATE users SET volume = @volume WHERE id = @id LIMIT 1", new { volume = volume, id = session.GetHabbo().Id });
+        return Task.CompletedTask;
     }
 }

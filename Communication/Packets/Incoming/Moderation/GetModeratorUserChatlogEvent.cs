@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Moderation;
 using Plus.Database;
 using Plus.HabboHotel.GameClients;
@@ -22,15 +23,15 @@ internal class GetModeratorUserChatlogEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!session.GetHabbo().GetPermissions().HasRight("mod_tool"))
-            return;
+            return Task.CompletedTask;
         var data = PlusEnvironment.GetHabboById(packet.PopInt());
         if (data == null)
         {
             session.SendNotification("Unable to load info for user.");
-            return;
+            return Task.CompletedTask;
         }
         _chatlogManager.FlushAndSave();
         var chatlogs = new List<KeyValuePair<RoomData, List<ChatlogEntry>>>();
@@ -48,6 +49,7 @@ internal class GetModeratorUserChatlogEvent : IPacketEvent
             }
         }
         session.SendPacket(new ModeratorUserChatlogComposer(data, chatlogs));
+        return Task.CompletedTask;
     }
 
     private List<ChatlogEntry> GetChatlogs(RoomData roomData, double timeEnter, double timeExit)

@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Groups;
 using Plus.Communication.Packets.Outgoing.Rooms.Permissions;
 using Plus.Database;
@@ -22,13 +23,13 @@ internal class UpdateGroupSettingsEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         var groupId = packet.PopInt();
         if (!_groupManager.TryGetGroup(groupId, out var group))
-            return;
+            return Task.CompletedTask;
         if (group.CreatorId != session.GetHabbo().Id)
-            return;
+            return Task.CompletedTask;
         var type = packet.PopInt();
         var furniOptions = packet.PopInt();
         switch (type)
@@ -58,7 +59,7 @@ internal class UpdateGroupSettingsEvent : IPacketEvent
         }
         group.AdminOnlyDeco = furniOptions;
         if (!_roomManager.TryGetRoom(group.RoomId, out var room))
-            return;
+            return Task.CompletedTask;
         foreach (var user in room.GetRoomUserManager().GetRoomUsers().ToList())
         {
             if (room.OwnerId == user.UserId || group.IsAdmin(user.UserId) || !group.IsMember(user.UserId))
@@ -77,5 +78,6 @@ internal class UpdateGroupSettingsEvent : IPacketEvent
             }
         }
         session.SendPacket(new GroupInfoComposer(group, session));
+        return Task.CompletedTask;
     }
 }

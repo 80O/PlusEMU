@@ -1,8 +1,9 @@
-﻿using Plus.HabboHotel.GameClients;
+﻿using System.Threading.Tasks;
+using Plus.HabboHotel.GameClients;
 
 namespace Plus.Communication.Packets.Incoming.Messenger;
 
 internal class FriendListUpdateEvent : IPacketEvent
 {
-    public void Parse(GameClient session, ClientPacket packet) { }
+    public Task Parse(GameClient session, ClientPacket packet) => Task.CompletedTask;
 }

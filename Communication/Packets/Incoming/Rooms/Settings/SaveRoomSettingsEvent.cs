@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Navigator;
 using Plus.Communication.Packets.Outgoing.Rooms.Engine;
 using Plus.Communication.Packets.Outgoing.Rooms.Settings;
@@ -31,17 +32,11 @@ internal class SaveRoomSettingsEvent : IPacketEvent
         _database = database;
     }
 
-    public SaveRoomSettingsEvent(IRoomManager roomManager, INavigatorManager navigatorManager)
-    {
-        _roomManager = roomManager;
-        _navigationManager = navigatorManager;
-    }
-
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         var roomId = packet.PopInt();
         if (!_roomManager.TryLoadRoom(roomId, out var room))
-            return;
+            return Task.CompletedTask;
         var name = _wordFilterManager.CheckMessage(packet.PopString());
         var description = _wordFilterManager.CheckMessage(packet.PopString());
         var access = RoomAccessUtility.ToRoomAccess(packet.PopInt());
@@ -98,7 +93,7 @@ internal class SaveRoomSettingsEvent : IPacketEvent
         if (floorThickness < -2 || floorThickness > 1)
             floorThickness = 0;
         if (name.Length < 1)
-            return;
+            return Task.CompletedTask;
         if (name.Length > 60)
             name = name.Substring(0, 60);
         if (access == RoomAccess.Password && password.Length == 0)
@@ -113,7 +108,7 @@ internal class SaveRoomSettingsEvent : IPacketEvent
             session.GetHabbo().Id != room.OwnerId && session.GetHabbo().Rank >= searchResultList.RequiredRank)
             categoryId = 36;
         if (tagCount > 2)
-            return;
+            return Task.CompletedTask;
         room.AllowPets = allowPets;
         room.AllowPetsEating = allowPetsEat;
         room.RoomBlockingEnabled = roomBlockingEnabled;
@@ -200,5 +195,6 @@ internal class SaveRoomSettingsEvent : IPacketEvent
         _achievementManager.ProgressAchievement(session, "ACH_SelfModChatScrollSpeedSeen", 1);
         _achievementManager.ProgressAchievement(session, "ACH_SelfModChatFloodFilterSeen", 1);
         _achievementManager.ProgressAchievement(session, "ACH_SelfModChatHearRangeSeen", 1);
+        return Task.CompletedTask;
     }
 }

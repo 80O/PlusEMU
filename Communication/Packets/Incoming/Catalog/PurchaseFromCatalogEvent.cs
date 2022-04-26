@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Catalog;
 using Plus.Communication.Packets.Outgoing.Inventory.AvatarEffects;
 using Plus.Communication.Packets.Outgoing.Inventory.Bots;
@@ -41,7 +42,7 @@ public class PurchaseFromCatalogEvent : IPacketEvent
         IAchievementManager achievementManager,
         IQuestManager questManager,
         IGameClientManager gameClientManager,
-        IItemDataManager _itemManager,
+        IItemDataManager itemManager,
         IBadgeManager badgeManager)
     {
         _catalogManager = catalogManager;
@@ -50,34 +51,34 @@ public class PurchaseFromCatalogEvent : IPacketEvent
         _achievementManager = achievementManager;
         _questManager = questManager;
         _gameClientManager = gameClientManager;
-        this._itemManager = _itemManager;
+        _itemManager = itemManager;
         _badgeManager = badgeManager;
     }
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (_settingsManager.TryGetValue("catalog.enabled") != "1")
         {
             session.SendNotification("The hotel managers have disabled the catalogue");
-            return;
+            return Task.CompletedTask;
         }
         var pageId = packet.PopInt();
         var itemId = packet.PopInt();
         var extraData = packet.PopString();
         var amount = packet.PopInt();
         if (!_catalogManager.TryGetPage(pageId, out var page))
-            return;
+            return Task.CompletedTask;
         if (!page.Enabled || !page.Visible || page.MinimumRank > session.GetHabbo().Rank || page.MinimumVip > session.GetHabbo().VipRank && session.GetHabbo().Rank == 1)
-            return;
+            return Task.CompletedTask;
         if (!page.Items.TryGetValue(itemId, out var item))
         {
             if (page.ItemOffers.ContainsKey(itemId))
             {
                 item = page.ItemOffers[itemId];
                 if (item == null)
-                    return;
+                    return Task.CompletedTask;
             }
             else
-                return;
+                return Task.CompletedTask;
         }
         if (amount < 1 || amount > 100 || !item.HaveOffer)
             amount = 1;
@@ -86,7 +87,7 @@ public class PurchaseFromCatalogEvent : IPacketEvent
         var totalPixelCost = amount > 1 ? item.CostPixels * amount - (int)Math.Floor((double)amount / 6) * item.CostPixels : item.CostPixels;
         var totalDiamondCost = amount > 1 ? item.CostDiamonds * amount - (int)Math.Floor((double)amount / 6) * item.CostDiamonds : item.CostDiamonds;
         if (session.GetHabbo().Credits < totalCreditsCost || session.GetHabbo().Duckets < totalPixelCost || session.GetHabbo().Diamonds < totalDiamondCost)
-            return;
+            return Task.CompletedTask;
         var limitedEditionSells = 0;
         var limitedEditionStack = 0;
         switch (item.Data.InteractionType)
@@ -105,17 +106,17 @@ public class PurchaseFromCatalogEvent : IPacketEvent
                     var race = bits[1];
                     var color = bits[2];
                     if (!PetUtility.CheckPetName(petName))
-                        return;
+                        return Task.CompletedTask;
                     if (race.Length > 2)
-                        return;
+                        return Task.CompletedTask;
                     if (color.Length != 6)
-                        return;
+                        return Task.CompletedTask;
                     _achievementManager.ProgressAchievement(session, "ACH_PetLover", 1);
                 }
                 catch (Exception e)
                 {
                     ExceptionLogger.LogException(e);
-                    return;
+                    return Task.CompletedTask;
                 }
                 break;
             case InteractionType.Floor:
@@ -148,7 +149,7 @@ public class PurchaseFromCatalogEvent : IPacketEvent
                 if (!session.GetHabbo().GetBadgeComponent().HasBadge(extraData))
                 {
                     session.SendPacket(new BroadcastMessageAlertComposer("Oops, it appears that you do not own this badge."));
-                    return;
+                    return Task.CompletedTask;
                 }
                 extraData = extraData + Convert.ToChar(9) + session.GetHabbo().Username + Convert.ToChar(9) + DateTime.Now.Day + "-" + DateTime.Now.Month + "-" + DateTime.Now.Year;
                 break;
@@ -157,7 +158,7 @@ public class PurchaseFromCatalogEvent : IPacketEvent
                 if (session.GetHabbo().GetBadgeComponent().HasBadge(item.Data.ItemName))
                 {
                     session.SendPacket(new PurchaseErrorComposer(1));
-                    return;
+                    return Task.CompletedTask;
                 }
                 break;
             }
@@ -172,7 +173,7 @@ public class PurchaseFromCatalogEvent : IPacketEvent
                 session.SendNotification("This item has sold out!\n\n" + "Please note, you have not recieved another item (You have also not been charged for it!)");
                 session.SendPacket(new CatalogUpdatedComposer());
                 session.SendPacket(new PurchaseOkComposer());
-                return;
+                return Task.CompletedTask;
             }
             item.LimitedEditionSells++;
             using var connection = _database.Connection();
@@ -365,5 +366,6 @@ public class PurchaseFromCatalogEvent : IPacketEvent
             session.GetHabbo().GetBadgeComponent().GiveBadge(badge.Code, true, session);
         session.SendPacket(new PurchaseOkComposer(item, item.Data));
         session.SendPacket(new FurniListUpdateComposer());
+        return Task.CompletedTask;
     }
 }

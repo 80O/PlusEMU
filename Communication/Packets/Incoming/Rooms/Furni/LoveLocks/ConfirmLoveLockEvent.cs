@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Rooms.Furni.LoveLocks;
 using Plus.Database;
 using Plus.HabboHotel.GameClients;
@@ -15,16 +16,16 @@ internal class ConfirmLoveLockEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         var pId = packet.PopInt();
         var isConfirmed = packet.PopBoolean();
         var room = session.GetHabbo().CurrentRoom;
         if (room == null)
-            return;
+            return Task.CompletedTask;
         var item = room.GetRoomItemHandler().GetItem(pId);
         if (item == null || item.GetBaseItem() == null || item.GetBaseItem().InteractionType != InteractionType.Lovelock)
-            return;
+            return Task.CompletedTask;
         var userOneId = item.InteractingUser;
         var userTwoId = item.InteractingUser2;
         var userOne = room.GetRoomUserManager().GetRoomUserByHabbo(userOneId);
@@ -34,14 +35,14 @@ internal class ConfirmLoveLockEvent : IPacketEvent
             item.InteractingUser = 0;
             item.InteractingUser2 = 0;
             session.SendNotification("Your partner has left the room or has cancelled the love lock.");
-            return;
+            return Task.CompletedTask;
         }
         if (userOne.GetClient() == null || userTwo.GetClient() == null)
         {
             item.InteractingUser = 0;
             item.InteractingUser2 = 0;
             session.SendNotification("Your partner has left the room or has cancelled the love lock.");
-            return;
+            return Task.CompletedTask;
         }
         if (userOne == null)
         {
@@ -50,7 +51,7 @@ internal class ConfirmLoveLockEvent : IPacketEvent
             userTwo.LlPartner = 0;
             item.InteractingUser = 0;
             item.InteractingUser2 = 0;
-            return;
+            return Task.CompletedTask;
         }
         if (userTwo == null)
         {
@@ -59,7 +60,7 @@ internal class ConfirmLoveLockEvent : IPacketEvent
             userOne.LlPartner = 0;
             item.InteractingUser = 0;
             item.InteractingUser2 = 0;
-            return;
+            return Task.CompletedTask;
         }
         if (item.ExtraData.Contains(Convert.ToChar(5).ToString()))
         {
@@ -71,7 +72,7 @@ internal class ConfirmLoveLockEvent : IPacketEvent
             userOne.LlPartner = 0;
             item.InteractingUser = 0;
             item.InteractingUser2 = 0;
-            return;
+            return Task.CompletedTask;
         }
         if (!isConfirmed)
         {
@@ -81,7 +82,7 @@ internal class ConfirmLoveLockEvent : IPacketEvent
             userTwo.LlPartner = 0;
             userOne.CanWalk = true;
             userTwo.CanWalk = true;
-            return;
+            return Task.CompletedTask;
         }
         if (userOneId == session.GetHabbo().Id)
         {
@@ -94,7 +95,7 @@ internal class ConfirmLoveLockEvent : IPacketEvent
             userTwo.LlPartner = userOneId;
         }
         if (userOne.LlPartner == 0 || userTwo.LlPartner == 0)
-            return;
+            return Task.CompletedTask;
         item.ExtraData = "1" + (char)5 + userOne.GetUsername() + (char)5 + userTwo.GetUsername() + (char)5 + userOne.GetClient().GetHabbo().Look + (char)5 + userTwo.GetClient().GetHabbo().Look +
                          (char)5 + DateTime.Now.ToString("dd/MM/yyyy");
         item.InteractingUser = 0;
@@ -115,5 +116,6 @@ internal class ConfirmLoveLockEvent : IPacketEvent
         userTwo.CanWalk = true;
         userOne = null;
         userTwo = null;
+        return Task.CompletedTask;
     }
 }

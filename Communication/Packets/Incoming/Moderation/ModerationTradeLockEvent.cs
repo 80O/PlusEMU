@@ -1,4 +1,5 @@
-﻿using Plus.Database;
+﻿using System.Threading.Tasks;
+using Plus.Database;
 using Plus.HabboHotel.GameClients;
 
 namespace Plus.Communication.Packets.Incoming.Moderation;
@@ -12,10 +13,10 @@ internal class ModerationTradeLockEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!session.GetHabbo().GetPermissions().HasRight("mod_trade_lock"))
-            return;
+            return Task.CompletedTask;
         var userId = packet.PopInt();
         var message = packet.PopString();
         var days = packet.PopInt() / 1440.0;
@@ -26,12 +27,12 @@ internal class ModerationTradeLockEvent : IPacketEvent
         if (habbo == null)
         {
             session.SendWhisper("An error occoured whilst finding that user in the database.");
-            return;
+            return Task.CompletedTask;
         }
         if (habbo.GetPermissions().HasRight("mod_trade_lock") && !session.GetHabbo().GetPermissions().HasRight("mod_trade_lock_any"))
         {
             session.SendWhisper("Oops, you cannot trade lock another user ranked 5 or higher.");
-            return;
+            return Task.CompletedTask;
         }
         if (days < 1)
             days = 1;
@@ -46,5 +47,6 @@ internal class ModerationTradeLockEvent : IPacketEvent
             habbo.TradingLockExpiry = length;
             habbo.GetClient().SendNotification("You have been trade banned for " + days + " day(s)!\r\rReason:\r\r" + message);
         }
+        return Task.CompletedTask;
     }
 }

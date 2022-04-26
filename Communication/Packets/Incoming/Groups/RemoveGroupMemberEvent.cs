@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Groups;
 using Plus.Communication.Packets.Outgoing.Rooms.Permissions;
 using Plus.Database;
@@ -27,12 +28,12 @@ internal class RemoveGroupMemberEvent : IPacketEvent
         _cacheManager = cacheManager;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         var groupId = packet.PopInt();
         var userId = packet.PopInt();
         if (!_groupManager.TryGetGroup(groupId, out var group))
-            return;
+            return Task.CompletedTask;
         if (userId == session.GetHabbo().Id)
         {
             if (group.IsMember(userId))
@@ -42,7 +43,7 @@ internal class RemoveGroupMemberEvent : IPacketEvent
                 if (group.IsAdmin(userId))
                     group.TakeAdmin(userId);
                 if (!_roomManager.TryGetRoom(group.RoomId, out var room))
-                    return;
+                    return Task.CompletedTask;
                 var user = room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
                 if (user != null)
                 {
@@ -68,7 +69,7 @@ internal class RemoveGroupMemberEvent : IPacketEvent
                 if (group.AdminOnlyDeco == 0)
                 {
                     if (!_roomManager.TryGetRoom(group.RoomId, out var room))
-                        return;
+                        return Task.CompletedTask;
                     var user = room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
                     if (user != null)
                     {
@@ -93,17 +94,17 @@ internal class RemoveGroupMemberEvent : IPacketEvent
                 else
                     session.SendPacket(new RefreshFavouriteGroupComposer(session.GetHabbo().Id));
             }
-            return;
+            return Task.CompletedTask;
         }
         if (group.CreatorId == session.GetHabbo().Id || group.IsAdmin(session.GetHabbo().Id))
         {
             if (!group.IsMember(userId))
-                return;
+                return Task.CompletedTask;
             if (group.IsAdmin(userId) && group.CreatorId != session.GetHabbo().Id)
             {
                 session.SendNotification(
                     "Sorry, only group creators can remove other administrators from the group.");
-                return;
+                return Task.CompletedTask;
             }
             if (group.IsAdmin(userId))
                 group.TakeAdmin(userId);
@@ -124,5 +125,6 @@ internal class RemoveGroupMemberEvent : IPacketEvent
             session.SendPacket(new GroupMembersComposer(group, members.Take(finishIndex).ToList(), membersCount, 1,
                 group.CreatorId == session.GetHabbo().Id || group.IsAdmin(session.GetHabbo().Id), 0, ""));
         }
+        return Task.CompletedTask;
     }
 }

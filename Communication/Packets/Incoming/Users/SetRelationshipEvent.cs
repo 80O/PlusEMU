@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Messenger;
 using Plus.Communication.Packets.Outgoing.Moderation;
 using Plus.Database;
@@ -18,24 +19,24 @@ internal class SetRelationshipEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         var user = packet.PopInt();
         var type = packet.PopInt();
         if (!session.GetHabbo().GetMessenger().FriendshipExists(user))
         {
             session.SendPacket(new BroadcastMessageAlertComposer("Oops, you can only set a relationship where a friendship exists."));
-            return;
+            return Task.CompletedTask;
         }
         if (type < 0 || type > 3)
         {
             session.SendPacket(new BroadcastMessageAlertComposer("Oops, you've chosen an invalid relationship type."));
-            return;
+            return Task.CompletedTask;
         }
         if (session.GetHabbo().Relationships.Count > 2000)
         {
             session.SendPacket(new BroadcastMessageAlertComposer("Sorry, you're limited to a total of 2000 relationships."));
-            return;
+            return Task.CompletedTask;
         }
         using var dbClient = _database.GetQueryReactor();
         if (type == 0)
@@ -80,5 +81,6 @@ internal class SetRelationshipEvent : IPacketEvent
                     session.SendPacket(new FriendListUpdateComposer(session, buddy));
             }
         }
+        return Task.CompletedTask;
     }
 }

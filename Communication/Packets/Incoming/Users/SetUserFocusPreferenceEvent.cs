@@ -1,4 +1,5 @@
-﻿using Plus.Database;
+﻿using System.Threading.Tasks;
+using Plus.Database;
 using Plus.HabboHotel.GameClients;
 using Plus.Utilities;
 
@@ -13,7 +14,7 @@ internal class SetUserFocusPreferenceEvent : IPacketEvent
         _database = database;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         var focusPreference = packet.PopBoolean();
         session.GetHabbo().FocusPreference = focusPreference;
@@ -22,5 +23,6 @@ internal class SetUserFocusPreferenceEvent : IPacketEvent
         dbClient.AddParameter("habboId", session.GetHabbo().Id);
         dbClient.AddParameter("focusPreference", ConvertExtensions.ToStringEnumValue(focusPreference));
         dbClient.RunQuery();
+        return Task.CompletedTask;
     }
 }

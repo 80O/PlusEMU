@@ -1,4 +1,5 @@
-﻿using Plus.HabboHotel.GameClients;
+﻿using System.Threading.Tasks;
+using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Items;
 using Plus.HabboHotel.Rooms;
 
@@ -13,22 +14,23 @@ internal class ToggleMoodlightEvent : IPacketEvent
         _roomManager = roomManager;
     }
 
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!session.GetHabbo().InRoom)
-            return;
+            return Task.CompletedTask;
         if (!_roomManager.TryGetRoom(session.GetHabbo().CurrentRoomId, out var room))
-            return;
+            return Task.CompletedTask;
         if (!room.CheckRights(session, true) || room.MoodlightData == null)
-            return;
+            return Task.CompletedTask;
         var item = room.GetRoomItemHandler().GetItem(room.MoodlightData.ItemId);
         if (item == null || item.GetBaseItem().InteractionType != InteractionType.Moodlight)
-            return;
+            return Task.CompletedTask;
         if (room.MoodlightData.Enabled)
             room.MoodlightData.Disable();
         else
             room.MoodlightData.Enable();
         item.ExtraData = room.MoodlightData.GenerateExtraData();
         item.UpdateState();
+        return Task.CompletedTask;
     }
 }

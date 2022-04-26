@@ -1,4 +1,5 @@
-﻿using Plus.Communication.Attributes;
+﻿using System.Threading.Tasks;
+using Plus.Communication.Attributes;
 using Plus.Communication.Encryption;
 using Plus.Communication.Encryption.Crypto.Prng;
 using Plus.Communication.Packets.Outgoing.Handshake;
@@ -9,7 +10,7 @@ namespace Plus.Communication.Packets.Incoming.Handshake;
 [NoAuthenticationRequired]
 public class GenerateSecretKeyEvent : IPacketEvent
 {
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         var cipherPublickey = packet.PopString();
         var sharedKey = HabboEncryptionV2.CalculateDiffieHellmanSharedKey(cipherPublickey);
@@ -20,5 +21,6 @@ public class GenerateSecretKeyEvent : IPacketEvent
         }
         else
             session.SendNotification("There was an error logging you in, please try again!");
+        return Task.CompletedTask;
     }
 }

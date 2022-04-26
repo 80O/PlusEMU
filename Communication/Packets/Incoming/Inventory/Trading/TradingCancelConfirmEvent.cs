@@ -1,21 +1,23 @@
-﻿using Plus.HabboHotel.GameClients;
+﻿using System.Threading.Tasks;
+using Plus.HabboHotel.GameClients;
 
 namespace Plus.Communication.Packets.Incoming.Inventory.Trading;
 
 internal class TradingCancelConfirmEvent : IPacketEvent
 {
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         if (!session.GetHabbo().InRoom)
-            return;
+            return Task.CompletedTask;
         var room = session.GetHabbo().CurrentRoom;
         if (room == null)
-            return;
+            return Task.CompletedTask;
         var roomUser = room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
         if (roomUser == null)
-            return;
+            return Task.CompletedTask;
         if (!room.GetTrading().TryGetTrade(roomUser.TradeId, out var trade))
-            return;
+            return Task.CompletedTask;
         trade.EndTrade(session.GetHabbo().Id);
+        return Task.CompletedTask;
     }
 }

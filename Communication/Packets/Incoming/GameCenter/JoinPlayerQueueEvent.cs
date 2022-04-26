@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.GameCenter;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Games;
@@ -14,7 +15,7 @@ internal class JoinPlayerQueueEvent : IPacketEvent
     {
         _gameDataManager = gameDataManager;
     }
-    public void Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
         var gameId = packet.PopInt();
         GameData gameData = null;
@@ -24,6 +25,7 @@ internal class JoinPlayerQueueEvent : IPacketEvent
             session.SendPacket(new JoinQueueComposer(gameData.Id));
             session.SendPacket(new LoadGameComposer(gameData, ssoTicket));
         }
+        return Task.CompletedTask;
     }
 
     private string GenerateSso(int length)
