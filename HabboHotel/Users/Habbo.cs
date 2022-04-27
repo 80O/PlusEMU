@@ -407,6 +407,8 @@ public class Habbo
     public bool SessionClothingBlocked { get; set; }
 
     public bool InRoom => CurrentRoomId >= 1 && CurrentRoom != null;
+    
+    private bool isLoadingRoom { get; set; }
 
     public Room? CurrentRoom
     {
@@ -642,29 +644,41 @@ public class Habbo
     {
         if (GetClient() == null || GetClient().GetHabbo() == null)
             return;
+
+        if (this.isLoadingRoom)
+            return;
+        else
+            this.isLoadingRoom = true;
+
         if (GetClient().GetHabbo().InRoom)
         {
             Room oldRoom = null;
             if (!PlusEnvironment.GetGame().GetRoomManager().TryGetRoom(GetClient().GetHabbo().CurrentRoomId, out oldRoom))
+            {
+                this.isLoadingRoom = false;
                 return;
+            }
             if (oldRoom.GetRoomUserManager() != null)
                 oldRoom.GetRoomUserManager().RemoveUserFromRoom(GetClient(), false);
         }
         if (GetClient().GetHabbo().IsTeleporting && GetClient().GetHabbo().TeleportingRoomId != id)
         {
             GetClient().SendPacket(new CloseConnectionComposer());
+            this.isLoadingRoom = false;
             return;
         }
         Room room = null;
         if (!PlusEnvironment.GetGame().GetRoomManager().TryLoadRoom(id, out room))
         {
             GetClient().SendPacket(new CloseConnectionComposer());
+            this.isLoadingRoom = false;
             return;
         }
         if (room.IsCrashed)
         {
             GetClient().SendNotification("This room has crashed! :(");
             GetClient().SendPacket(new CloseConnectionComposer());
+            this.isLoadingRoom = false;
             return;
         }
         GetClient().GetHabbo().CurrentRoomId = room.RoomId;
@@ -672,6 +686,7 @@ public class Habbo
         {
             GetClient().SendPacket(new CantConnectComposer(1));
             GetClient().SendPacket(new CloseConnectionComposer());
+            this.isLoadingRoom = false;
             return;
         }
         if (!GetPermissions().HasRight("room_ban_override") && room.GetBans().IsBanned(Id))
@@ -680,6 +695,7 @@ public class Habbo
             GetClient().GetHabbo().RoomAuthOk = false;
             GetClient().SendPacket(new CantConnectComposer(4));
             GetClient().SendPacket(new CloseConnectionComposer());
+            this.isLoadingRoom = false;
             return;
         }
         GetClient().SendPacket(new OpenConnectionComposer());
@@ -691,10 +707,12 @@ public class Habbo
                 {
                     GetClient().SendPacket(new DoorbellComposer(""));
                     room.SendPacket(new DoorbellComposer(GetClient().GetHabbo().Username), true);
+                    this.isLoadingRoom = false;
                     return;
                 }
                 GetClient().SendPacket(new FlatAccessDeniedComposer(""));
                 GetClient().SendPacket(new CloseConnectionComposer());
+                this.isLoadingRoom = false;
                 return;
             }
             if (room.Access == RoomAccess.Password && !GetClient().GetHabbo().GetPermissions().HasRight("room_enter_locked"))
@@ -703,12 +721,14 @@ public class Habbo
                 {
                     GetClient().SendPacket(new GenericErrorComposer(-100002));
                     GetClient().SendPacket(new CloseConnectionComposer());
+                    this.isLoadingRoom = false;
                     return;
                 }
             }
         }
         if (!EnterRoom(room))
             GetClient().SendPacket(new CloseConnectionComposer());
+        this.isLoadingRoom = false;
     }
 
     public bool EnterRoom(Room room)
