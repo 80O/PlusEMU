@@ -20,7 +20,7 @@ internal class HabboSearchResultComposer : ServerPacket
             WriteBoolean(false);
             WriteString(string.Empty);
             WriteInteger(0);
-            WriteString(online ? friend.Figure : "");
+            WriteString(friend.Figure);
             WriteString(friend.LastOnline);
         }
         WriteInteger(otherUsers.Count);
@@ -34,7 +34,7 @@ internal class HabboSearchResultComposer : ServerPacket
             WriteBoolean(false);
             WriteString(string.Empty);
             WriteInteger(0);
-            WriteString(online ? otherUser.Figure : "");
+            WriteString(otherUser.Figure);
             WriteString(otherUser.LastOnline);
         }
     }
