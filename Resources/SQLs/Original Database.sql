@@ -25052,3 +25052,6 @@ ALTER TABLE `user_roomvisits`
 ALTER TABLE `rooms` 
 	ADD `sale_price` INT(5) NOT NULL DEFAULT '0' AFTER `spush_enabled`, 
 	ADD `lay_enabled` ENUM('0','1') NOT NULL DEFAULT '0' AFTER `sale_price`;
+
+ALTER TABLE `user_stats`
+RENAME TO `user_statistics`;
