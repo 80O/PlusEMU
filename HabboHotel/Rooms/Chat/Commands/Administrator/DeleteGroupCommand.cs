@@ -39,7 +39,7 @@ internal class DeleteGroupCommand : IChatCommand
             dbClient.RunQuery("DELETE FROM `group_memberships` WHERE `group_id` = '" + room.Group.Id + "'");
             dbClient.RunQuery("DELETE FROM `group_requests` WHERE `group_id` = '" + room.Group.Id + "'");
             dbClient.RunQuery("UPDATE `rooms` SET `group_id` = '0' WHERE `group_id` = '" + room.Group.Id + "' LIMIT 1");
-            dbClient.RunQuery("UPDATE `user_stats` SET `groupid` = '0' WHERE `groupid` = '" + room.Group.Id + "' LIMIT 1");
+            dbClient.RunQuery("UPDATE `user_statistics` SET `groupid` = '0' WHERE `groupid` = '" + room.Group.Id + "' LIMIT 1");
             dbClient.RunQuery("DELETE FROM `items_groups` WHERE `group_id` = '" + room.Group.Id + "'");
         }
         _groupManager.DeleteGroup(room.Group.Id);

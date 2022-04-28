@@ -102,7 +102,7 @@ public class Habbo
 
     public double AccountCreated { get; set; }
 
-    public List<int> ClientVolume { get; set; } = new() { 0, 0, 0};
+    public List<int> ClientVolume { get; set; } = new() { 0, 0, 0 };
 
     public double LastNameChange { get; set; }
 
@@ -262,7 +262,7 @@ public class Habbo
             _habboSaved = true;
             return "UPDATE `users` SET `online` = '0', `last_online` = '" + UnixTimestamp.GetNow() + "', `activity_points` = '" + Duckets + "', `credits` = '" + Credits +
                    "', `vip_points` = '" + Diamonds + "', `home_room` = '" + HomeRoom + "', `gotw_points` = '" + GotwPoints + "', `time_muted` = '" + TimeMuted + "',`friend_bar_state` = '" +
-                   FriendBarStateUtility.GetInt(FriendbarState) + "' WHERE id = '" + Id + "' LIMIT 1;UPDATE `user_stats` SET `roomvisits` = '" + _habboStats.RoomVisits + "', `onlineTime` = '" +
+                   FriendBarStateUtility.GetInt(FriendbarState) + "' WHERE id = '" + Id + "' LIMIT 1;UPDATE `user_statistics` SET `roomvisits` = '" + _habboStats.RoomVisits + "', `onlineTime` = '" +
                    (UnixTimestamp.GetNow() - SessionStart + _habboStats.OnlineTime) + "', `respect` = '" + _habboStats.Respect + "', `respectGiven` = '" + _habboStats.RespectGiven +
                    "', `giftsGiven` = '" + _habboStats.GiftsGiven + "', `giftsReceived` = '" + _habboStats.GiftsReceived + "', `dailyRespectPoints` = '" + _habboStats.DailyRespectPoints +
                    "', `dailyPetRespectPoints` = '" + _habboStats.DailyPetRespectPoints + "', `AchievementScore` = '" + _habboStats.AchievementPoints + "', `quest_id` = '" + _habboStats.QuestId +
@@ -340,7 +340,7 @@ public class Habbo
             using var dbClient = PlusEnvironment.GetDatabaseManager().GetQueryReactor();
             dbClient.RunQuery("UPDATE `users` SET `online` = '0', `last_online` = '" + (int)UnixTimestamp.GetNow() + "', `activity_points` = '" + Duckets + "', `credits` = '" + Credits +
                               "', `vip_points` = '" + Diamonds + "', `home_room` = '" + HomeRoom + "', `gotw_points` = '" + GotwPoints + "', `time_muted` = '" + TimeMuted +
-                              "',`friend_bar_state` = '" + FriendBarStateUtility.GetInt(FriendbarState) + "' WHERE id = '" + Id + "' LIMIT 1;UPDATE `user_stats` SET `roomvisits` = '" +
+                              "',`friend_bar_state` = '" + FriendBarStateUtility.GetInt(FriendbarState) + "' WHERE id = '" + Id + "' LIMIT 1;UPDATE `user_statistics` SET `roomvisits` = '" +
                               _habboStats.RoomVisits + "', `onlineTime` = '" + (int)(UnixTimestamp.GetNow() - SessionStart + _habboStats.OnlineTime) + "', `respect` = '" + _habboStats.Respect +
                               "', `respectGiven` = '" + _habboStats.RespectGiven + "', `giftsGiven` = '" + _habboStats.GiftsGiven + "', `giftsReceived` = '" + _habboStats.GiftsReceived +
                               "', `dailyRespectPoints` = '" + _habboStats.DailyRespectPoints + "', `dailyPetRespectPoints` = '" + _habboStats.DailyPetRespectPoints + "', `AchievementScore` = '" +

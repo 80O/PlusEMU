@@ -58,7 +58,7 @@ internal class DeleteGroupEvent : IPacketEvent
             connection.Execute("DELETE FROM `group_memberships` WHERE `group_id` = @groupId", new { groupId = group.Id });
             connection.Execute("DELETE FROM `group_requests` WHERE `group_id` = @groupId", new { groupId = group.Id });
             connection.Execute("UPDATE `rooms` SET `group_id` = 0 WHERE `group_id` = @groupId LIMIT 1", new { groupId = group.Id });
-            connection.Execute("UPDATE `user_stats` SET `groupid` = 0 WHERE `groupid` = @groupId LIMIT 1", new { groupId = group.Id });
+            connection.Execute("UPDATE `user_statistics` SET `groupid` = 0 WHERE `groupid` = @groupId LIMIT 1", new { groupId = group.Id });
             connection.Execute("DELETE FROM `items_groups` WHERE `group_id` = @groupId", new { groupId = group.Id });
         }
 

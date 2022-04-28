@@ -121,7 +121,7 @@ public class QuestManager : IQuestManager
         {
             dbClient.RunQuery("UPDATE `user_quests` SET `progress` = '" + totalProgress + "' WHERE `user_id` = '" + session.GetHabbo().Id + "' AND `quest_id` = '" + quest.Id + "' LIMIT 1");
             if (completeQuest)
-                dbClient.RunQuery("UPDATE `user_stats` SET `quest_id` = '0' WHERE `id` = '" + session.GetHabbo().Id + "' LIMIT 1");
+                dbClient.RunQuery("UPDATE `user_statistics` SET `quest_id` = '0' WHERE `id` = '" + session.GetHabbo().Id + "' LIMIT 1");
         }
         session.GetHabbo().Quests[session.GetHabbo().GetStats().QuestId] = totalProgress;
         session.SendPacket(new QuestStartedComposer(session, quest));

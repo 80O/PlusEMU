@@ -13,7 +13,7 @@ internal class SetGroupFavouriteEvent : IPacketEvent
     private readonly IGroupManager _groupManager;
     private readonly IDatabase _database;
 
-    public SetGroupFavouriteEvent(IGroupManager groupManager,IDatabase database)
+    public SetGroupFavouriteEvent(IGroupManager groupManager, IDatabase database)
     {
         _groupManager = groupManager;
         _database = database;
@@ -29,7 +29,7 @@ internal class SetGroupFavouriteEvent : IPacketEvent
         session.GetHabbo().GetStats().FavouriteGroupId = group.Id;
         using (var connection = _database.Connection())
         {
-            connection.Execute("UPDATE `user_stats` SET `groupid` = @groupId WHERE `id` = @userId LIMIT 1",
+            connection.Execute("UPDATE `user_statistics` SET `groupid` = @groupId WHERE `id` = @userId LIMIT 1",
                 new { groupId = session.GetHabbo().GetStats().FavouriteGroupId, userId = session.GetHabbo().Id });
         }
         if (session.GetHabbo().InRoom && session.GetHabbo().CurrentRoom != null)
