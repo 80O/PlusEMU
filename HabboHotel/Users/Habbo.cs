@@ -25,6 +25,9 @@ using Plus.Utilities;
 
 using Dapper;
 using Plus.HabboHotel.Users.Navigator;
+using Plus.Database;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace Plus.HabboHotel.Users;
 
@@ -52,7 +55,7 @@ public class Habbo
     //Advertising reporting system.
 
     //Generic player values.
-    private IgnoresComponent _ignores;
+    private IIgnoresComponent _ignores;
     public InventoryComponent Inventory { get; private set; }
 
     //Anti-script placeholders.
@@ -102,7 +105,7 @@ public class Habbo
 
     public double AccountCreated { get; set; }
 
-    public List<int> ClientVolume { get; set; } = new() { 0, 0, 0};
+    public List<int> ClientVolume { get; set; } = new() { 0, 0, 0 };
 
     public double LastNameChange { get; set; }
 
@@ -297,14 +300,14 @@ public class Habbo
         return _clothing.Init(this);
     }
 
-    public bool InitIgnores()
+    public bool InitIgnore(IDatabase database)
     {
-        _ignores = new IgnoresComponent();
+        _ignores = new IgnoresComponent(database);
         return _ignores.Init(this);
     }
 
     [Obsolete("Each loading task should be moved to their own IUserDataLoadingTask")]
-    public void Init(GameClient client)
+    public void Init(GameClient client, IDatabase database)
     {
         // Move each of these loading tasks to their own IUserDataLoadingTask implementation.
         //foreach (var id in data.FavouritedRooms) FavoriteRooms.Add(id);
@@ -313,13 +316,13 @@ public class Habbo
         _disconnected = false;
         InitFx();
         InitClothing();
-        InitIgnores();
+        InitIgnore(database);
     }
 
 
     public PermissionComponent GetPermissions() => _permissions;
 
-    public IgnoresComponent GetIgnores() => _ignores;
+    public IIgnoresComponent GetIgnores() => _ignores;
 
     public void OnDisconnect()
     {

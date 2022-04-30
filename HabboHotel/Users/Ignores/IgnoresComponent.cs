@@ -1,16 +1,21 @@
-﻿using System;
+﻿using Dapper;
+using Plus.Database;
+using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Threading.Tasks;
 
 namespace Plus.HabboHotel.Users.Ignores;
 
-public sealed class IgnoresComponent
+public sealed class IgnoresComponent : IIgnoresComponent
 {
     private readonly List<int> _ignoredUsers;
+    private readonly IDatabase _database;
 
-    public IgnoresComponent()
+    public IgnoresComponent(IDatabase database)
     {
         _ignoredUsers = new List<int>();
+        _database = database;
     }
 
     public bool Init(Habbo player)
@@ -27,22 +32,32 @@ public sealed class IgnoresComponent
         return true;
     }
 
-    public bool TryGet(int userId) => _ignoredUsers.Contains(userId);
+    public bool TryGet(Habbo userId) => _ignoredUsers.Contains(userId.Id);
 
-    public bool TryAdd(int userId)
+    public bool TryAdd(Habbo userId)
     {
-        if (_ignoredUsers.Contains(userId))
+        if (_ignoredUsers.Contains(userId.Id))
             return false;
-        _ignoredUsers.Add(userId);
+        _ignoredUsers.Add(userId.Id);
         return true;
     }
 
-    public bool TryRemove(int userId) => _ignoredUsers.Remove(userId);
+    public bool TryRemove(Habbo userId) => _ignoredUsers.Remove(userId.Id);
 
     public ICollection<int> IgnoredUserIds() => _ignoredUsers;
 
     public void Dispose()
     {
         _ignoredUsers.Clear();
+    }
+
+    public async Task UnIgnoreUser(Habbo uid, Habbo ignoreid)
+    {
+            using var connection = _database.Connection();
+            await connection.ExecuteAsync(
+            "DELETE FROM user_ignores WHERE user_id = @uid AND ignore_id = @ignoreId",
+            new { uid = uid.Id, ignoreId = ignoreid.Id }
+            );
+            
     }
 }

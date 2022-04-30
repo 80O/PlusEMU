@@ -8,11 +8,11 @@ namespace Plus.Communication.Packets.Incoming.Rooms.Action;
 
 internal class UnIgnoreUserEvent : IPacketEvent
 {
-    private readonly IIgnoresManager _ignoresManager;
+    private readonly IIgnoresComponent _ignoresComponent;
 
-    public UnIgnoreUserEvent(IIgnoresManager ignoresManager)
+    public UnIgnoreUserEvent(IIgnoresComponent ignoresComponent)
     {
-        _ignoresManager = ignoresManager;
+        _ignoresComponent = ignoresComponent;
     }
 
     public Task Parse(GameClient session, ClientPacket packet)
@@ -26,13 +26,12 @@ internal class UnIgnoreUserEvent : IPacketEvent
         var player = PlusEnvironment.GetGame().GetClientManager().GetClientByUsername(username)?.GetHabbo();
         if (player == null)
             return Task.CompletedTask;
-        if (!session.GetHabbo().GetIgnores().TryGet(player.Id))
+        if (!session.GetHabbo().GetIgnores().TryGet(player))
             return Task.CompletedTask;
-        if (session.GetHabbo().GetIgnores().TryRemove(player.Id))
+        if (session.GetHabbo().GetIgnores().TryRemove(player))
         {
-            _ignoresManager.UnIgnoreUser(session.GetHabbo().Id, player.Id);
+            _ignoresComponent.UnIgnoreUser(session.GetHabbo(), player);
             session.SendPacket(new IgnoreStatusComposer(3, player.Username));
-
         }
         return Task.CompletedTask;
     }

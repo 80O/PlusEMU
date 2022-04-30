@@ -28,9 +28,9 @@ internal class IgnoreUserEvent : IPacketEvent
         var player = PlusEnvironment.GetGame().GetClientManager().GetClientByUsername(username)?.GetHabbo();
         if (player == null || player.GetPermissions().HasRight("mod_tool"))
             return Task.CompletedTask;
-        if (session.GetHabbo().GetIgnores().TryGet(player.Id))
+        if (session.GetHabbo().GetIgnores().TryGet(player))
             return Task.CompletedTask;
-        if (session.GetHabbo().GetIgnores().TryAdd(player.Id))
+        if (session.GetHabbo().GetIgnores().TryAdd(player))
         {
             using (var dbClient = _database.GetQueryReactor())
             {
