@@ -2,16 +2,17 @@
 using Plus.Communication.Packets.Outgoing.Rooms.Action;
 using Plus.Database;
 using Plus.HabboHotel.GameClients;
+using Plus.HabboHotel.Users.Ignores;
 
 namespace Plus.Communication.Packets.Incoming.Rooms.Action;
 
 internal class UnIgnoreUserEvent : IPacketEvent
 {
-    private readonly IDatabase _database;
+    private readonly IIgnoresManager _ignoresManager;
 
-    public UnIgnoreUserEvent(IDatabase database)
+    public UnIgnoreUserEvent(IIgnoresManager ignoresManager)
     {
-        _database = database;
+        _ignoresManager = ignoresManager;
     }
 
     public Task Parse(GameClient session, ClientPacket packet)
@@ -29,14 +30,9 @@ internal class UnIgnoreUserEvent : IPacketEvent
             return Task.CompletedTask;
         if (session.GetHabbo().GetIgnores().TryRemove(player.Id))
         {
-            using (var dbClient = _database.GetQueryReactor())
-            {
-                dbClient.SetQuery("DELETE FROM `user_ignores` WHERE `user_id` = @uid AND `ignore_id` = @ignoreId");
-                dbClient.AddParameter("uid", session.GetHabbo().Id);
-                dbClient.AddParameter("ignoreId", player.Id);
-                dbClient.RunQuery();
-            }
+            _ignoresManager.UnIgnoreUser(session.GetHabbo().Id, player.Id);
             session.SendPacket(new IgnoreStatusComposer(3, player.Username));
+
         }
         return Task.CompletedTask;
     }
