@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Users;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Users.Ignores;

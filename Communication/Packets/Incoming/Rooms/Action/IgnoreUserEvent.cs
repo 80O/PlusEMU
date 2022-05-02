@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Rooms.Action;
-using Plus.Database;
 using Plus.HabboHotel.Achievements;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Users.Ignores;
