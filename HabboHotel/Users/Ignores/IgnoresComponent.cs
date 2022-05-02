@@ -53,6 +53,21 @@ public sealed class IgnoresComponent : IIgnoresComponent
         _ignoredUsers.Clear();
     }
 
+    public IReadOnlyCollection<string> GetIgnoredUsers(Habbo uid)
+    {
+        var ignoredUsers = new List<string>();
+        foreach (var userId in new List<int>(uid.GetClient().GetHabbo().GetIgnores().IgnoredUserIds()))
+        {
+            var player = PlusEnvironment.GetHabboById(userId);
+            if (player != null)
+            {
+                if (!ignoredUsers.Contains(player.Username))
+                    ignoredUsers.Add(player.Username);
+            }
+        }
+        return ignoredUsers;
+    }
+
     public async Task IgnoreUser(Habbo uid, Habbo? ignoredid)
     {
         if (!uid.GetClient().GetHabbo().InRoom)

@@ -2,23 +2,23 @@
 using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Users;
 using Plus.HabboHotel.GameClients;
+using Plus.HabboHotel.Users.Ignores;
 
 namespace Plus.Communication.Packets.Incoming.Users;
 
 internal class GetIgnoredUsersEvent : IPacketEvent
 {
+    IIgnoresComponent _ignoresComponent;
+
+    public GetIgnoredUsersEvent(IIgnoresComponent ignoresComponent)
+    {
+        _ignoresComponent = ignoresComponent;
+    }
+
     public Task Parse(GameClient session, ClientPacket packet)
     {
-        var ignoredUsers = new List<string>();
-        foreach (var userId in new List<int>(session.GetHabbo().GetIgnores().IgnoredUserIds()))
-        {
-            var player = PlusEnvironment.GetHabboById(userId);
-            if (player != null)
-            {
-                if (!ignoredUsers.Contains(player.Username))
-                    ignoredUsers.Add(player.Username);
-            }
-        }
+        var ignoredUsers = _ignoresComponent.GetIgnoredUsers(session.GetHabbo());
+
         session.SendPacket(new IgnoredUsersComposer(ignoredUsers));
         return Task.CompletedTask;
     }
