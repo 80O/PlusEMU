@@ -17,22 +17,11 @@ internal class UnIgnoreUserEvent : IPacketEvent
 
     public Task Parse(GameClient session, ClientPacket packet)
     {
-        if (!session.GetHabbo().InRoom)
-            return Task.CompletedTask;
-        var room = session.GetHabbo().CurrentRoom;
-        if (room == null)
-            return Task.CompletedTask;
         var username = packet.PopString();
-        var player = PlusEnvironment.GetGame().GetClientManager().GetClientByUsername(username)?.GetHabbo();
-        if (player == null)
-            return Task.CompletedTask;
-        if (!session.GetHabbo().GetIgnores().TryGet(player))
-            return Task.CompletedTask;
-        if (session.GetHabbo().GetIgnores().TryRemove(player))
-        {
-            _ignoresComponent.UnIgnoreUser(session.GetHabbo(), player);
-            session.SendPacket(new IgnoreStatusComposer(3, player.Username));
-        }
+
+        _ignoresComponent.UnIgnoreUser(session.GetHabbo(), PlusEnvironment.GetGame().GetClientManager().GetClientByUsername(username)?.GetHabbo());
+        session.SendPacket(new IgnoreStatusComposer(3, PlusEnvironment.GetGame().GetClientManager().GetClientByUsername(username).GetHabbo().Username));
+
         return Task.CompletedTask;
     }
 }

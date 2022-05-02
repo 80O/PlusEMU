@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Plus.Database;
+using Plus.HabboHotel.Achievements;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -11,6 +12,7 @@ public sealed class IgnoresComponent : IIgnoresComponent
 {
     private readonly List<int> _ignoredUsers;
     private readonly IDatabase _database;
+    private readonly IAchievementManager _achievementManager;
 
     public IgnoresComponent(IDatabase database)
     {
@@ -51,13 +53,59 @@ public sealed class IgnoresComponent : IIgnoresComponent
         _ignoredUsers.Clear();
     }
 
-    public async Task UnIgnoreUser(Habbo uid, Habbo ignoreid)
+    public async Task IgnoreUser(Habbo uid, Habbo? ignoredid)
     {
+        if (!uid.GetClient().GetHabbo().InRoom)
+            return;
+
+        var room = uid.GetClient().GetHabbo().CurrentRoom;
+
+        if (room == null)
+            return;
+
+        if (ignoredid == null || ignoredid.GetPermissions().HasRight("mod_tools"))
+            return;
+
+        if (uid.GetClient().GetHabbo().GetIgnores().TryGet(ignoredid))
+            return;
+
+        if (uid.GetClient().GetHabbo().GetIgnores().TryAdd(ignoredid))
+        {
+            {
+                using var connection = _database.Connection();
+                await connection.ExecuteAsync(
+                "INSERT INTO user_ignores (user_id,ignore_id) VALUES(@uid,@ignoreId)",
+                new { uid = uid.Id, ignoreId = ignoredid.Id }
+                );
+            }
+        }
+    }
+
+    public async Task UnIgnoreUser(Habbo uid, Habbo? ignoredid)
+    {
+        if (!uid.GetClient().GetHabbo().InRoom)
+            return;
+
+        var room = uid.GetClient().GetHabbo().CurrentRoom;
+
+        if (room == null)
+            return;
+
+        if (ignoredid == null)
+            return;
+
+        if (!uid.GetClient().GetHabbo().GetIgnores().TryGet(ignoredid))
+            return;
+
+        if (uid.GetClient().GetHabbo().GetIgnores().TryRemove(ignoredid))
+        {
             using var connection = _database.Connection();
             await connection.ExecuteAsync(
             "DELETE FROM user_ignores WHERE user_id = @uid AND ignore_id = @ignoreId",
-            new { uid = uid.Id, ignoreId = ignoreid.Id }
+            new { uid = uid.Id, ignoreId = ignoredid.Id }
             );
+
+        }
             
     }
 }
