@@ -12,8 +12,8 @@ namespace Plus.HabboHotel.Users.Ignores
        ICollection<int> IgnoredUserIds();
        void Dispose();
        IReadOnlyCollection<string> GetIgnoredUsers(Habbo uid);
-       Task IgnoreUser(Habbo uid, Habbo? ignoreid);
-       Task UnIgnoreUser(Habbo uid, Habbo? ignoreid);
+       Task IgnoreUser(Habbo uid, Habbo? ignoredid);
+       Task UnIgnoreUser(Habbo uid, Habbo? ignoredid);
 
     }
 }
