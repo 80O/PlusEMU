@@ -14,11 +14,9 @@ internal class GetIgnoredUsersEvent : IPacketEvent
         _ignoresComponent = ignoresComponent;
     }
 
-    public Task Parse(GameClient session, ClientPacket packet)
+    public async Task Parse(GameClient session, ClientPacket packet)
     {
-        var ignoredUsers = _ignoresComponent.GetIgnoredUsers(session.GetHabbo());
-
+        var ignoredUsers = await _ignoresComponent.GetIgnoredUsers(session.GetHabbo());
         session.SendPacket(new IgnoredUsersComposer(ignoredUsers));
-        return Task.CompletedTask;
     }
 }

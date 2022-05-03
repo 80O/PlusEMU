@@ -17,14 +17,13 @@ internal class IgnoreUserEvent : IPacketEvent
         _ignoresComponent = ignoresComponent;
     }
 
-    public Task Parse(GameClient session, ClientPacket packet)
+    public async Task Parse(GameClient session, ClientPacket packet)
     {
         var username = packet.PopString();
 
-        _ignoresComponent.IgnoreUser(session.GetHabbo(), PlusEnvironment.GetGame().GetClientManager().GetClientByUsername(username)?.GetHabbo());
-        session.SendPacket(new IgnoreStatusComposer(1, PlusEnvironment.GetGame().GetClientManager().GetClientByUsername(username).GetHabbo().Username));
+        var ignoredid = await _ignoresComponent.IgnoreUser(session.GetHabbo(), PlusEnvironment.GetGame().GetClientManager().GetClientByUsername(username)?.GetHabbo());
+        if(ignoredid != null) 
+            session.SendPacket(new IgnoreStatusComposer(1, ignoredid.Username));
         _achievementManager.ProgressAchievement(session, "ACH_SelfModIgnoreSeen", 1);
-
-        return Task.CompletedTask;
     }
 }

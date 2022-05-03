@@ -53,7 +53,7 @@ public sealed class IgnoresComponent : IIgnoresComponent
         _ignoredUsers.Clear();
     }
 
-    public IReadOnlyCollection<string> GetIgnoredUsers(Habbo uid)
+    public async Task<IReadOnlyCollection<string>> GetIgnoredUsers(Habbo uid)
     {
         var ignoredUsers = new List<string>();
         foreach (var userId in new List<int>(uid.GetClient().GetHabbo().GetIgnores().IgnoredUserIds()))
@@ -68,21 +68,21 @@ public sealed class IgnoresComponent : IIgnoresComponent
         return ignoredUsers;
     }
 
-    public async Task IgnoreUser(Habbo uid, Habbo? ignoredid)
+    public async Task<Habbo?> IgnoreUser(Habbo uid, Habbo? ignoredid)
     {
         if (!uid.GetClient().GetHabbo().InRoom)
-            return;
+            return null;
 
         var room = uid.GetClient().GetHabbo().CurrentRoom;
 
         if (room == null)
-            return;
+            return null;
 
         if (ignoredid == null || ignoredid.GetPermissions().HasRight("mod_tools"))
-            return;
+            return null;
 
         if (uid.GetClient().GetHabbo().GetIgnores().TryGet(ignoredid))
-            return;
+            return null;
 
         if (uid.GetClient().GetHabbo().GetIgnores().TryAdd(ignoredid))
         {
@@ -94,23 +94,24 @@ public sealed class IgnoresComponent : IIgnoresComponent
                 );
             }
         }
+        return ignoredid;
     }
 
-    public async Task UnIgnoreUser(Habbo uid, Habbo? ignoredid)
+    public async Task<Habbo?> UnIgnoreUser(Habbo uid, Habbo? ignoredid)
     {
         if (!uid.GetClient().GetHabbo().InRoom)
-            return;
+            return null;
 
         var room = uid.GetClient().GetHabbo().CurrentRoom;
 
         if (room == null)
-            return;
+            return null;
 
         if (ignoredid == null)
-            return;
+            return null;
 
         if (!uid.GetClient().GetHabbo().GetIgnores().TryGet(ignoredid))
-            return;
+            return null;
 
         if (uid.GetClient().GetHabbo().GetIgnores().TryRemove(ignoredid))
         {
@@ -121,6 +122,7 @@ public sealed class IgnoresComponent : IIgnoresComponent
             );
 
         }
-            
+        return ignoredid;
+
     }
 }
