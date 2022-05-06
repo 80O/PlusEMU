@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Plus.Communication.Rcon.Commands;
 using Plus.HabboHotel.Users.Authentication;
 using Plus.HabboHotel.Users.UserData;
+using Plus.HabboHotel.Users.Profile;
 using Scrutor;
 
 namespace Plus;
@@ -26,6 +27,7 @@ public static class Program
         collection.AddAssignableTo<IRconCommand>();
         collection.AddAssignableTo<IAuthenticationTask>();
         collection.AddAssignableTo<IUserDataLoadingTask>();
+        collection.AddAssignableTo<IProfile>();
         collection.Scan(scan => scan.FromAssemblies(typeof(Program).Assembly)
             .AddClasses(classes => classes.Where(c => c.GetInterface($"I{c.Name}") != null))
             .UsingRegistrationStrategy(RegistrationStrategy.Skip)

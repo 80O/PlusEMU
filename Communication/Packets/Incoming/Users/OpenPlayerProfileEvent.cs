@@ -1,40 +1,27 @@
 ﻿using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Users;
-using Plus.Database;
 using Plus.HabboHotel.GameClients;
-using Plus.HabboHotel.Groups;
-using Dapper;
+using Plus.HabboHotel.Users.Profile;
 
 namespace Plus.Communication.Packets.Incoming.Users;
 
 internal class OpenPlayerProfileEvent : IPacketEvent
 {
-    private readonly IGroupManager _groupManager;
-    private readonly IDatabase _database;
+    private readonly IProfile _profile;
 
-    public OpenPlayerProfileEvent(IGroupManager groupManager, IDatabase database)
+    public OpenPlayerProfileEvent(IProfile profile)
     {
-        _groupManager = groupManager;
-        _database = database;
+        _profile = profile;
     }
 
-    public Task Parse(GameClient session, ClientPacket packet)
+    public async Task Parse(GameClient session, ClientPacket packet)
     {
         var userId = packet.PopInt();
         packet.PopBoolean(); //IsMe?
-        var targetData = PlusEnvironment.GetHabboById(userId);
-        if (targetData == null)
-        {
-            session.SendNotification("An error occured whilst finding that user's profile.");
-            return Task.CompletedTask;
-        }
-        var groups = _groupManager.GetGroupsForUser(targetData.Id);
-        int friendCount;
-        using (var connection = _database.Connection())
-        {
-            friendCount = connection.ExecuteScalar<int>("SELECT count(0) FROM messenger_friendships WHERE user_one_id = @userid OR user_two_id = @userid", new { userid = userId });
-        }
-        session.SendPacket(new ProfileInformationComposer(targetData, session, groups, friendCount));
-        return Task.CompletedTask;
+        var targetData = await _profile.GetProfile(PlusEnvironment.GetHabboById(userId));
+        var groups = await _profile.GetGroups(PlusEnvironment.GetHabboById(userId));
+        var friendcount = await _profile.GetFriendCount(PlusEnvironment.GetHabboById(userId));
+        if(targetData != null)
+            session.SendPacket(new ProfileInformationComposer(targetData, session, groups, friendcount));
     }
 }
