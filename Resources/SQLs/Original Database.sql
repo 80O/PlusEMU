@@ -24933,10 +24933,10 @@ CREATE TABLE `user_saved_searches` (
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for `user_stats`
+-- Table structure for `user_statistics`
 -- ----------------------------
-DROP TABLE IF EXISTS `user_stats`;
-CREATE TABLE `user_stats` (
+DROP TABLE IF EXISTS `user_statistics`;
+CREATE TABLE `user_statistics` (
   `id` int(7) NOT NULL,
   `RoomVisits` int(7) NOT NULL DEFAULT '0',
   `OnlineTime` int(7) NOT NULL DEFAULT '0',
@@ -24964,7 +24964,7 @@ CREATE TABLE `user_stats` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- ----------------------------
--- Records of user_stats
+-- Records of user_statistics
 -- ----------------------------
 
 -- ----------------------------
@@ -25052,3 +25052,6 @@ ALTER TABLE `user_roomvisits`
 ALTER TABLE `rooms` 
 	ADD `sale_price` INT(5) NOT NULL DEFAULT '0' AFTER `spush_enabled`, 
 	ADD `lay_enabled` ENUM('0','1') NOT NULL DEFAULT '0' AFTER `sale_price`;
+
+-- 3_RenameUserStatsTable
+RENAME TABLE user_stats TO user_statistics;

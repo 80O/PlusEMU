@@ -15,14 +15,14 @@ namespace Plus.HabboHotel.Users.UserData
             using (var dbClient = PlusEnvironment.GetDatabaseManager().GetQueryReactor())
             {
                 dbClient.SetQuery(
-                    "SELECT `id`,`roomvisits`,`onlinetime`,`respect`,`respectgiven`,`giftsgiven`,`giftsreceived`,`dailyrespectpoints`,`dailypetrespectpoints`,`achievementscore`,`quest_id`,`quest_progress`,`groupid`,`tickets_answered`,`respectstimestamp`,`forum_posts` FROM `user_stats` WHERE `id` = @user_id LIMIT 1");
+                    "SELECT `id`,`roomvisits`,`onlinetime`,`respect`,`respectgiven`,`giftsgiven`,`giftsreceived`,`dailyrespectpoints`,`dailypetrespectpoints`,`achievementscore`,`quest_id`,`quest_progress`,`groupid`,`tickets_answered`,`respectstimestamp`,`forum_posts` FROM `user_statistics` WHERE `id` = @user_id LIMIT 1");
                 dbClient.AddParameter("user_id", habbo.Id);
                 statRow = dbClient.GetRow();
                 if (statRow == null) //No row, add it yo
                 {
-                    dbClient.RunQuery("INSERT INTO `user_stats` (`id`) VALUES ('" + habbo.Id + "')");
+                    dbClient.RunQuery("INSERT INTO `user_statistics` (`id`) VALUES ('" + habbo.Id + "')");
                     dbClient.SetQuery(
-                        "SELECT `id`,`roomvisits`,`onlinetime`,`respect`,`respectgiven`,`giftsgiven`,`giftsreceived`,`dailyrespectpoints`,`dailypetrespectpoints`,`achievementscore`,`quest_id`,`quest_progress`,`groupid`,`tickets_answered`,`respectstimestamp`,`forum_posts` FROM `user_stats` WHERE `id` = @user_id LIMIT 1");
+                        "SELECT `id`,`roomvisits`,`onlinetime`,`respect`,`respectgiven`,`giftsgiven`,`giftsreceived`,`dailyrespectpoints`,`dailypetrespectpoints`,`achievementscore`,`quest_id`,`quest_progress`,`groupid`,`tickets_answered`,`respectstimestamp`,`forum_posts` FROM `user_statistics` WHERE `id` = @user_id LIMIT 1");
                     dbClient.AddParameter("user_id", habbo.Id);
                     statRow = dbClient.GetRow();
                 }
@@ -45,7 +45,7 @@ namespace Plus.HabboHotel.Users.UserData
                         //    dailyRespects = subData.Respects;
                         stats.DailyRespectPoints = dailyRespects;
                         stats.DailyPetRespectPoints = dailyRespects;
-                        dbClient.RunQuery("UPDATE `user_stats` SET `dailyRespectPoints` = '" + dailyRespects + "', `dailyPetRespectPoints` = '" + dailyRespects + "', `respectsTimestamp` = '" +
+                        dbClient.RunQuery("UPDATE `user_statistics` SET `dailyRespectPoints` = '" + dailyRespects + "', `dailyPetRespectPoints` = '" + dailyRespects + "', `respectsTimestamp` = '" +
                                           DateTime.Today.ToString("MM/dd") + "' WHERE `id` = '" + habbo.Id + "' LIMIT 1");
                     }
                     Group g = null;

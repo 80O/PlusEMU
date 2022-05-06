@@ -26,7 +26,7 @@ internal class StartQuestEvent : IPacketEvent
         using (var dbClient = _database.GetQueryReactor())
         {
             dbClient.RunQuery("REPLACE INTO `user_quests` (`user_id`,`quest_id`) VALUES ('" + session.GetHabbo().Id + "', '" + quest.Id + "')");
-            dbClient.RunQuery("UPDATE `user_stats` SET `quest_id` = '" + quest.Id + "' WHERE `id` = '" + session.GetHabbo().Id + "' LIMIT 1");
+            dbClient.RunQuery("UPDATE `user_statistics` SET `quest_id` = '" + quest.Id + "' WHERE `id` = '" + session.GetHabbo().Id + "' LIMIT 1");
         }
         session.GetHabbo().GetStats().QuestId = quest.Id;
         _questManager.GetList(session, null);
