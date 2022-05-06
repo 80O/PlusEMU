@@ -1,0 +1,1 @@
+﻿RENAME TABLE user_stats TO user_statistics;
