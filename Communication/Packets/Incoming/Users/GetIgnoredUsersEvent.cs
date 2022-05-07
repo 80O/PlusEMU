@@ -7,12 +7,9 @@ namespace Plus.Communication.Packets.Incoming.Users;
 
 internal class GetIgnoredUsersEvent : IPacketEvent
 {
-    IIgnoresManager _ignoresComponent;
+    private readonly IIgnoresManager _ignoresComponent;
 
-    public GetIgnoredUsersEvent(IIgnoresManager ignoresComponent)
-    {
-        _ignoresComponent = ignoresComponent;
-    }
+    public GetIgnoredUsersEvent(IIgnoresManager ignoresComponent) => _ignoresComponent = ignoresComponent;
 
     public Task Parse(GameClient session, ClientPacket packet)
     {

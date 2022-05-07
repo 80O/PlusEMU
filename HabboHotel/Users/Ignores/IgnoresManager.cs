@@ -1,6 +1,5 @@
 ﻿using Dapper;
 using Plus.Database;
-using Plus.HabboHotel.Achievements;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -12,7 +11,6 @@ public sealed class IgnoresManager : IIgnoresManager
 {
     private readonly List<int> _ignoredUsers;
     private readonly IDatabase _database;
-    private readonly IAchievementManager _achievementManager;
 
     public IgnoresManager(IDatabase database)
     {
