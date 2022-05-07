@@ -27,7 +27,7 @@ public static class Program
         collection.AddAssignableTo<IRconCommand>();
         collection.AddAssignableTo<IAuthenticationTask>();
         collection.AddAssignableTo<IUserDataLoadingTask>();
-        collection.AddAssignableTo<IProfile>();
+        collection.AddAssignableTo<IProfileManager>();
         collection.Scan(scan => scan.FromAssemblies(typeof(Program).Assembly)
             .AddClasses(classes => classes.Where(c => c.GetInterface($"I{c.Name}") != null))
             .UsingRegistrationStrategy(RegistrationStrategy.Skip)

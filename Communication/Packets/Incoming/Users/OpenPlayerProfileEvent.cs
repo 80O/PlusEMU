@@ -7,9 +7,9 @@ namespace Plus.Communication.Packets.Incoming.Users;
 
 internal class OpenPlayerProfileEvent : IPacketEvent
 {
-    private readonly IProfile _profile;
+    private readonly IProfileManager _profile;
 
-    public OpenPlayerProfileEvent(IProfile profile)
+    public OpenPlayerProfileEvent(IProfileManager profile)
     {
         _profile = profile;
     }
@@ -18,9 +18,9 @@ internal class OpenPlayerProfileEvent : IPacketEvent
     {
         var userId = packet.PopInt();
         packet.PopBoolean(); //IsMe?
-        var targetData = await _profile.GetProfile(PlusEnvironment.GetHabboById(userId));
-        var groups = await _profile.GetGroups(PlusEnvironment.GetHabboById(userId));
-        var friendCount = await _profile.GetFriendCount(PlusEnvironment.GetHabboById(userId));
+        var targetData = _profile.GetProfile(PlusEnvironment.GetHabboById(userId));
+        var groups = _profile.GetGroups(PlusEnvironment.GetHabboById(userId));
+        var friendCount = _profile.GetFriendCount(PlusEnvironment.GetHabboById(userId));
         if(targetData != null)
             session.SendPacket(new ProfileInformationComposer(targetData, session, groups, friendCount));
     }

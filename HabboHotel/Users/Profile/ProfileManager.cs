@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Plus.HabboHotel.Users.Profile
 {
-    public class ProfileManager : IProfile
+    public class ProfileManager : IProfileManager
     {
         private readonly IGroupManager _groupManager;
         private readonly IDatabase _database;
@@ -18,13 +18,13 @@ namespace Plus.HabboHotel.Users.Profile
             _database = database;
         }
 
-        public async Task <List<Group>> GetGroups(Habbo habbo)
+        public List<Group> GetGroups(Habbo habbo)
         {
             var groups = _groupManager.GetGroupsForUser(habbo.Id);
             return groups;
         }
 
-        public async Task<Habbo>? GetProfile(Habbo habbo)
+        public Habbo? GetProfile(Habbo habbo)
         {
             var targetData = PlusEnvironment.GetHabboById(habbo.Id);
             if (targetData == null)
@@ -37,7 +37,7 @@ namespace Plus.HabboHotel.Users.Profile
             return habbo;
         }
 
-        public async Task<int> GetFriendCount (Habbo habbo)
+        public int GetFriendCount (Habbo habbo)
         {
             using (var connection = _database.Connection())
             {
