@@ -8,9 +8,9 @@ namespace Plus.Communication.Packets.Incoming.Rooms.Action;
 
 internal class UnIgnoreUserEvent : IPacketEvent
 {
-    private readonly IIgnoresComponent _ignoresComponent;
+    private readonly IIgnoresManager _ignoresComponent;
 
-    public UnIgnoreUserEvent(IIgnoresComponent ignoresComponent)
+    public UnIgnoreUserEvent(IIgnoresManager ignoresComponent)
     {
         _ignoresComponent = ignoresComponent;
     }

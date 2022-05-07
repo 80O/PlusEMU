@@ -8,10 +8,10 @@ namespace Plus.Communication.Packets.Incoming.Rooms.Action;
 
 internal class IgnoreUserEvent : IPacketEvent
 {
-    IIgnoresComponent _ignoresComponent;
+    IIgnoresManager _ignoresComponent;
     IAchievementManager _achievementManager;
 
-    public IgnoreUserEvent(IAchievementManager achievementManager, IIgnoresComponent ignoresComponent)
+    public IgnoreUserEvent(IAchievementManager achievementManager, IIgnoresManager ignoresComponent)
     {
         _achievementManager = achievementManager;
         _ignoresComponent = ignoresComponent;

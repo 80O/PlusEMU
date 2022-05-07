@@ -7,16 +7,17 @@ namespace Plus.Communication.Packets.Incoming.Users;
 
 internal class GetIgnoredUsersEvent : IPacketEvent
 {
-    IIgnoresComponent _ignoresComponent;
+    IIgnoresManager _ignoresComponent;
 
-    public GetIgnoredUsersEvent(IIgnoresComponent ignoresComponent)
+    public GetIgnoredUsersEvent(IIgnoresManager ignoresComponent)
     {
         _ignoresComponent = ignoresComponent;
     }
 
-    public async Task Parse(GameClient session, ClientPacket packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
-        var ignoredUsers = await _ignoresComponent.GetIgnoredUsers(session.GetHabbo());
+        var ignoredUsers = _ignoresComponent.GetIgnoredUsers(session.GetHabbo());
         session.SendPacket(new IgnoredUsersComposer(ignoredUsers));
+        return Task.CompletedTask;
     }
 }

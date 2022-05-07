@@ -55,7 +55,7 @@ public class Habbo
     //Advertising reporting system.
 
     //Generic player values.
-    private IIgnoresComponent _ignores;
+    private IIgnoresManager _ignores;
     public InventoryComponent Inventory { get; private set; }
 
     //Anti-script placeholders.
@@ -302,7 +302,7 @@ public class Habbo
 
     public bool InitIgnore(IDatabase database)
     {
-        _ignores = new IgnoresComponent(database);
+        _ignores = new IgnoresManager(database);
         return _ignores.Init(this);
     }
 
@@ -322,7 +322,7 @@ public class Habbo
 
     public PermissionComponent GetPermissions() => _permissions;
 
-    public IIgnoresComponent GetIgnores() => _ignores;
+    public IIgnoresManager GetIgnores() => _ignores;
 
     public void OnDisconnect()
     {
