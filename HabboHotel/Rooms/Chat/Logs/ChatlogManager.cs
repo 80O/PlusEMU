@@ -5,7 +5,8 @@ namespace Plus.HabboHotel.Rooms.Chat.Logs;
 
 public sealed class ChatlogManager : IChatlogManager
 {
-    private const int FlushOnCount = 10;
+    // Save all chat logs every message, not each 10 messages
+    private const int FlushOnCount = 0;
 
     private readonly List<ChatlogEntry> _chatlogs;
     private readonly ReaderWriterLockSlim _lock;
