@@ -223,8 +223,9 @@ public sealed class ModerationManager : IModerationManager
         var banType = type == ModerationBanType.Ip ? "ip" : type == ModerationBanType.Machine ? "machine" : "user";
         using (var dbClient = _database.GetQueryReactor())
         {
-            dbClient.SetQuery("REPLACE INTO `bans` (`bantype`, `value`, `reason`, `expire`, `added_by`,`added_date`) VALUES ('" + banType + "', '" + banValue + "', @reason, " + expireTimestamp +
-                              ", '" + mod + "', '" + PlusEnvironment.GetUnixTimestamp() + "');");
+            // Fix banning exploit (sql injection can generate a fake "machineId")
+            dbClient.SetQuery("REPLACE INTO `bans` (`bantype`, `value`, `reason`, `expire`, `added_by`,`added_date`) VALUES ('" + banType + "', @banValue, @reason, " + expireTimestamp + ", '" + mod + "', '" + PlusEnvironment.GetUnixTimestamp() + "');");
+            dbClient.AddParameter("banValue", banValue);
             dbClient.AddParameter("reason", reason);
             dbClient.RunQuery();
         }

@@ -176,9 +176,15 @@ public class PurchaseFromCatalogEvent : IPacketEvent
                 return;
             }
             item.LimitedEditionSells++;
-            using var connection = _database.Connection();
-            connection.Execute("UPDATE `catalog_items` SET `limited_sells` = @limitedSells WHERE `id` = @itemId LIMIT 1",
-                new { limitedSells = item.LimitedEditionSells, itemId = item.Id });
+
+            // Another exploit fix
+            using var dbClient = PlusEnvironment.GetDatabaseManager().GetQueryReactor();
+
+            dbClient.SetQuery("UPDATE `catalog_items` SET `limited_sells` = @limitedSells WHERE `id` = @itemId LIMIT 1");
+            dbClient.AddParameter("limitedSells", item.LimitedEditionSells);
+            dbClient.AddParameter("itemId", item.Id);
+
+            dbClient.RunQuery();
 
             limitedEditionSells = item.LimitedEditionSells;
             limitedEditionStack = item.LimitedEditionStack;

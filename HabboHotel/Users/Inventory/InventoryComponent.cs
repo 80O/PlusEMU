@@ -31,7 +31,12 @@ public class InventoryComponent
             if (fromRoom)
             {
                 using var dbClient = PlusEnvironment.GetDatabaseManager().GetQueryReactor();
-                dbClient.RunQuery("UPDATE `items` SET `room_id` = '0', `user_id` = '" + UserId + "' WHERE `id` = '" + id + "' LIMIT 1");
+                
+                // Fix another sql injection exploit
+                dbClient.SetQuery("UPDATE `items` SET `room_id` = '0', `user_id` = @userId WHERE `id` = @id LIMIT 1");
+                dbClient.AddParameter("userId", UserId);
+                dbClient.AddParameter("id", id);
+                dbClient.RunQuery();
             }
             else
             {
