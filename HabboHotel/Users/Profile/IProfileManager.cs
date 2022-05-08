@@ -7,7 +7,7 @@ namespace Plus.HabboHotel.Users.Profile
     public interface IProfileManager
     {
         Habbo? GetProfile(Habbo habbo);
-        int GetFriendCount(Habbo habbbo);
+        Task<int> GetFriendCount(int userid);
         List<Group> GetGroups(Habbo habbo);
     }
 }

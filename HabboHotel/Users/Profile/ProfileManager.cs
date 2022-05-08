@@ -10,7 +10,6 @@ namespace Plus.HabboHotel.Users.Profile
     {
         private readonly IGroupManager _groupManager;
         private readonly IDatabase _database;
-        int friendCount;
 
         public ProfileManager(IGroupManager groupManager, IDatabase database)
         {
@@ -37,13 +36,10 @@ namespace Plus.HabboHotel.Users.Profile
             return habbo;
         }
 
-        public int GetFriendCount (Habbo habbo)
+        public async Task<int> GetFriendCount (int userid)
         {
-            using (var connection = _database.Connection())
-            {
-                friendCount = connection.ExecuteScalar<int>("SELECT count(0) FROM messenger_friendships WHERE user_one_id = @userid OR user_two_id = @userid", new { userid = habbo.Id });
-            }
-            return friendCount;
+            using var connection = _database.Connection();
+            return await connection.ExecuteScalarAsync<int>("SELECT count(0) FROM messenger_friendships WHERE user_one_id = @userId OR user_two_id = @userId", new { userId = userid });
         }
     }
 }

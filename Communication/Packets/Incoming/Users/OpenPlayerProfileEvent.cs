@@ -9,10 +9,7 @@ internal class OpenPlayerProfileEvent : IPacketEvent
 {
     private readonly IProfileManager _profile;
 
-    public OpenPlayerProfileEvent(IProfileManager profile)
-    {
-        _profile = profile;
-    }
+    public OpenPlayerProfileEvent(IProfileManager profile) => _profile = profile;
 
     public async Task Parse(GameClient session, ClientPacket packet)
     {
@@ -20,8 +17,8 @@ internal class OpenPlayerProfileEvent : IPacketEvent
         packet.PopBoolean(); //IsMe?
         var targetData = _profile.GetProfile(PlusEnvironment.GetHabboById(userId));
         var groups = _profile.GetGroups(PlusEnvironment.GetHabboById(userId));
-        var friendCount = _profile.GetFriendCount(PlusEnvironment.GetHabboById(userId));
+        var friendCount = _profile.GetFriendCount(userId);
         if(targetData != null)
-            session.SendPacket(new ProfileInformationComposer(targetData, session, groups, friendCount));
+            session.SendPacket(new ProfileInformationComposer(targetData, session, groups,await friendCount));
     }
 }
