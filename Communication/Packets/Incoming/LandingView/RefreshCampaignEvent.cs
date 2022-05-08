@@ -22,6 +22,8 @@ internal class RefreshCampaignEvent : IPacketEvent
                 var data = value.Split(',');
                 campaingName = data[1];
             }
+
+            session.SendPacket(new NextLimitedMessageComposer());
             session.SendPacket(new CampaignComposer(parseCampaings, campaingName));
         }
         catch

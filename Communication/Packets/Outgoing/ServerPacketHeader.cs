@@ -2,6 +2,9 @@
 
 public static class ServerPacketHeader
 {
+    // NextLimitedComposer
+    public const int NextLimitedComposer = 2910;
+
     // Handshake
     public const int InitCryptoMessageComposer = 3531; //675
     public const int SecretKeyMessageComposer = 696; //3179
