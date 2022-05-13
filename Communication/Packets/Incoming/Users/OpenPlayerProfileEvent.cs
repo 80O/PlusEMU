@@ -16,7 +16,7 @@ internal class OpenPlayerProfileEvent : IPacketEvent
         var userId = packet.PopInt();
         packet.PopBoolean(); //IsMe?
         var targetData = PlusEnvironment.GetHabboById(userId);
-        var groups = _profile.GetGroups(PlusEnvironment.GetHabboById(userId));
+        var groups = _profile.GetGroups(targetData);
         var friendCount = _profile.GetFriendCount(userId);
         if(targetData != null)
             session.SendPacket(new ProfileInformationComposer(targetData, session, groups,await friendCount));
