@@ -23,19 +23,6 @@ namespace Plus.HabboHotel.Users.Profile
             return groups;
         }
 
-        public Habbo? GetProfile(Habbo habbo)
-        {
-            var targetData = PlusEnvironment.GetHabboById(habbo.Id);
-            if (targetData == null)
-            {
-                habbo.GetClient().SendNotification("An error occured whilst finding that user's profile.");
-                return null;
-            }
-            var groups = _groupManager.GetGroupsForUser(targetData.Id);
-            
-            return habbo;
-        }
-
         public async Task<int> GetFriendCount (int userid)
         {
             using var connection = _database.Connection();
