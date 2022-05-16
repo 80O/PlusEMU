@@ -11,7 +11,7 @@ internal class ThreadDataComposer : ServerPacket
         base.WriteInteger(startIndex);
         base.WriteInteger(thread.Posts.Count);
 
-        foreach (var Post in thread.Posts)
+        foreach (GroupForumThreadPost Post in thread.Posts)
         {
             Post.SerializeData(this);
         }

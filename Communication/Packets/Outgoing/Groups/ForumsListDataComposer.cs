@@ -16,7 +16,7 @@ internal class ForumsListDataComposer : ServerPacket
 
         base.WriteInteger(forums.Count);
 
-        foreach (var forum in forums)
+        foreach (GroupForum forum in forums)
         {
             var lastPost = forum.GetLastPost();
             var isn = lastPost == null;
