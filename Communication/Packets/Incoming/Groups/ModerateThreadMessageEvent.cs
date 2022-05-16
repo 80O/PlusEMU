@@ -8,13 +8,15 @@ namespace Plus.Communication.Packets.Incoming.Groups;
 
 internal class ModerateThreadMessageEvent : IPacketEvent
 {
+    private readonly IGroupForumManager _groupForumManager;
+    public ModerateThreadMessageEvent(IGroupForumManager groupForumManager) => _groupForumManager = groupForumManager;
     public async Task Parse(GameClient session, ClientPacket packet)
     {
         var forumId = packet.PopInt();
         var threadId = packet.PopInt();
         var deleteLevel = packet.PopInt();
 
-        GroupForum forum = PlusEnvironment.GetGame().GetGroupForumManager().GetForum(forumId);
+        GroupForum forum = _groupForumManager.GetForum(forumId);
 
         if (forum is null)
         {

@@ -7,6 +7,8 @@ namespace Plus.Communication.Packets.Incoming.Groups;
 
 internal class PostGroupContentEvent : IPacketEvent
 {
+    private readonly IGroupForumManager _groupForumManager;
+    public PostGroupContentEvent(IGroupForumManager groupForumManager) => _groupForumManager = groupForumManager;
     public async Task Parse(GameClient Session, ClientPacket Packet)
     {
         int ForumId = Packet.PopInt();
@@ -14,10 +16,10 @@ internal class PostGroupContentEvent : IPacketEvent
         string Caption = Packet.PopString();
         string Message = Packet.PopString();
 
-        GroupForum Forum = PlusEnvironment.GetGame().GetGroupForumManager().GetForum(ForumId);
+        GroupForum Forum = _groupForumManager.GetForum(ForumId);
         if (Forum == null)
         {
-            Session.SendNotification("Oops! This forum cannot be found.");
+            return;
         }
 
         bool IsNewThread = ThreadId == 0;
@@ -25,13 +27,13 @@ internal class PostGroupContentEvent : IPacketEvent
         if (IsNewThread)
         {
 
-            if ((Forum?.Settings.GetReasonForNot(Session, Forum.Settings.WhoCanInitDiscussions)) != "")
+            if ((Forum.Settings.GetReasonForNot(Session, Forum.Settings.WhoCanInitDiscussions)) != "")
             {
                 Session.SendWhisper("Oops! Something went wrong. You do not have permission to start discussions here.");
             }
 
-            GroupForumThread Thread = await Forum.CreateThread(Session.GetHabbo().Id, Caption);
-            GroupForumThreadPost Post = await Thread.CreatePost(Session.GetHabbo().Id, Message);
+            GroupForumThread? Thread = await Forum.CreateThread(Session.GetHabbo().Id, Caption);
+            GroupForumThreadPost? Post = await Thread.CreatePost(Session.GetHabbo().Id, Message);
             Session.SendPacket(new ThreadCreatedComposer(Session, Thread));
 
             Thread.AddView(Session.GetHabbo().Id, 1);
@@ -42,7 +44,7 @@ internal class PostGroupContentEvent : IPacketEvent
             GroupForumThread Thread = Forum.GetThread(ThreadId);
             if (Thread == null)
             {
-                Session.SendWhisper("Oops! The forum could not be found.");
+                return;
             }
 
             if (Thread.Locked && Forum?.Settings.GetReasonForNot(Session, Forum.Settings.WhoCanModerate) != "")
@@ -55,7 +57,7 @@ internal class PostGroupContentEvent : IPacketEvent
                 Session.SendWhisper("Oops! You cannot post here.");
             }
 
-            GroupForumThreadPost Post = await Thread.CreatePost(Session.GetHabbo().Id, Message);
+            GroupForumThreadPost? Post = await Thread.CreatePost(Session.GetHabbo().Id, Message);
             Session.SendPacket(new ThreadReplyComposer(Session, Post));
         }
 

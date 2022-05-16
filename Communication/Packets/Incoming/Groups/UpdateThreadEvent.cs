@@ -7,41 +7,43 @@ namespace Plus.Communication.Packets.Incoming.Groups;
 
 internal class UpdateThreadEvent : IPacketEvent
 {
-    public async Task Parse(GameClient Session, ClientPacket Packet)
+    private readonly IGroupForumManager _groupForumManager;
+    public UpdateThreadEvent(IGroupForumManager groupForumManager) => _groupForumManager = groupForumManager;
+    public async Task Parse(GameClient session, ClientPacket packet)
     {
-        var ForumID = Packet.PopInt();
-        var ThreadID = Packet.PopInt();
-        var Pinned = Packet.PopBoolean();
-        var Locked = Packet.PopBoolean();
+        var forumId = packet.PopInt();
+        var threadId = packet.PopInt();
+        var pinned = packet.PopBoolean();
+        var locked = packet.PopBoolean();
 
-        GroupForum forum = PlusEnvironment.GetGame().GetGroupForumManager().GetForum(ForumID);
-        GroupForumThread thread = forum.GetThread(ThreadID);
+        GroupForum forum = _groupForumManager.GetForum(forumId);
+        GroupForumThread thread = forum.GetThread(threadId);
 
-        if (forum.Settings.GetReasonForNot(Session, forum.Settings.WhoCanModerate) != "")
+        if (forum.Settings.GetReasonForNot(session, forum.Settings.WhoCanModerate) != "")
         {
-            Session.SendWhisper(("Oops! You are not admin on this Thread!"));
+            session.SendWhisper(("Oops! You are not admin on this Thread!"));
         }
 
-        bool isPining = thread.Pinned != Pinned,
-            isLocking = thread.Locked != Locked;
+        bool isPining = thread.pinned != pinned,
+            isLocking = thread.locked != locked;
 
-        thread.Pinned = Pinned;
-        thread.Locked = Locked;
+        thread.pinned = pinned;
+        thread.locked = locked;
         
         await thread.Save();
 
-        Session.SendPacket(new Outgoing.Groups.ThreadUpdatedComposer(Session, thread));
+        session.SendPacket(new Outgoing.Groups.ThreadUpdatedComposer(session, thread));
 
         if (isPining)
-            if (Pinned)
-                Session.SendWhisper(("Thread has been successfully pinned."));
+            if (pinned)
+                session.SendWhisper(("Thread has been successfully pinned."));
             else
-                Session.SendWhisper(("Thread has been successfully unpinned."));
+                session.SendWhisper(("Thread has been successfully unpinned."));
 
         if (isLocking)
-            if (Locked)
-                Session.SendWhisper(("Thread has been successfully locked."));
+            if (locked)
+                session.SendWhisper(("Thread has been successfully locked."));
             else
-                Session.SendWhisper(("Thread has been successfully re-opened."));
+                session.SendWhisper(("Thread has been successfully re-opened."));
     }
 }

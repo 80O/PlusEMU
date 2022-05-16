@@ -10,11 +10,13 @@ namespace Plus.HabboHotel.Groups.Forums
     {
         private readonly IDatabase _database;
         readonly List<GroupForum> Forums;
+        private readonly IGroupManager _groupManager;
 
-        public GroupForumManager(IDatabase database)
+        public GroupForumManager(IDatabase database, IGroupManager groupManager)
         {
             Forums = new List<GroupForum>();
             _database = database;
+            _groupManager = groupManager;
         }
 
         public GroupForum? GetForum(int GroupId) => TryGetForum(GroupId, out GroupForum f) ? f : null;
@@ -40,7 +42,7 @@ namespace Plus.HabboHotel.Groups.Forums
         {
             if ((Forum = Forums.FirstOrDefault(c => c.Id == Id)) == null)
             {
-                if (!PlusEnvironment.GetGame().GetGroupManager().TryGetGroup(Id, out Group group))
+                if (!_groupManager.TryGetGroup(Id, out Group group))
                     return false;
 
                 if (!group.HasForum)
@@ -53,7 +55,7 @@ namespace Plus.HabboHotel.Groups.Forums
             return true;
         }
 
-        public List<GroupForum?> GetForumsByUserId(int Userid) => PlusEnvironment.GetGame().GetGroupManager().GetGroupsForUser(Userid).Where(c => TryGetForum(c.Id, out GroupForum forum)).Select(c => GetForum(c.Id)).ToList();
+        public List<GroupForum?> GetForumsByUserId(int Userid) => _groupManager.GetGroupsForUser(Userid).Where(c => TryGetForum(c.Id, out GroupForum forum)).Select(c => GetForum(c.Id)).ToList();
 
         public async Task RemoveGroup(Group Group)
         {

@@ -30,7 +30,6 @@ namespace Plus.HabboHotel.Groups.Forums
 
             DeleterId = deleterid;
             DeletedLevel = deletedlevel;
-
         }
 
         public Habbo GetDeleter() => PlusEnvironment.GetHabboById(DeleterId);

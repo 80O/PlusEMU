@@ -7,11 +7,13 @@ namespace Plus.Communication.Packets.Incoming.Groups;
 
 internal class GetForumStatsEvent : IPacketEvent
 {
+    private readonly IGroupForumManager _groupForumManager;
+    public GetForumStatsEvent(IGroupForumManager groupForumManager) => _groupForumManager = groupForumManager;
     public Task Parse(GameClient Session, ClientPacket Packet)
     {
         int GroupForumId = Packet.PopInt();
 
-        if (!PlusEnvironment.GetGame().GetGroupForumManager().TryGetForum(GroupForumId, out GroupForum Forum))
+        if (!_groupForumManager.TryGetForum(GroupForumId, out GroupForum Forum))
         {
             Session.SendWhisper("Oops! This group forum does not exist!");
             return Task.CompletedTask;

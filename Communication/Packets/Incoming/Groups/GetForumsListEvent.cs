@@ -12,8 +12,14 @@ namespace Plus.Communication.Packets.Incoming.Groups;
 internal class GetForumsListEvent : IPacketEvent
 {
     private readonly IDatabase _database;
+    private readonly IGroupForumManager _groupForumManager;
 
-    public GetForumsListEvent(IDatabase database) => _database = database;
+    public GetForumsListEvent(IDatabase database, IGroupForumManager groupForumManager)
+    {
+        _database = database; 
+        _groupForumManager = groupForumManager;
+    }
+    
 
     public async Task Parse(GameClient Session, ClientPacket Packet)
     {
@@ -32,7 +38,7 @@ internal class GetForumsListEvent : IPacketEvent
         switch (viewOrderID)
         {
             case 2:
-                List<GroupForum> Forums = PlusEnvironment.GetGame().GetGroupForumManager().GetForumsByUserId(Session.GetHabbo().Id);
+                List<GroupForum> Forums = _groupForumManager.GetForumsByUserId(Session.GetHabbo().Id);
 
                 if (Forums.Count - 1 >= forumListIndex)
                 {
@@ -49,7 +55,7 @@ internal class GetForumsListEvent : IPacketEvent
 
                     foreach (var result in results)
                     {
-                        if (PlusEnvironment.GetGame().GetGroupForumManager().TryGetForum(Convert.ToInt32(result.id), out GroupForum forum))
+                        if (_groupForumManager.TryGetForum(Convert.ToInt32(result.id), out GroupForum forum))
                             forums.Add(forum);
                     }
                     break;
@@ -63,7 +69,7 @@ internal class GetForumsListEvent : IPacketEvent
 
                     foreach (var result in results)
                     {
-                        if (PlusEnvironment.GetGame().GetGroupForumManager().TryGetForum(Convert.ToInt32(result.id), out GroupForum forum))
+                        if (_groupForumManager.TryGetForum(Convert.ToInt32(result.id), out GroupForum forum))
                             forums.Add(forum);
                     }
                     break;

@@ -7,6 +7,8 @@ namespace Plus.Communication.Packets.Incoming.Groups;
 
 internal class UpdateForumSettingsMessageEvent : IPacketEvent
 {
+    private readonly IGroupForumManager _groupForumManager;
+    public UpdateForumSettingsMessageEvent(IGroupForumManager groupForumManager) => _groupForumManager = groupForumManager;
     public async Task Parse(GameClient Session, ClientPacket Packet)
     {
         int ForumId = Packet.PopInt();
@@ -15,8 +17,7 @@ internal class UpdateForumSettingsMessageEvent : IPacketEvent
         int WhoCanPost = Packet.PopInt();
         int WhoCanMod = Packet.PopInt();
 
-
-        GroupForum forum = PlusEnvironment.GetGame().GetGroupForumManager().GetForum(ForumId);
+        GroupForum forum = _groupForumManager.GetForum(ForumId);
 
         if (forum == null)
         {

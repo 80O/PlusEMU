@@ -7,6 +7,8 @@ namespace Plus.Communication.Packets.Incoming.Groups;
 
 internal class GetThreadDataEvent : IPacketEvent
 {
+    private readonly IGroupForumManager _groupForumManager;
+    public GetThreadDataEvent(IGroupForumManager groupForumManager) => _groupForumManager = groupForumManager;
     public Task Parse(GameClient Session, ClientPacket Packet)
     {
         int ForumId = Packet.PopInt();
@@ -14,7 +16,7 @@ internal class GetThreadDataEvent : IPacketEvent
         int StartIndex = Packet.PopInt();
         int length = Packet.PopInt();
 
-        GroupForum Forum = PlusEnvironment.GetGame().GetGroupForumManager().GetForum(ForumId);
+        GroupForum Forum = _groupForumManager.GetForum(ForumId);
 
         if (Forum == null)
         {

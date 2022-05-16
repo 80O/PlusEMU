@@ -9,10 +9,7 @@ namespace Plus.Communication.Packets.Incoming.Groups;
 internal class DeleteGroupPostEvent : IPacketEvent
 {
     private readonly IGroupForumManager _groupForumManager;
-    public DeleteGroupPostEvent(IGroupForumManager groupForumManager)
-    {
-        _groupForumManager = groupForumManager;
-    }
+    public DeleteGroupPostEvent(IGroupForumManager groupForumManager) => _groupForumManager = groupForumManager;
     public async Task Parse(GameClient session, ClientPacket packet)
     {
         int forumId = packet.PopInt();

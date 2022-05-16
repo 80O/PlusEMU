@@ -6,6 +6,8 @@ namespace Plus.Communication.Packets.Incoming.Groups;
 
 internal class UpdateForumReadMarkerEvent : IPacketEvent
 {
+    private readonly IGroupForumManager _groupForumManager;
+    public UpdateForumReadMarkerEvent(IGroupForumManager groupForumManager) => _groupForumManager = groupForumManager;
     public Task Parse(GameClient Session, ClientPacket Packet)
     {
         var length = Packet.PopInt();
@@ -15,7 +17,7 @@ internal class UpdateForumReadMarkerEvent : IPacketEvent
             int postid = Packet.PopInt(); //Post ID
             bool readall = Packet.PopBoolean(); //Make all read
 
-            GroupForum forum = PlusEnvironment.GetGame().GetGroupForumManager().GetForum(forumid);
+            GroupForum forum = _groupForumManager.GetForum(forumid);
             if (forum == null)
                 continue;
 
