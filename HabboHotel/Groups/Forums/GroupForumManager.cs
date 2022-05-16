@@ -21,21 +21,21 @@ namespace Plus.HabboHotel.Groups.Forums
 
         public GroupForum? GetForum(int GroupId) => TryGetForum(GroupId, out GroupForum f) ? f : null;
 
-        public async Task<GroupForum> CreateGroupForum(Group Gp)
+        public async Task<GroupForum> CreateGroupForum(Group group)
         {
-            if (TryGetForum(Gp.Id, out GroupForum GF))
-                return GF;
+            if (TryGetForum(group.Id, out GroupForum groupForum))
+                return groupForum;
 
             using (var connection = _database.Connection())
             {
-                await connection.ExecuteAsync("REPLACE INTO group_forums_settings (group_id) VALUES (@gp)", new { gp = Gp.Id });
-                await connection.ExecuteAsync("UPDATE groups SET forum_enabled = '1' WHERE id = @id", new { id = Gp.Id });
+                await connection.ExecuteAsync("REPLACE INTO group_forums_settings (group_id) VALUES (@gp)", new { gp = group.Id });
+                await connection.ExecuteAsync("UPDATE groups SET forum_enabled = '1' WHERE id = @id", new { id = group.Id });
             }
 
-            GF = new GroupForum(Gp, _database);
-            Gp.HasForum = true;
-            Forums.Add(GF);
-            return GF;
+            groupForum = new GroupForum(group, _database);
+            group.HasForum = true;
+            Forums.Add(groupForum);
+            return groupForum;
         }
 
         public bool TryGetForum(int Id, out GroupForum Forum)

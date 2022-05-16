@@ -9,36 +9,36 @@ internal class GetThreadDataEvent : IPacketEvent
 {
     private readonly IGroupForumManager _groupForumManager;
     public GetThreadDataEvent(IGroupForumManager groupForumManager) => _groupForumManager = groupForumManager;
-    public Task Parse(GameClient Session, ClientPacket Packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
-        int ForumId = Packet.PopInt();
-        int ThreadId = Packet.PopInt();
-        int StartIndex = Packet.PopInt();
-        int length = Packet.PopInt();
+        int forumId = packet.PopInt();
+        int threadId = packet.PopInt();
+        int startIndex = packet.PopInt();
+        int length = packet.PopInt();
 
-        GroupForum Forum = _groupForumManager.GetForum(ForumId);
+        GroupForum Forum = _groupForumManager.GetForum(forumId);
 
         if (Forum == null)
         {
-            Session.SendWhisper("Awkward! Forum cannot be found.");
+            session.SendWhisper("Awkward! Forum cannot be found.");
             return Task.CompletedTask;
         }
 
-        GroupForumThread Thread = Forum.GetThread(ThreadId);
+        GroupForumThread Thread = Forum.GetThread(threadId);
         if (Thread == null)
         {
-            Session.SendWhisper("Unable to find forum thread.");
+            session.SendWhisper("Unable to find forum thread.");
             return Task.CompletedTask;
         }
 
-        if (Thread.DeletedLevel > 1 && (Forum.Settings.GetReasonForNot(Session, Forum.Settings.WhoCanModerate) != ""))
+        if (Thread.DeletedLevel > 1 && (Forum.Settings.GetReasonForNot(session, Forum.Settings.WhoCanModerate) != ""))
         {
-            Session.SendWhisper(("You are unable to see this thread as it has been deleted."));
+            session.SendWhisper(("You are unable to see this thread as it has been deleted."));
             return Task.CompletedTask;
         }
 
 
-        Session.SendPacket(new ThreadDataComposer(Thread, StartIndex, length));
+        session.SendPacket(new ThreadDataComposer(Thread, startIndex, length));
         return Task.CompletedTask;
     }
 }

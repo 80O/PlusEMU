@@ -4,12 +4,12 @@ using Plus.HabboHotel.Groups.Forums;
 namespace Plus.Communication.Packets.Outgoing.Groups;
 internal class PostUpdatedComposer : ServerPacket
 {
-    public PostUpdatedComposer(GameClient Session, GroupForumThreadPost Post)
+    public PostUpdatedComposer(GameClient session, GroupForumThreadPost post)
             : base(ServerPacketHeader.PostUpdatedMessageComposer)
     {
-        base.WriteInteger(Post.ParentThread.ParentForum.Id);
-        base.WriteInteger(Post.ParentThread.Id);
+        base.WriteInteger(post.ParentThread.ParentForum.Id);
+        base.WriteInteger(post.ParentThread.Id);
 
-        Post.SerializeData(this);
+        post.SerializeData(this);
     }
 }

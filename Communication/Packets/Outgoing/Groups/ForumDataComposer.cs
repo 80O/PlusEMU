@@ -5,15 +5,15 @@ namespace Plus.Communication.Packets.Outgoing.Groups;
 
 internal class ForumDataComposer : ServerPacket
 {
-    public ForumDataComposer(GroupForum Forum, GameClient Session)
+    public ForumDataComposer(GroupForum forum, GameClient session)
             : base(ServerPacketHeader.ForumDataMessageComposer)
     {
-        base.WriteInteger(Forum.Id);
-        base.WriteString(Forum.Group.Name);
-        base.WriteString(Forum.Group.Description);
-        base.WriteString(Forum.Group.Badge);
+        base.WriteInteger(forum.Id);
+        base.WriteString(forum.Group.Name);
+        base.WriteString(forum.Group.Description);
+        base.WriteString(forum.Group.Badge);
 
-        base.WriteInteger(Forum.Threads.Count);
+        base.WriteInteger(forum.Threads.Count);
         base.WriteInteger(0); //Last Author ID
         base.WriteInteger(0); //Score ?
         base.WriteInteger(0); //Last Thread Mark
@@ -22,18 +22,18 @@ internal class ForumDataComposer : ServerPacket
         base.WriteString("not_member");
         base.WriteInteger(0);
 
-        base.WriteInteger(Forum.Settings.WhoCanRead); 
-        base.WriteInteger(Forum.Settings.WhoCanPost);
-        base.WriteInteger(Forum.Settings.WhoCanInitDiscussions);
-        base.WriteInteger(Forum.Settings.WhoCanModerate);
+        base.WriteInteger(forum.Settings.WhoCanRead); 
+        base.WriteInteger(forum.Settings.WhoCanPost);
+        base.WriteInteger(forum.Settings.WhoCanInitDiscussions);
+        base.WriteInteger(forum.Settings.WhoCanModerate);
 
-        base.WriteString(Forum.Settings.GetReasonForNot(Session, Forum.Settings.WhoCanRead));
-        base.WriteString(Forum.Settings.GetReasonForNot(Session, Forum.Settings.WhoCanPost));
-        base.WriteString(Forum.Settings.GetReasonForNot(Session, Forum.Settings.WhoCanInitDiscussions));
-        base.WriteString(Forum.Settings.GetReasonForNot(Session, Forum.Settings.WhoCanModerate));
+        base.WriteString(forum.Settings.GetReasonForNot(session, forum.Settings.WhoCanRead));
+        base.WriteString(forum.Settings.GetReasonForNot(session, forum.Settings.WhoCanPost));
+        base.WriteString(forum.Settings.GetReasonForNot(session, forum.Settings.WhoCanInitDiscussions));
+        base.WriteString(forum.Settings.GetReasonForNot(session, forum.Settings.WhoCanModerate));
         base.WriteString("");
 
-        base.WriteBoolean(Forum.Group.CreatorId == Session.GetHabbo().Id); // Is Owner
-        base.WriteBoolean(Forum.Group.IsAdmin(Session.GetHabbo().Id) && Forum.Settings.GetReasonForNot(Session, Forum.Settings.WhoCanModerate) == ""); // Is admin
+        base.WriteBoolean(forum.Group.CreatorId == session.GetHabbo().Id); // Is Owner
+        base.WriteBoolean(forum.Group.IsAdmin(session.GetHabbo().Id) && forum.Settings.GetReasonForNot(session, forum.Settings.WhoCanModerate) == ""); // Is admin
     }
 }

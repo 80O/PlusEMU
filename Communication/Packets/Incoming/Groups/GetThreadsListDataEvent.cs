@@ -9,19 +9,19 @@ internal class GetThreadsListDataEvent : IPacketEvent
 {
     private readonly IGroupForumManager _groupForumManager;
     public GetThreadsListDataEvent(IGroupForumManager groupForumManager) => _groupForumManager = groupForumManager;
-    public Task Parse(GameClient Session, ClientPacket Packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
-        int ForumId = Packet.PopInt();
-        int StartIndex = Packet.PopInt();
-        int ThreadCountLength = Packet.PopInt();
+        int forumId = packet.PopInt();
+        int startIndex = packet.PopInt();
+        int threadCountLength = packet.PopInt();
 
-        GroupForum Forum = _groupForumManager.GetForum(ForumId);
+        GroupForum Forum = _groupForumManager.GetForum(forumId);
         if (Forum == null)
         {
             return Task.CompletedTask;
         }
 
-        Session.SendPacket(new ThreadsListDataComposer(Forum, Session, StartIndex, ThreadCountLength));
+        session.SendPacket(new ThreadsListDataComposer(Forum, session, startIndex, threadCountLength));
         return Task.CompletedTask;
     }
 }

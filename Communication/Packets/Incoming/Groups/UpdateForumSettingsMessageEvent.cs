@@ -9,38 +9,38 @@ internal class UpdateForumSettingsMessageEvent : IPacketEvent
 {
     private readonly IGroupForumManager _groupForumManager;
     public UpdateForumSettingsMessageEvent(IGroupForumManager groupForumManager) => _groupForumManager = groupForumManager;
-    public async Task Parse(GameClient Session, ClientPacket Packet)
+    public async Task Parse(GameClient session, ClientPacket packet)
     {
-        int ForumId = Packet.PopInt();
-        int WhoCanRead = Packet.PopInt();
-        int WhoCanReply = Packet.PopInt();
-        int WhoCanPost = Packet.PopInt();
-        int WhoCanMod = Packet.PopInt();
+        int forumId = packet.PopInt();
+        int whoCanRead = packet.PopInt();
+        int whoCanReply = packet.PopInt();
+        int whoCanPost = packet.PopInt();
+        int whoCanMod = packet.PopInt();
 
-        GroupForum forum = _groupForumManager.GetForum(ForumId);
+        GroupForum forum = _groupForumManager.GetForum(forumId);
 
         if (forum == null)
         {
-            Session.SendWhisper("Oops! This forum could not be found.");
+            session.SendWhisper("Oops! This forum could not be found.");
         }
 
-        if (forum?.Settings.GetReasonForNot(Session, forum.Settings.WhoCanModerate) != "")
+        if (forum?.Settings.GetReasonForNot(session, forum.Settings.WhoCanModerate) != "")
         {
-            Session.SendWhisper("Oops! The forum could not be changed.");
+            session.SendWhisper("Oops! The forum could not be changed.");
         }
 
-        forum.Settings.WhoCanRead = WhoCanRead;
-        forum.Settings.WhoCanModerate = WhoCanMod;
-        forum.Settings.WhoCanPost = WhoCanReply;
-        forum.Settings.WhoCanInitDiscussions = WhoCanPost;
+        forum.Settings.WhoCanRead = whoCanRead;
+        forum.Settings.WhoCanModerate = whoCanMod;
+        forum.Settings.WhoCanPost = whoCanReply;
+        forum.Settings.WhoCanInitDiscussions = whoCanPost;
         await forum.Settings.Save();
 
-        PlusEnvironment.GetGame().GetAchievementManager().ProgressAchievement(Session, "ACH_SelfModForumCanModerateSeen", 1);
-        PlusEnvironment.GetGame().GetAchievementManager().ProgressAchievement(Session, "ACH_SelfModForumCanPostSeen", 1);
-        PlusEnvironment.GetGame().GetAchievementManager().ProgressAchievement(Session, "ACH_SelfModForumCanPostThrdSeen", 1);
-        PlusEnvironment.GetGame().GetAchievementManager().ProgressAchievement(Session, "ACH_SelfModForumCanReadSeen", 1);
+        PlusEnvironment.GetGame().GetAchievementManager().ProgressAchievement(session, "ACH_SelfModForumCanModerateSeen", 1);
+        PlusEnvironment.GetGame().GetAchievementManager().ProgressAchievement(session, "ACH_SelfModForumCanPostSeen", 1);
+        PlusEnvironment.GetGame().GetAchievementManager().ProgressAchievement(session, "ACH_SelfModForumCanPostThrdSeen", 1);
+        PlusEnvironment.GetGame().GetAchievementManager().ProgressAchievement(session, "ACH_SelfModForumCanReadSeen", 1);
 
-        Session.SendPacket(new ForumDataComposer(forum, Session));
-        Session.SendPacket(new ThreadsListDataComposer(forum, Session));
+        session.SendPacket(new ForumDataComposer(forum, session));
+        session.SendPacket(new ThreadsListDataComposer(forum, session));
     }
 }

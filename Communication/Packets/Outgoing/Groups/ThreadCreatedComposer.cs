@@ -6,10 +6,10 @@ namespace Plus.Communication.Packets.Outgoing.Groups;
 internal class ThreadCreatedComposer : ServerPacket
 {
 
-    public ThreadCreatedComposer(GameClient Session, GroupForumThread Thread)
+    public ThreadCreatedComposer(GameClient session, GroupForumThread thread)
             : base(ServerPacketHeader.ThreadCreatedMessageComposer)
     {
-        base.WriteInteger(Thread.ParentForum.Id);
-        Thread.SerializeData(Session, this);
+        base.WriteInteger(thread.ParentForum.Id);
+        thread.SerializeData(session, this);
     }
 }

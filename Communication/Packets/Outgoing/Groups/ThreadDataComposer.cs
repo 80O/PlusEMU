@@ -3,15 +3,15 @@
 namespace Plus.Communication.Packets.Outgoing.Groups;
 internal class ThreadDataComposer : ServerPacket
 {
-    public ThreadDataComposer(GroupForumThread Thread, int StartIndex, int MaxLength)
+    public ThreadDataComposer(GroupForumThread thread, int startIndex, int maxLength)
             : base(ServerPacketHeader.ThreadDataMessageComposer)
     {
-        base.WriteInteger(Thread.ParentForum.Id);
-        base.WriteInteger(Thread.Id);
-        base.WriteInteger(StartIndex);
-        base.WriteInteger(Thread.Posts.Count);
+        base.WriteInteger(thread.ParentForum.Id);
+        base.WriteInteger(thread.Id);
+        base.WriteInteger(startIndex);
+        base.WriteInteger(thread.Posts.Count);
 
-        foreach (var Post in Thread.Posts)
+        foreach (var Post in thread.Posts)
         {
             Post.SerializeData(this);
         }

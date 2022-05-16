@@ -9,17 +9,17 @@ internal class GetForumStatsEvent : IPacketEvent
 {
     private readonly IGroupForumManager _groupForumManager;
     public GetForumStatsEvent(IGroupForumManager groupForumManager) => _groupForumManager = groupForumManager;
-    public Task Parse(GameClient Session, ClientPacket Packet)
+    public Task Parse(GameClient session, ClientPacket packet)
     {
-        int GroupForumId = Packet.PopInt();
+        int groupForumId = packet.PopInt();
 
-        if (!_groupForumManager.TryGetForum(GroupForumId, out GroupForum Forum))
+        if (!_groupForumManager.TryGetForum(groupForumId, out GroupForum Forum))
         {
-            Session.SendWhisper("Oops! This group forum does not exist!");
+            session.SendWhisper("Oops! This group forum does not exist!");
             return Task.CompletedTask;
         }
 
-        Session.SendPacket(new ForumDataComposer(Forum, Session));
+        session.SendPacket(new ForumDataComposer(Forum, session));
         return Task.CompletedTask;
     }
 }

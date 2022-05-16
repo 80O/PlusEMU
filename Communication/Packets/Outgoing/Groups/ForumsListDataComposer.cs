@@ -7,31 +7,31 @@ namespace Plus.Communication.Packets.Outgoing.Groups;
 
 internal class ForumsListDataComposer : ServerPacket
 {
-    public ForumsListDataComposer(ICollection<GroupForum> Forums, GameClient Session, int ViewOrder = 0, int StartIndex = 0, int MaxLength = 20)
+    public ForumsListDataComposer(ICollection<GroupForum> forums, GameClient session, int viewOrder = 0, int startIndex = 0, int maxLength = 20)
             : base(ServerPacketHeader.ForumsListDataMessageComposer)
     {
-        base.WriteInteger(ViewOrder);
-        base.WriteInteger(StartIndex);
-        base.WriteInteger(StartIndex);
+        base.WriteInteger(viewOrder);
+        base.WriteInteger(startIndex);
+        base.WriteInteger(startIndex);
 
-        base.WriteInteger(Forums.Count);
+        base.WriteInteger(forums.Count);
 
-        foreach (var Forum in Forums)
+        foreach (var forum in forums)
         {
-            var lastpost = Forum.GetLastPost();
-            var isn = lastpost == null;
-            base.WriteInteger(Forum.Id);
-            base.WriteString(Forum.Name);
-            base.WriteString(Forum.Description);
-            base.WriteString(Forum.Group.Badge);
+            var lastPost = forum.GetLastPost();
+            var isn = lastPost == null;
+            base.WriteInteger(forum.Id);
+            base.WriteString(forum.Name);
+            base.WriteString(forum.Description);
+            base.WriteString(forum.Group.Badge);
             base.WriteInteger(0);
             base.WriteInteger(0);
-            base.WriteInteger(Forum.MessagesCount);
-            base.WriteInteger(Forum.UnreadMessages(Session.GetHabbo().Id));
+            base.WriteInteger(forum.MessagesCount);
+            base.WriteInteger(forum.UnreadMessages(session.GetHabbo().Id));
             base.WriteInteger(0);
-            base.WriteInteger(!isn ? lastpost.GetAuthor().Id : 0);
-            base.WriteString(!isn ? lastpost.GetAuthor().Username : "");
-            base.WriteInteger(!isn ? (int)PlusEnvironment.GetUnixTimestamp() - lastpost.Timestamp : 0);
+            base.WriteInteger(!isn ? lastPost.GetAuthor().Id : 0);
+            base.WriteString(!isn ? lastPost.GetAuthor().Username : "");
+            base.WriteInteger(!isn ? (int)PlusEnvironment.GetUnixTimestamp() - lastPost.Timestamp : 0);
         }
     }
 }

@@ -60,7 +60,7 @@ namespace Plus.HabboHotel.Groups.Forums
         public async Task <GroupForumThread?> CreateThread(int Creator, string Caption)
         {
             var timestamp = (int)PlusEnvironment.GetUnixTimestamp();
-            var Thread = new GroupForumThread(this, _database, 0, Creator, (int)timestamp, Caption, false, false, 0, 0);
+            GroupForumThread Thread = new GroupForumThread(this, _database, 0, Creator, (int)timestamp, Caption, false, false, 0, 0);
 
             using var connection = _database.Connection();
 

@@ -21,11 +21,11 @@ internal class GetForumsListEvent : IPacketEvent
     }
     
 
-    public async Task Parse(GameClient Session, ClientPacket Packet)
+    public async Task Parse(GameClient session, ClientPacket packet)
     {
-        var viewOrderID = Packet.PopInt();
-        var forumListIndex = Packet.PopInt();
-        int forumListLength = Packet.PopInt();
+        var viewOrderID = packet.PopInt();
+        var forumListIndex = packet.PopInt();
+        int forumListLength = packet.PopInt();
 
         /*
          * My groups = 2
@@ -38,13 +38,13 @@ internal class GetForumsListEvent : IPacketEvent
         switch (viewOrderID)
         {
             case 2:
-                List<GroupForum> Forums = _groupForumManager.GetForumsByUserId(Session.GetHabbo().Id);
+                List<GroupForum> Forums = _groupForumManager.GetForumsByUserId(session.GetHabbo().Id);
 
                 if (Forums.Count - 1 >= forumListIndex)
                 {
                     Forums = Forums.GetRange(forumListIndex, Math.Min(forumListLength, Forums.Count));
                 }
-                Session.SendPacket(new ForumsListDataComposer(Forums, Session, viewOrderID, forumListIndex, forumListLength));
+                session.SendPacket(new ForumsListDataComposer(Forums, session, viewOrderID, forumListIndex, forumListLength));
                 return;
 
             case 0:
@@ -76,6 +76,6 @@ internal class GetForumsListEvent : IPacketEvent
                 }
         }
 
-        Session.SendPacket(new ForumsListDataComposer(forums, Session, viewOrderID, forumListIndex, forumListLength));
+        session.SendPacket(new ForumsListDataComposer(forums, session, viewOrderID, forumListIndex, forumListLength));
     }
 }
