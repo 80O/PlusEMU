@@ -72,13 +72,12 @@ namespace Plus.HabboHotel.Groups.Forums
         public async void AddView(int userid, int count = -1)
         {
             GroupForumThreadPostView v;
-            Console.WriteLine(GetView(userid));
+
             if ((v = GetView(userid)) != null)
             {
                 v.Count = count >= 0 ? count : Posts.Count;
                 using var connection = _database.Connection();
                 await connection.ExecuteAsync("UPDATE group_forums_thread_views SET count = @c WHERE thread_id = @p AND user_id = @u", new { c = v.Count, p = Id, u = userid });
-                Console.WriteLine("Updated Thread Views");
             }
             else
             {
@@ -95,7 +94,6 @@ namespace Plus.HabboHotel.Groups.Forums
                 });
 
                 Views.Add(v);
-                Console.WriteLine("Added to Thread Views");
             }
         }
 

@@ -16,29 +16,11 @@ namespace Plus.HabboHotel.Groups.Forums
         public GroupForumSettings Settings;
         public List<GroupForumThread> Threads;
 
-        public int Id
-        {
-            get
-            {
-                return GroupId;
-            }
-        }
+        public int Id => GroupId;
 
-        public string Name
-        {
-            get
-            {
-                return Group.Name;
-            }
-        }
+        public string Name => Group.Name;
 
-        public string Description
-        {
-            get
-            {
-                return Group.Description;
-            }
-        }
+        public string Description => Group.Description;
 
 
         public GroupForum(Group group, IDatabase database)
@@ -52,7 +34,7 @@ namespace Plus.HabboHotel.Groups.Forums
             LoadThreads();
         }
 
-        private async void LoadThreads()
+        private async Task LoadThreads()
         {
             using var connection = _database.Connection();
             var table = await connection.QueryAsync("SELECT * FROM group_forums_threads WHERE forum_id = @id ORDER BY id DESC", new { id = Id });

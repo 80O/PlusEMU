@@ -8,40 +8,40 @@ namespace Plus.Communication.Packets.Incoming.Groups;
 
 internal class ModerateThreadMessageEvent : IPacketEvent
 {
-    public async Task Parse(GameClient Session, ClientPacket Packet)
+    public async Task Parse(GameClient session, ClientPacket packet)
     {
-        var int1 = Packet.PopInt();
-        var int2 = Packet.PopInt();
-        var int3 = Packet.PopInt();
+        var forumId = packet.PopInt();
+        var threadId = packet.PopInt();
+        var deleteLevel = packet.PopInt();
 
-        GroupForum forum = PlusEnvironment.GetGame().GetGroupForumManager().GetForum(int1);
+        GroupForum forum = PlusEnvironment.GetGame().GetGroupForumManager().GetForum(forumId);
 
         if (forum is null)
         {
-            Session.SendWhisper(("Uh-oh. The requested forum cannot be found."));
+            return;
         }
 
-        if (forum?.Settings.GetReasonForNot(Session, forum.Settings.WhoCanModerate) != "")
+        if (forum.Settings.GetReasonForNot(session, forum.Settings.WhoCanModerate) != "")
         {
-            Session.SendWhisper(("You do not have the required permission to take action on this thread."));
+            session.SendWhisper(("You do not have the required permission to take action on this thread."));
         }
 
-        GroupForumThread thread = forum?.GetThread(int2);
+        GroupForumThread thread = forum.GetThread(threadId);
 
         if (thread is null)
         {
-            Session.SendWhisper(("Unable to find the requested thread."));
+            return;
         }
 
-        thread.DeletedLevel = int3 / 10;
-        thread.DeleterUserId = thread.DeletedLevel != 0 ? Session.GetHabbo().Id : 0;
+        thread.DeletedLevel = deleteLevel / 10;
+        thread.DeleterUserId = thread.DeletedLevel != 0 ? session.GetHabbo().Id : 0;
         await thread.Save();
 
-        Session.SendPacket(new ThreadsListDataComposer(forum, Session));
+        session.SendPacket(new ThreadsListDataComposer(forum, session));
 
         if (thread.DeletedLevel != 0)
-            Session.SendWhisper("Successfully removed thread from public view.");
+            session.SendWhisper("Successfully removed thread from public view.");
         else
-            Session.SendWhisper("Thread has been successfully restored to public view.");
+            session.SendWhisper("Thread has been successfully restored to public view.");
     }
 }

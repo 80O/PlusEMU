@@ -23,6 +23,7 @@ using Plus.HabboHotel.Quests;
 using Plus.HabboHotel.Users.Effects;
 using Dapper;
 using Plus.HabboHotel.Groups;
+using Plus.HabboHotel.Groups.Forums;
 
 namespace Plus.Communication.Packets.Incoming.Catalog;
 
@@ -36,6 +37,8 @@ public class PurchaseFromCatalogEvent : IPacketEvent
     private readonly IGameClientManager _gameClientManager;
     private readonly IItemDataManager _itemManager;
     private readonly IBadgeManager _badgeManager;
+    private readonly IGroupManager _groupManager;
+    private readonly IGroupForumManager _groupForumManager;
 
     public PurchaseFromCatalogEvent(ICatalogManager catalogManager,
         IDatabase database,
@@ -44,7 +47,9 @@ public class PurchaseFromCatalogEvent : IPacketEvent
         IQuestManager questManager,
         IGameClientManager gameClientManager,
         IItemDataManager itemManager,
-        IBadgeManager badgeManager)
+        IBadgeManager badgeManager,
+        IGroupManager groupManager,
+        IGroupForumManager groupForumManager)
     {
         _catalogManager = catalogManager;
         _database = database;
@@ -54,6 +59,8 @@ public class PurchaseFromCatalogEvent : IPacketEvent
         _gameClientManager = gameClientManager;
         _itemManager = itemManager;
         _badgeManager = badgeManager;
+        _groupManager = groupManager;
+        _groupForumManager = groupForumManager;
     }
     public async Task Parse(GameClient session, ClientPacket packet)
     {
@@ -102,13 +109,13 @@ public class PurchaseFromCatalogEvent : IPacketEvent
                     if (!int.TryParse(extraData, out int GroupId))
                         break;
 
-                    if (!PlusEnvironment.GetGame().GetGroupManager().TryGetGroup(GroupId, out Group group))
+                    if (!_groupManager.TryGetGroup(GroupId, out Group group))
                         break;
 
                     if (group.HasForum)
                         session.SendNotification("This group already has a forum, so you'll get just a new forum terminal for it!");
 
-                    PlusEnvironment.GetGame().GetGroupForumManager().CreateGroupForum(group);
+                    await _groupForumManager.CreateGroupForum(group);
                 }
                 catch (Exception e)
                 {

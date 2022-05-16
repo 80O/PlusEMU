@@ -8,27 +8,32 @@ namespace Plus.Communication.Packets.Incoming.Groups;
 
 internal class DeleteGroupPostEvent : IPacketEvent
 {
-    public async Task Parse(GameClient Session, ClientPacket Packet)
+    private readonly IGroupForumManager _groupForumManager;
+    public DeleteGroupPostEvent(IGroupForumManager groupForumManager)
     {
-        int forumId = Packet.PopInt();
-        int threadId = Packet.PopInt();
-        int postId = Packet.PopInt();
-        int deleteLevel = Packet.PopInt();
+        _groupForumManager = groupForumManager;
+    }
+    public async Task Parse(GameClient session, ClientPacket packet)
+    {
+        int forumId = packet.PopInt();
+        int threadId = packet.PopInt();
+        int postId = packet.PopInt();
+        int deleteLevel = packet.PopInt();
 
-        GroupForum Forum = PlusEnvironment.GetGame().GetGroupForumManager().GetForum(forumId);
-        GroupForumThread Thread = Forum.GetThread(threadId);
-        GroupForumThreadPost Post = Thread.GetPost(postId);
+        GroupForum forum = _groupForumManager.GetForum(forumId);
+        GroupForumThread thread = forum.GetThread(threadId);
+        GroupForumThreadPost post = thread.GetPost(postId);
 
-        Post.DeletedLevel = deleteLevel / 10;
-        Post.DeleterId = Session.GetHabbo().Id;
+        post.DeletedLevel = deleteLevel / 10;
+        post.DeleterId = session.GetHabbo().Id;
 
-        await Post.Save();
+        await post.Save();
 
-        Session.SendPacket(new PostUpdatedComposer(Session, Post));
+        session.SendPacket(new PostUpdatedComposer(session, post));
 
-        if (Post.DeletedLevel != 0)
-            Session.SendWhisper("Success! Forum message has been hidden from view");
+        if (post.DeletedLevel != 0)
+            session.SendWhisper("Success! Forum message has been hidden from view");
         else
-            Session.SendWhisper("Success! Forum message has been restored to public view");
+            session.SendWhisper("Success! Forum message has been restored to public view");
     }
 }
