@@ -10,6 +10,7 @@ using Plus.HabboHotel.Catalog;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Games;
 using Plus.HabboHotel.Groups;
+using Plus.HabboHotel.Groups.Forums;
 using Plus.HabboHotel.Items;
 using Plus.HabboHotel.Items.Televisions;
 using Plus.HabboHotel.LandingView;
@@ -41,6 +42,7 @@ public class Game : IGame
     private readonly IRoomManager _roomManager;
     private readonly IChatManager _chatManager;
     private readonly IGroupManager _groupManager;
+    private readonly IGroupForumManager _groupForumManager;
     private readonly IQuestManager _questManager;
     private readonly IAchievementManager _achievementManager;
 
@@ -70,6 +72,7 @@ public class Game : IGame
         IRoomManager roomManager,
         IChatManager chatManager,
         IGroupManager groupManager,
+        IGroupForumManager groupForumManager,
         IQuestManager questManager,
         IAchievementManager achievementManager,
         ITalentTrackManager talentTrackManager,
@@ -93,6 +96,7 @@ public class Game : IGame
         _roomManager = roomManager;
         _chatManager = chatManager;
         _groupManager = groupManager;
+        _groupForumManager = groupForumManager;
         _questManager = questManager;
         _achievementManager = achievementManager;
         _talentTrackManager = talentTrackManager;
@@ -180,6 +184,8 @@ public class Game : IGame
     public IQuestManager GetQuestManager() => _questManager;
 
     public IGroupManager GetGroupManager() => _groupManager;
+
+    public IGroupForumManager GetGroupForumManager() => _groupForumManager;
 
     public ILandingViewManager GetLandingManager() => _landingViewManager;
 

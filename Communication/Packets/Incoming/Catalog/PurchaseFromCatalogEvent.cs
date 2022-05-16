@@ -22,6 +22,7 @@ using Plus.HabboHotel.Items;
 using Plus.HabboHotel.Quests;
 using Plus.HabboHotel.Users.Effects;
 using Dapper;
+using Plus.HabboHotel.Groups;
 
 namespace Plus.Communication.Packets.Incoming.Catalog;
 
@@ -94,6 +95,26 @@ public class PurchaseFromCatalogEvent : IPacketEvent
         {
             case InteractionType.None:
                 extraData = "";
+                break;
+            case InteractionType.GuildForum:
+                try
+                {
+                    if (!int.TryParse(extraData, out int GroupId))
+                        break;
+
+                    if (!PlusEnvironment.GetGame().GetGroupManager().TryGetGroup(GroupId, out Group group))
+                        break;
+
+                    if (group.HasForum)
+                        session.SendNotification("This group already has a forum, so you'll get just a new forum terminal for it!");
+
+                    PlusEnvironment.GetGame().GetGroupForumManager().CreateGroupForum(group);
+                }
+                catch (Exception e)
+                {
+                    ExceptionLogger.LogException(e);
+                    return;
+                }
                 break;
             case InteractionType.GuildItem:
             case InteractionType.GuildGate:

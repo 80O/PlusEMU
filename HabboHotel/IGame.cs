@@ -8,6 +8,7 @@ using Plus.HabboHotel.Catalog;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Games;
 using Plus.HabboHotel.Groups;
+using Plus.HabboHotel.Groups.Forums;
 using Plus.HabboHotel.Items;
 using Plus.HabboHotel.Items.Televisions;
 using Plus.HabboHotel.LandingView;
@@ -40,6 +41,7 @@ public interface IGame
     ISubscriptionManager GetSubscriptionManager();
     IQuestManager GetQuestManager();
     IGroupManager GetGroupManager();
+    IGroupForumManager GetGroupForumManager();
     ILandingViewManager GetLandingManager();
     ITelevisionManager GetTelevisionManager();
     IChatManager GetChatManager();

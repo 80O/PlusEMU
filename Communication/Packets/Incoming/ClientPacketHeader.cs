@@ -80,6 +80,7 @@ public static class ClientPacketHeader
     public const int ModerationBanEvent = 2473; //2595
     public const int SubmitNewTicketEvent = 1046; //963
     public const int CloseIssueDefaultActionEvent = 1921;
+    public const int CallForHelpFromForumMessageMessageEvent = 3880;
 
     // Inventory
     public const int GetCreditsInfoEvent = 1051; //3697
@@ -116,6 +117,14 @@ public static class ClientPacketHeader
     // Group Forums
     public const int PostGroupContentEvent = 1499; //477
     public const int GetForumStatsEvent = 1126; //872
+    public const int GetForumsListEvent = 3802;
+    public const int GetThreadsListDataEvent = 2568;
+    public const int GetThreadDataEvent = 2324;
+    public const int UpdateForumReadMarkerEvent = 1659;
+    public const int UpdateThreadEvent = 2980;
+    public const int DeleteGroupPostEvent = 1991;
+    public const int ModerateThreadMessageEvent = 50;
+    public const int UpdateForumSettingsMessageEvent = 3295;
 
     // Sound
 
@@ -163,7 +172,6 @@ public static class ClientPacketHeader
     public const int MakeOfferEvent = 2308; //255
     public const int KickUserEvent = 1336; //3929
     public const int GetRoomSettingsEvent = 581; //1014
-    public const int GetThreadsListDataEvent = 2568; //1606
     public const int GetForumUserProfileEvent = 3515; //2639
     public const int SaveWiredEffectConfigEvent = 2234; //3431
     public const int GetRoomEntryDataEvent = 1747; //2768
@@ -252,7 +260,6 @@ public static class ClientPacketHeader
     public const int GetRentableSpaceEvent = 2035; //793
     public const int OpenBotActionEvent = 3236; //2544
     public const int OpenCalendarBoxEvent = 1229; //724
-    public const int DeleteGroupPostEvent = 1991; //317
     public const int CheckValidNameEvent = 2507; //8
     public const int UpdateGroupBadgeEvent = 1589; //2959
     public const int PlaceObjectEvent = 1809; //579
@@ -262,7 +269,6 @@ public static class ClientPacketHeader
     public const int NavigatorSearchEvent = 618; //2722
     public const int GetPetInformationEvent = 2986; //2853
     public const int GetGuestRoomEvent = 2247; //1164
-    public const int UpdateThreadEvent = 2980; //1522
     public const int AcceptGroupMembershipEvent = 2996; //2259
     public const int GetMarketplaceConfigurationEvent = 2811; //1604
     public const int Game2GetWeeklyLeaderboardEvent = 285; //2106
@@ -279,7 +285,6 @@ public static class ClientPacketHeader
     public const int PickTicketEvent = 1807; //3973
     public const int GetGiftWrappingConfigurationEvent = 1570; //1928
     public const int GetCraftingRecipesAvailableEvent = 1869; //1653
-    public const int GetThreadDataEvent = 2324; //1559
     public const int ManageGroupEvent = 737; //2547
     public const int PlacePetEvent = 1495; //223
     public const int EditRoomPromotionEvent = 816; //3707
