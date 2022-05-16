@@ -24,11 +24,11 @@ internal class UpdateThreadEvent : IPacketEvent
             session.SendWhisper(("Oops! You are not admin on this Thread!"));
         }
 
-        bool isPining = thread.pinned != pinned,
-            isLocking = thread.locked != locked;
+        bool isPining = thread.Pinned != pinned,
+            isLocking = thread.Locked != locked;
 
-        thread.pinned = pinned;
-        thread.locked = locked;
+        thread.Pinned = pinned;
+        thread.Locked = locked;
         
         await thread.Save();
 
