@@ -71,38 +71,42 @@ namespace Plus.HabboHotel.Groups.Forums
 
         public async void AddView(int userid, int count = -1)
         {
-            GroupForumThreadPostView v;
+            GroupForumThreadPostView view;
 
-            if ((v = GetView(userid)) != null)
+            if ((view = GetView(userid)) != null)
             {
-                v.Count = count >= 0 ? count : Posts.Count;
+                view.Count = count >= 0 ? count : Posts.Count;
                 using var connection = _database.Connection();
-                await connection.ExecuteAsync("UPDATE group_forums_thread_views SET count = @c WHERE thread_id = @p AND user_id = @u", new { c = v.Count, p = Id, u = userid });
+                await connection.ExecuteAsync("UPDATE group_forums_thread_views SET count = @c WHERE thread_id = @p AND user_id = @u", new { c = view.Count, p = Id, u = userid });
             }
             else
             {
-                v = new GroupForumThreadPostView(0, userid, Posts.Count);
+                view = new GroupForumThreadPostView(0, userid, Posts.Count);
 
                 using var connection = _database.Connection();
-                var sqlStatement = @"INSERT INTO group_forums_thread_views (thread_id, user_id, count) VALUES (@t, @u, @c); SELECT LAST_INSERT_ID()";
+                var sqlStatement = @"INSERT INTO group_forums_thread_views (thread_id, user_id, count) VALUES (@threadId, @userId, @count); SELECT LAST_INSERT_ID()";
 
-                v.Id = await connection.ExecuteScalarAsync<int>(sqlStatement, new
+                view.Id = await connection.ExecuteScalarAsync<int>(sqlStatement, new
                 {
-                    t = Id,
-                    u = userid,
-                    c = v.Count
+                    threadId = Id,
+                    userId = userid,
+                    count = view.Count
                 });
 
-                Views.Add(v);
+                Views.Add(view);
             }
         }
 
-        public GroupForumThreadPostView GetView(int userid) => Views.FirstOrDefault(c => c.UserId == userid);
+        public GroupForumThreadPostView GetView(int userid) => Views.FirstOrDefault(count => count.UserId == userid);
 
         public int GetUnreadMessages(int userid)
         {
-            GroupForumThreadPostView v;
-            return (v = GetView(userid)) != null ? Posts.Count - v.Count : Posts.Count;
+            GroupForumThreadPostView view;
+            foreach (var item in Views)
+            {
+                item.UserId = userid;
+            }
+            return (view = GetView(userid)) != null ? Posts.Count - view.Count : Posts.Count;
         }
 
         public List<GroupForumThreadPost> GetUserPosts(int userid) => Posts.Where(c => c.UserId == userid).ToList();

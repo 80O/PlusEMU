@@ -39,6 +39,7 @@ internal class GetThreadDataEvent : IPacketEvent
 
 
         session.SendPacket(new ThreadDataComposer(Thread, startIndex, length));
+        Thread.AddView(session.GetHabbo().Id, 1);
         return Task.CompletedTask;
     }
 }
