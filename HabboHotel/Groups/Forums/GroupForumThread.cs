@@ -133,7 +133,6 @@ namespace Plus.HabboHotel.Groups.Forums
             });
            
             Posts.Add(post);
-            AddView(userid, 1);
             return post;
         }
 
