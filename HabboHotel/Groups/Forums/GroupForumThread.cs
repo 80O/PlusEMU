@@ -72,23 +72,25 @@ namespace Plus.HabboHotel.Groups.Forums
         public async void AddView(int userid, int count = -1)
         {
             GroupForumThreadPostView view;
+            var now = (int)PlusEnvironment.GetUnixTimestamp();
 
             if ((view = GetView(userid)) != null)
             {
                 view.Count = count >= 0 ? count : Posts.Count;
                 using var connection = _database.Connection();
-                await connection.ExecuteAsync("UPDATE group_forums_thread_views SET count = @c WHERE thread_id = @p AND user_id = @u", new { c = view.Count, p = Id, u = userid });
+                await connection.ExecuteAsync("UPDATE group_forums_thread_views SET count = @c, timestamp = @timestamp WHERE thread_id = @p AND user_id = @u", new { c = view.Count, timestamp = now, p = Id, u = userid });
             }
             else
             {
                 view = new GroupForumThreadPostView(0, userid, Posts.Count);
 
                 using var connection = _database.Connection();
-                var sqlStatement = @"INSERT INTO group_forums_thread_views (thread_id, user_id, count) VALUES (@threadId, @userId, @count); SELECT LAST_INSERT_ID()";
+                var sqlStatement = @"INSERT INTO group_forums_thread_views (thread_id, timestamp, user_id, count) VALUES (@threadId, @timestamp, @userId, @count); SELECT LAST_INSERT_ID()";
 
                 view.Id = await connection.ExecuteScalarAsync<int>(sqlStatement, new
                 {
                     threadId = Id,
+                    timestamp = now,
                     userId = userid,
                     count = view.Count
                 });
