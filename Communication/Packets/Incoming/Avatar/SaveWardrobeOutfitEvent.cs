@@ -3,8 +3,6 @@ using Plus.Core.FigureData;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Users.Wardrobe;
 
-using Dapper;
-
 namespace Plus.Communication.Packets.Incoming.Avatar;
 
 internal class SaveWardrobeOutfitEvent : IPacketEvent
