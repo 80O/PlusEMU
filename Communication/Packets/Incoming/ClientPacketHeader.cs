@@ -293,7 +293,7 @@ public static class ClientPacketHeader
     public const int MoveWallItemEvent = 168; //609
     public const int ClientVariablesEvent = 1053; //1600
     // TODO: Add support for Nitro
-    public const int PingEvent = 509; //2584
+    public const int PingEvent = 2596; //2584
     public const int DeleteGroupEvent = 1134; //747
     public const int UpdateGroupSettingsEvent = 3435; //3180
     public const int GetRecyclerRewardsEvent = 398; //3258
