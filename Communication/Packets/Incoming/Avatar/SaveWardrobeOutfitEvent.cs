@@ -24,9 +24,7 @@ internal class SaveWardrobeOutfitEvent : IPacketEvent
         var look = packet.PopString();
         var gender = packet.PopString();
         look = _figureDataManager.ProcessFigure(look, gender, session.GetHabbo().GetClothing().GetClothingParts, true);
-
-        _userWardrobeManager.SaveOutfit(session.GetHabbo().Id, slotId, gender, look);
-
+        Task.Run(async () => await _userWardrobeManager.SaveOutfit(session.GetHabbo().Id, slotId, gender, look));
         return Task.CompletedTask;
     }
 }
