@@ -17,7 +17,7 @@ public static class ServerPacketHeader
     public const int WardrobeMessageComposer = 3315; //2760
 
     // Catalog
-    public const int CatalogIndexMessageComposer = 2347; //2018
+    public const int CatalogIndexMessageComposer = 1032; //2018
     public const int CatalogItemDiscountMessageComposer = 2347; //3322
     public const int PurchaseOkMessageComposer = 869; //2843
     public const int CatalogOfferMessageComposer = 3388; //3848
