@@ -18,12 +18,12 @@ namespace Plus.HabboHotel.Users.Wardrobe
         {
             using var connection = _database.Connection();
             await connection.ExecuteAsync(
-                "REPLACE INTO `user_wardrobe` SET `look` = @look, `gender` = @gender WHERE `user_id` = @userID AND `slot_id` = @slotID LIMIT 1",
+                "INSERT INTO `user_wardrobe` (`user_id`, `slot_id`, `gender`, `look`) VALUES (@userID, @slotID, @gender, @look) ON DUPLICATE KEY UPDATE `look`=VALUES(`look`)",
                     new {
-                        look = look,
-                        gender = gender.ToUpper(),
                         userID = userID,
-                        lotID = slotID
+                        slotID = slotID,
+                        gender = gender.ToUpper(),
+                        look = look,
                     }
             );
 
@@ -38,7 +38,7 @@ namespace Plus.HabboHotel.Users.Wardrobe
                    {
                        gender = gender.ToUpper(),
                        userID = userID,
-                       lotID = slotID
+                       slotID = slotID
                    }
            );
         }
