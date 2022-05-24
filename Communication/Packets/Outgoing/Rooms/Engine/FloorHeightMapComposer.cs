@@ -5,7 +5,7 @@ internal class FloorHeightMapComposer : ServerPacket
     public FloorHeightMapComposer(string map, int wallHeight)
         : base(ServerPacketHeader.FloorHeightMapMessageComposer)
     {
-        WriteBoolean(false);
+        WriteBoolean(true);
         WriteInteger(wallHeight);
         WriteString(map);
     }

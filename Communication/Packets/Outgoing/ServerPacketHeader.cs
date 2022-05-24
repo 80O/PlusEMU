@@ -49,24 +49,24 @@ public static class ServerPacketHeader
 
     // Room Engine
     public const int UsersMessageComposer = 374; //2422
-    public const int FurnitureAliasesMessageComposer = 1723; //81
-    public const int ObjectAddMessageComposer = 1534; //505
-    public const int ObjectsMessageComposer = 1778; //3521
-    public const int ObjectUpdateMessageComposer = 3776; //273
-    public const int ObjectRemoveMessageComposer = 2703; //85
-    public const int SlideObjectBundleMessageComposer = 3207; //11437
-    public const int ItemsMessageComposer = 2187; //2335
-    public const int ItemAddMessageComposer = 2187; //1841
-    public const int ItemUpdateMessageComposer = 2009; //2933
-    public const int ItemRemoveMessageComposer = 3208; //762
+    public const int FurnitureAliasesMessageComposer = 2856; //81
+    public const int ObjectAddMessageComposer = 3399; //505
+    public const int ObjectsMessageComposer = 646; //3521
+    public const int ObjectUpdateMessageComposer = 2286; //273
+    public const int ObjectRemoveMessageComposer = 2411; //85
+    public const int SlideObjectBundleMessageComposer = 3639; //11437
+    public const int ItemsMessageComposer = 2779; //2335
+    public const int ItemAddMessageComposer = 2448; //1841
+    public const int ItemUpdateMessageComposer = 2034; //2933
+    public const int ItemRemoveMessageComposer = 2514; //762
 
     // Room Session
-    public const int RoomForwardMessageComposer = 160; //1963
-    public const int RoomReadyMessageComposer = 2031; //2029
-    public const int OpenConnectionMessageComposer = 758; //1329
-    public const int CloseConnectionMessageComposer = 122; //1898
-    public const int FlatAccessibleMessageComposer = 3783; //1179
-    public const int CantConnectMessageComposer = 899; //1864
+    public const int RoomForwardMessageComposer = 1954; //1963
+    public const int RoomReadyMessageComposer = 3221; //2029
+    public const int OpenConnectionMessageComposer = 1856; //1329
+    public const int CloseConnectionMessageComposer = 168; //1898
+    public const int FlatAccessibleMessageComposer = 499; //1179
+    public const int CantConnectMessageComposer = 2039; //1864
 
     // Room Permissions
     public const int YouAreControllerMessageComposer = 780; //1425
@@ -184,7 +184,7 @@ public static class ServerPacketHeader
 
     public const int FindFriendsProcessResultMessageComposer = 1210; //3763
     public const int UserChangeMessageComposer = 3920; //32
-    public const int FloorHeightMapMessageComposer = 1301; //1112
+    public const int FloorHeightMapMessageComposer = 607; //1112
     public const int RoomInfoUpdatedMessageComposer = 3297; //3833
     public const int MessengerErrorMessageComposer = 892; //915
     public const int MarketplaceCanMakeOfferResultMessageComposer = 54; //1874
@@ -251,7 +251,7 @@ public static class ServerPacketHeader
     public const int FlatAccessDeniedMessageComposer = 878; //1582
     public const int LatencyResponseMessageComposer = 10; //3014
     public const int HabboUserBadgesMessageComposer = 1087; //1123
-    public const int HeightMapMessageComposer = 1301; //207
+    public const int HeightMapMessageComposer = 1268; //207
 
     public const int CanCreateRoomMessageComposer = 378; //1237
     public const int InstantMessageErrorMessageComposer = 3359; //2964
