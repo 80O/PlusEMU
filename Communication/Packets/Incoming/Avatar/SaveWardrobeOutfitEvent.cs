@@ -3,8 +3,6 @@ using Plus.Core.FigureData;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Users.Wardrobe;
 
-using Dapper;
-
 namespace Plus.Communication.Packets.Incoming.Avatar;
 
 internal class SaveWardrobeOutfitEvent : IPacketEvent
@@ -18,13 +16,12 @@ internal class SaveWardrobeOutfitEvent : IPacketEvent
         _userWardrobeManager = userWardrobeManager;
     }
 
-    public Task Parse(GameClient session, ClientPacket packet)
+    public async Task Parse(GameClient session, ClientPacket packet)
     {
         var slotId = packet.PopInt();
         var look = packet.PopString();
         var gender = packet.PopString();
         look = _figureDataManager.ProcessFigure(look, gender, session.GetHabbo().GetClothing().GetClothingParts, true);
-        Task.Run(async () => await _userWardrobeManager.SaveOutfit(session.GetHabbo().Id, slotId, gender, look));
-        return Task.CompletedTask;
+        await _userWardrobeManager.SaveOutfit(session.GetHabbo().Id, slotId, gender, look);
     }
 }
