@@ -34,7 +34,7 @@ public static class ClientPacketHeader
     // TODO: Add Nitro Support
     public const int ActionEvent = 3268; //3639
     public const int ApplySignEvent = 1975; //2966
-    public const int DanceEvent = 2080; //645
+    public const int DanceEvent = 2080; //645 
     public const int SitEvent = 2235; //1565
     public const int ChangeMottoEvent = 2228; //3515
     public const int LookToEvent = 3301; //3744
@@ -292,7 +292,6 @@ public static class ClientPacketHeader
     public const int SaveFloorPlanModelEvent = 875; //1287
     public const int MoveWallItemEvent = 168; //609
     public const int ClientVariablesEvent = 1053; //1600
-    // TODO: Add support for Nitro
     public const int PingEvent = 2596; //2584
     public const int DeleteGroupEvent = 1134; //747
     public const int UpdateGroupSettingsEvent = 3435; //3180
