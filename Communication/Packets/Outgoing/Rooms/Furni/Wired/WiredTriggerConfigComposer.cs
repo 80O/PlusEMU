@@ -7,7 +7,7 @@ namespace Plus.Communication.Packets.Outgoing.Rooms.Furni.Wired;
 internal class WiredTriggeRconfigComposer : ServerPacket
 {
     public WiredTriggeRconfigComposer(IWiredItem box, List<int> blockedItems)
-        : base(ServerPacketHeader.WiredTriggeRconfigMessageComposer)
+        : base(ServerPacketHeader.WiredTriggerConfirmMessageComposer)
     {
         WriteBoolean(false);
         WriteInteger(5);
