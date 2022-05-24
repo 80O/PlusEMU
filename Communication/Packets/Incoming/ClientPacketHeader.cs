@@ -94,7 +94,7 @@ public static class ClientPacketHeader
     public const int InitTradeEvent = 1481; //3313
     public const int TradingCancelConfirmEvent = 2341; //2264
     public const int TradingModifyEvent = 1444; //1153
-    public const int TradingOfferItemEvent = 3107; //114
+    public const int TradingOfferItemEvent = 1263; //114
     public const int TradingCancelEvent = 2551; //2967
     public const int TradingConfirmCancelEvent = 2341; //2399
     public const int TradingOfferItemsEvent = 1263; //2996
@@ -107,7 +107,7 @@ public static class ClientPacketHeader
     // Groups
     public const int GetBadgeEditorPartsEvent = 813; //1670
     public const int GetGroupCreationWindowEvent = 798; //468
-    public const int GetGroupFurniSettingsEvent = 2651; //41
+    public const int GetGroupFurniSettingsEvent = 367; //41
     public const int DeclineGroupMembershipEvent = 1894; //403
     public const int JoinGroupEvent = 998; //2615
     public const int UpdateGroupColoursEvent = 1764; //1443
@@ -165,7 +165,7 @@ public static class ClientPacketHeader
     public const int SetUserFocusPreferenceEvent = 1461; //526
     public const int SubmitBullyReportEvent = 3060; //1803
     public const int RemoveRightsEvent = 2064; //40
-    public const int MakeOfferEvent = 3447; //255
+    public const int MakeOfferEvent = 848; //255
     public const int KickUserEvent = 1320; //3929
     public const int GetRoomSettingsEvent = 3129; //1014
     public const int GetThreadsListDataEvent = 436; //1606
@@ -188,7 +188,7 @@ public static class ClientPacketHeader
     public const int GetSanctionStatusEvent = 2746; //2883
     public const int CreditFurniRedeemEvent = 3115; //1676
     public const int DisconnectEvent = 2445; //2391
-    public const int PickupObjectEvent = 3456; //636
+    public const int PickupObjectEvent = 2445; //636
     public const int FindRandomFriendingRoomEvent = 1703; //1874
     public const int UseSellableClothingEvent = 3374; //818
     public const int MoveObjectEvent = 248; //1781
@@ -293,7 +293,7 @@ public static class ClientPacketHeader
     public const int MoveWallItemEvent = 168; //609
     public const int ClientVariablesEvent = 1053; //1600
     // TODO: Add support for Nitro
-    public const int PingEvent = 2596; //2584
+    public const int PingEvent = 509; //2584
     public const int DeleteGroupEvent = 1134; //747
     public const int UpdateGroupSettingsEvent = 3435; //3180
     public const int GetRecyclerRewardsEvent = 398; //3258
