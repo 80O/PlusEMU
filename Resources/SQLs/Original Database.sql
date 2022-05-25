@@ -25070,3 +25070,7 @@ ALTER TABLE user_stats RENAME TO user_statistics;
 
 -- 6_AddIsAmbassadorUsersColums
 ALTER TABLE `users` ADD `is_ambassador` BOOLEAN NOT NULL DEFAULT FALSE AFTER `allow_mimic`;
+
+-- 7_UniqueUserWardrobeConstraint
+ALTER TABLE `user_wardrobe`
+ADD UNIQUE(`user_id`, `slot_id`)
