@@ -1,4 +1,5 @@
 ﻿using System;
+using Plus.HabboHotel.Catalog.Item;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -28,6 +29,7 @@ namespace Plus.Communication.Packets.Incoming.Catalog;
 public class PurchaseFromCatalogEvent : IPacketEvent
 {
     private readonly ICatalogManager _catalogManager;
+    private readonly ICatalogItemManager _catalogItemManager;
     private readonly IDatabase _database;
     private readonly ISettingsManager _settingsManager;
     private readonly IAchievementManager _achievementManager;
@@ -37,6 +39,7 @@ public class PurchaseFromCatalogEvent : IPacketEvent
     private readonly IBadgeManager _badgeManager;
 
     public PurchaseFromCatalogEvent(ICatalogManager catalogManager,
+        ICatalogItemManager catalogItemManager,
         IDatabase database,
         ISettingsManager settingsManager,
         IAchievementManager achievementManager,
@@ -46,6 +49,7 @@ public class PurchaseFromCatalogEvent : IPacketEvent
         IBadgeManager badgeManager)
     {
         _catalogManager = catalogManager;
+        _catalogItemManager = catalogItemManager;
         _database = database;
         _settingsManager = settingsManager;
         _achievementManager = achievementManager;
@@ -177,8 +181,8 @@ public class PurchaseFromCatalogEvent : IPacketEvent
             }
             item.LimitedEditionSells++;
             using var connection = _database.Connection();
-            connection.Execute("UPDATE `catalog_items` SET `limited_sells` = @limitedSells WHERE `id` = @itemId LIMIT 1",
-                new { limitedSells = item.LimitedEditionSells, itemId = item.Id });
+
+            await _catalogItemManager.UpdateItem(item.Id, new UpdateCatalogItemDTO(limitedEditionSells: item.LimitedEditionSells, limitedEditionStack: item.LimitedEditionStack));
 
             limitedEditionSells = item.LimitedEditionSells;
             limitedEditionStack = item.LimitedEditionStack;
