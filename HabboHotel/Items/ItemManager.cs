@@ -25,5 +25,14 @@ namespace Plus.HabboHotel.Items
 			return Convert.ToInt32(InsertQuery);
 		}
 
+		public async Task DeleteItem(int itemID)
+        {
+			using var connection = _database.Connection();
+			await connection.ExecuteAsync(
+				"DELETE FROM items WHERE `id` = @itemID",
+				new { itemID = itemID }
+			);
+		}
+
 	}
 }

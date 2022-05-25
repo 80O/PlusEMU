@@ -191,7 +191,7 @@ public class PurchaseFromCatalogAsGiftEvent : IPacketEvent
                 new {itemId = newItemId, baseId = item.Data.Id, extra_data = string.IsNullOrEmpty(itemExtraData) ? "" : itemExtraData });
 
             //Here we're clearing up a record, this is dumb, but okay.
-            connection.Execute("DELETE FROM `items` WHERE `id` = @deleteId LIMIT 1", new { deleteId = newItemId});
+            await _itemManager.DeleteItem(newItemId);
         }
         var giveItem = ItemFactory.CreateGiftItem(presentData, habbo, extra_data, extra_data, newItemId);
         if (giveItem != null)

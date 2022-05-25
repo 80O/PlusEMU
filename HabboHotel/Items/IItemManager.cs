@@ -5,5 +5,6 @@ namespace Plus.HabboHotel.Items
 	public interface IItemManager
 	{
 		Task<int> CreateItem(int userID, int baseItemID, string extraData);
+		Task DeleteItem(int itemID);
 	}
 }
