@@ -30,6 +30,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="HabboHotel\Users\Present\" />
+	</ItemGroup>
+	<ItemGroup>
 	  <None Update="Config\config.ini">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
@@ -39,5 +42,8 @@
 	  <None Update="Config\nlog.config">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="HabboHotel\Users\Present\" />
 	</ItemGroup>
 </Project>
