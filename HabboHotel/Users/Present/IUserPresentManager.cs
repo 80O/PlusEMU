@@ -4,7 +4,7 @@ namespace Plus.HabboHotel.Users.Present
 {
 	public interface IUserPresentManager
 	{
-		Task GivePresent(int itemID, int baseID, string itemExtraData);
+		Task<int> CreatePresent(int itemID, int baseID, string itemExtraData);
 	}
 }
 
