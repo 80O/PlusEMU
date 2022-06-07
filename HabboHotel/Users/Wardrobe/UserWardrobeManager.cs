@@ -29,14 +29,13 @@ namespace Plus.HabboHotel.Users.Wardrobe
 
         }
 
-		public async Task RemoveOutfit(int userID, int slotID, string gender)
+		public async Task RemoveOutfit(int userID, int slotID)
         {
             using var connection = _database.Connection();
             await connection.ExecuteAsync(
-               "DELETE FROM `user_wardrobe` WHERE `user_id` = @userID AND `slot_id` = @slotID AND `gender` = @gender",
+               "DELETE FROM `user_wardrobe` WHERE `user_id` = @userID AND `slot_id` = @slotID",
                    new
                    {
-                       gender = gender.ToUpper(),
                        userID = userID,
                        slotID = slotID
                    }
