@@ -72,7 +72,9 @@ public class ChatEvent : IPacketEvent
             session.SendWhisper("Oops, you're currently muted.");
             return Task.CompletedTask;
         }
+
         user.LastBubble = session.GetHabbo().CustomBubbleId == 0 ? colour : session.GetHabbo().CustomBubbleId;
+
         if (!session.GetHabbo().GetPermissions().HasRight("mod_tool"))
         {
             if (user.IncrementAndCheckFlood(out var muteTime))

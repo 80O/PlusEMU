@@ -25043,14 +25043,14 @@ CREATE TABLE `wordfilter` (
 -------------------------------
 
 -- 1_UpdateRoomEntryTable
-ALTER TABLE `user_roomvisits` 
+ALTER TABLE `user_roomvisits`
 	DROP COLUMN `minute`,
 	DROP COLUMN `hour`;
 
 
 -- 2_AddMissingRoomColumns
-ALTER TABLE `rooms` 
-	ADD `sale_price` INT(5) NOT NULL DEFAULT '0' AFTER `spush_enabled`, 
+ALTER TABLE `rooms`
+	ADD `sale_price` INT(5) NOT NULL DEFAULT '0' AFTER `spush_enabled`,
 	ADD `lay_enabled` ENUM('0','1') NOT NULL DEFAULT '0' AFTER `sale_price`;
 
 -- 3_RefactorMessenger
@@ -25070,6 +25070,20 @@ ALTER TABLE user_stats RENAME TO user_statistics;
 
 -- 6_AddIsAmbassadorUsersColums
 ALTER TABLE `users` ADD `is_ambassador` BOOLEAN NOT NULL DEFAULT FALSE AFTER `allow_mimic`;
+
+-- 7_AddAmbassadorsLogs
+CREATE TABLE `ambassador_logs` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11),
+  `target` varchar(50) NOT NULL DEFAULT '',
+  `sanctions_type` text NOT NULL,
+  `timestamp` double NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- 8_AddBubbleIDToUsersTable
+ALTER TABLE `users` ADD COLUMN `bubble_id` TINYINT NOT_NULL DEFAULT '0' AFTER `is_ambassador`;
 
 -- 7_UniqueUserWardrobeConstraint
 ALTER TABLE `user_wardrobe`

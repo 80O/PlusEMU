@@ -337,7 +337,7 @@ public class Habbo
                               "', `respectGiven` = '" + _habboStats.RespectGiven + "', `giftsGiven` = '" + _habboStats.GiftsGiven + "', `giftsReceived` = '" + _habboStats.GiftsReceived +
                               "', `dailyRespectPoints` = '" + _habboStats.DailyRespectPoints + "', `dailyPetRespectPoints` = '" + _habboStats.DailyPetRespectPoints + "', `AchievementScore` = '" +
                               _habboStats.AchievementPoints + "', `quest_id` = '" + _habboStats.QuestId + "', `quest_progress` = '" + _habboStats.QuestProgress + "', `groupid` = '" +
-                              _habboStats.FavouriteGroupId + "',`forum_posts` = '" + _habboStats.ForumPosts + "' WHERE `id` = '" + Id + "' LIMIT 1;");
+                              _habboStats.FavouriteGroupId + "',`forum_posts` = '" + _habboStats.ForumPosts + "', `bubble_id` = '" + CustomBubbleId + "' WHERE `id` = '" + Id + "' LIMIT 1;");
             if (GetPermissions().HasRight("mod_tickets"))
                 dbClient.RunQuery("UPDATE `moderation_tickets` SET `status` = 'open', `moderator_id` = '0' WHERE `status` ='picked' AND `moderator_id` = '" + Id + "'");
         }
@@ -428,6 +428,8 @@ public class Habbo
         SaveKey("username", username);
         SaveKey("last_change", LastNameChange.ToString());
     }
+
+    public void SaveChatBubble(string customBubbleID) => SaveKey("bubble_id", customBubbleID);
 
     public void SaveKey(string key, string value)
     {

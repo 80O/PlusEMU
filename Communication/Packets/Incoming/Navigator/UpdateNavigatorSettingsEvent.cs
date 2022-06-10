@@ -1,21 +1,23 @@
 ﻿using System.Threading.Tasks;
 using Plus.Communication.Packets.Outgoing.Navigator;
 using Plus.HabboHotel.GameClients;
-using Plus.HabboHotel.Rooms;
+using Plus.HabboHotel.Navigator;
 
 namespace Plus.Communication.Packets.Incoming.Navigator;
 
 internal class UpdateNavigatorSettingsEvent : IPacketEvent
 {
-    public Task Parse(GameClient session, ClientPacket packet)
+    private readonly INavigatorManager _navigatorManager;
+
+    public UpdateNavigatorSettingsEvent(NavigatorManager navigatorManager)
+    {
+        _navigatorManager = navigatorManager;
+    }
+
+    public async Task Parse(GameClient session, ClientPacket packet)
     {
         var roomId = packet.PopInt();
-        if (roomId == 0)
-            return Task.CompletedTask;
-        if (!RoomFactory.TryGetData(roomId, out var _))
-            return Task.CompletedTask;
-        session.GetHabbo().HomeRoom = roomId;
+        await _navigatorManager.SaveHomeRoom(session.GetHabbo(), roomId);
         session.SendPacket(new NavigatorSettingsComposer(roomId));
-        return Task.CompletedTask;
     }
 }

@@ -12,6 +12,7 @@ public static class ClientPacketHeader
     // Avatar
     public const int GetWardrobeEvent = 3901; //765
     public const int SaveWardrobeOutfitEvent = 1777; //55
+    public const int SetChatStylePreferenceEvent = 1656;
 
     // Catalog
     public const int GetCatalogIndexEvent = 3226; //1294

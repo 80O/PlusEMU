@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Plus.HabboHotel.Users;
 using Plus.HabboHotel.Users.Navigator.SavedSearches;
 
 namespace Plus.HabboHotel.Navigator;
@@ -18,4 +19,5 @@ public interface INavigatorManager
     bool TryGetFeaturedRoom(int roomId, out FeaturedRoom publicRoom);
     ICollection<FeaturedRoom> GetFeaturedRooms();
     Task<Dictionary<int, SavedSearch>> LoadUserNavigatorPreferences(int habboId);
+    Task SaveHomeRoom(Habbo habbo, int roomId);
 }
