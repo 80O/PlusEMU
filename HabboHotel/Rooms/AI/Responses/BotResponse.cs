@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Plus.HabboHotel.Catalog.Utilities;
+﻿using Plus.HabboHotel.Catalog.Utilities;
 
 namespace Plus.HabboHotel.Rooms.AI.Responses;
 

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Plus.HabboHotel.Users.Ignores
+﻿namespace Plus.HabboHotel.Users.Ignores
 {
     public class IgnoreStatusUpdatedEventArgs : EventArgs
     {

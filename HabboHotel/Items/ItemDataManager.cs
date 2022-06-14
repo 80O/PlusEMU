@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using NLog;
 using System.Data;
-using NLog;
 
 namespace Plus.HabboHotel.Items;
 
@@ -35,11 +33,11 @@ public class ItemDataManager : IItemDataManager
                         var height = Convert.ToDouble(row["stack_height"]);
                         var allowStack = row["can_stack"].ToString() == "1";
                         var allowWalk = row["is_walkable"].ToString() == "1";
-                        var allowSit =row["can_sit"].ToString() == "1";
+                        var allowSit = row["can_sit"].ToString() == "1";
                         var allowRecycle = row["allow_recycle"].ToString() == "1";
                         var allowTrade = row["allow_trade"].ToString() == "1";
                         var allowMarketplace = row["allow_marketplace_sell"].ToString() == "1";
-                        var allowGift = row["allow_gift"].ToString()    == "1";
+                        var allowGift = row["allow_gift"].ToString() == "1";
                         var allowInventoryStack = row["allow_inventory_stack"].ToString() == "1";
                         var interactionType = InteractionTypes.GetTypeFromString(row["interaction_type"].ToString());
                         var behaviourData = Convert.ToInt32(row["behaviour_data"]);

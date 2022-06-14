@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Linq;
-using Plus.Communication.Packets.Outgoing.Rooms.Engine;
+﻿using Plus.Communication.Packets.Outgoing.Rooms.Engine;
 using Plus.HabboHotel.Items;
 using Plus.HabboHotel.Items.Wired;
 using Plus.HabboHotel.Rooms.Games.Teams;
 using Plus.HabboHotel.Rooms.PathFinding;
+using System.Collections.Concurrent;
 
 namespace Plus.HabboHotel.Rooms.Games.Football;
 
@@ -186,25 +184,25 @@ public class Soccer
         switch (item.Team)
         {
             case Team.Blue:
-            {
-                _gates[0] = null;
-                break;
-            }
+                {
+                    _gates[0] = null;
+                    break;
+                }
             case Team.Red:
-            {
-                _gates[1] = null;
-                break;
-            }
+                {
+                    _gates[1] = null;
+                    break;
+                }
             case Team.Green:
-            {
-                _gates[2] = null;
-                break;
-            }
+                {
+                    _gates[2] = null;
+                    break;
+                }
             case Team.Yellow:
-            {
-                _gates[3] = null;
-                break;
-            }
+                {
+                    _gates[3] = null;
+                    break;
+                }
         }
     }
 
@@ -214,28 +212,28 @@ public class Soccer
         {
             case InteractionType.FootballGoalRed:
             case InteractionType.Footballcounterred:
-            {
-                _room.GetGameManager().RemoveFurnitureFromTeam(item, Team.Red);
-                break;
-            }
+                {
+                    _room.GetGameManager().RemoveFurnitureFromTeam(item, Team.Red);
+                    break;
+                }
             case InteractionType.FootballGoalGreen:
             case InteractionType.Footballcountergreen:
-            {
-                _room.GetGameManager().RemoveFurnitureFromTeam(item, Team.Green);
-                break;
-            }
+                {
+                    _room.GetGameManager().RemoveFurnitureFromTeam(item, Team.Green);
+                    break;
+                }
             case InteractionType.FootballGoalBlue:
             case InteractionType.Footballcounterblue:
-            {
-                _room.GetGameManager().RemoveFurnitureFromTeam(item, Team.Blue);
-                break;
-            }
+                {
+                    _room.GetGameManager().RemoveFurnitureFromTeam(item, Team.Blue);
+                    break;
+                }
             case InteractionType.FootballGoalYellow:
             case InteractionType.Footballcounteryellow:
-            {
-                _room.GetGameManager().RemoveFurnitureFromTeam(item, Team.Yellow);
-                break;
-            }
+                {
+                    _room.GetGameManager().RemoveFurnitureFromTeam(item, Team.Yellow);
+                    break;
+                }
         }
     }
 

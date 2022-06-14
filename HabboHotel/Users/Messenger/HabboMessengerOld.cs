@@ -328,10 +328,10 @@
 //    public ICollection<MessengerRequest> GetRequests() => _requests.Values;
 
 //    public ICollection<MessengerBuddy> GetFriends() => _friends.Values;
-    
+
 //    public void AcceptFriendRequest(MessengerBuddy buddy)
 //    {
 //        if (!_requests.TryRemove(buddy.Id, out var request)) return;
-        
+
 //    }
 //}

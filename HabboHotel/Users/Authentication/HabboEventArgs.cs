@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Plus.HabboHotel.Users.Authentication
+﻿namespace Plus.HabboHotel.Users.Authentication
 {
     public class HabboEventArgs : EventArgs
     {

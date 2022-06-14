@@ -1,9 +1,8 @@
 ﻿using Plus.Communication.Packets.Outgoing.Messenger;
+using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Users;
 using Plus.HabboHotel.Users.Authentication;
 using Plus.HabboHotel.Users.Messenger;
-using System.Threading.Tasks;
-using Plus.HabboHotel.GameClients;
 
 namespace Plus.HabboHotel.Friends
 {

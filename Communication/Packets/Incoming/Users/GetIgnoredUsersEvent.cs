@@ -1,7 +1,6 @@
 ﻿using Plus.Communication.Packets.Outgoing.Users;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Users.Ignores;
-using System.Threading.Tasks;
 
 namespace Plus.Communication.Packets.Incoming.Users;
 

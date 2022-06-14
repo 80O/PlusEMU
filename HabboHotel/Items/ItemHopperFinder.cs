@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Plus.HabboHotel.Items;
+﻿namespace Plus.HabboHotel.Items;
 
 public static class ItemHopperFinder
 {

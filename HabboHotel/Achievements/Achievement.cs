@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Plus.HabboHotel.Achievements;
+﻿namespace Plus.HabboHotel.Achievements;
 
 public class Achievement
 {

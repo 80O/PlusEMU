@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading;
-
-namespace Plus.HabboHotel.Rooms.Chat.Logs;
+﻿namespace Plus.HabboHotel.Rooms.Chat.Logs;
 
 public sealed class ChatlogManager : IChatlogManager
 {

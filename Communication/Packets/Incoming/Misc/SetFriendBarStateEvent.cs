@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Plus.Communication.Packets.Outgoing.Sound;
+﻿using Plus.Communication.Packets.Outgoing.Sound;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Users.Messenger.FriendBar;
 

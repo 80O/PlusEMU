@@ -1,10 +1,8 @@
-﻿using System;
-using System.Drawing;
-using System.Threading.Tasks;
-using Plus.Communication.Packets.Outgoing.Rooms.AI.Pets;
+﻿using Plus.Communication.Packets.Outgoing.Rooms.AI.Pets;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Rooms;
 using Plus.HabboHotel.Rooms.Chat.Pets.Locale;
+using System.Drawing;
 
 namespace Plus.Communication.Packets.Incoming.Rooms.AI.Pets.Horse;
 

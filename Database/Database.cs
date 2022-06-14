@@ -1,8 +1,7 @@
-﻿using System;
-using System.Data;
-using MySqlConnector;
+﻿using MySqlConnector;
 using Plus.Core;
 using Plus.Database.Interfaces;
+using System.Data;
 
 namespace Plus.Database;
 

@@ -1,5 +1,4 @@
 ﻿using Plus.HabboHotel.GameClients;
-using System.Threading.Tasks;
 
 namespace Plus.HabboHotel.Users.Authentication.Tasks
 {

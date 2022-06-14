@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using NLog;
+﻿using NLog;
+using Plus.Database;
 using Plus.HabboHotel.Rooms.AI;
 using Plus.HabboHotel.Rooms.AI.Responses;
-using Plus.Database;
+using System.Data;
 
 namespace Plus.HabboHotel.Bots;
 

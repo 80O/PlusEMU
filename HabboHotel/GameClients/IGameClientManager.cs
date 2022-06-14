@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Plus.Communication.ConnectionManager;
+﻿using Plus.Communication.ConnectionManager;
 using Plus.Communication.Packets.Outgoing;
 using Plus.HabboHotel.Users.Messenger;
 

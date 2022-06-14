@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Plus.HabboHotel.Catalog.Marketplace;
+﻿using Plus.HabboHotel.Catalog.Marketplace;
 
 namespace Plus.Communication.Packets.Outgoing.Marketplace;
 

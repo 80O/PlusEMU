@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Plus.HabboHotel.Rooms.AI;
 using System.Data;
-using Plus.HabboHotel.Rooms.AI;
 
 namespace Plus.HabboHotel.Users.Inventory.Pets;
 

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading;
-using NLog;
+﻿using NLog;
 
 namespace Plus.Core;
 

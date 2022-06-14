@@ -1,15 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using NLog;
 using Plus.Core;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
 using Plus.Plugins;
 using Plus.Utilities.DependencyInjection;
 using Scrutor;
+using System.Reflection;
 
 namespace Plus;
 

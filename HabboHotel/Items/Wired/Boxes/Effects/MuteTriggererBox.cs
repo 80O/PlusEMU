@@ -1,9 +1,9 @@
-﻿using System.Collections.Concurrent;
-using Plus.Communication.Packets.Incoming;
+﻿using Plus.Communication.Packets.Incoming;
 using Plus.Communication.Packets.Outgoing.Rooms.Chat;
 using Plus.HabboHotel.Rooms;
 using Plus.HabboHotel.Users;
 using Plus.Utilities;
+using System.Collections.Concurrent;
 
 namespace Plus.HabboHotel.Items.Wired.Boxes.Effects;
 

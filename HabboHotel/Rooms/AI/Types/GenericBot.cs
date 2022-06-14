@@ -1,6 +1,5 @@
-﻿using System;
+﻿using Plus.HabboHotel.GameClients;
 using System.Drawing;
-using Plus.HabboHotel.GameClients;
 
 namespace Plus.HabboHotel.Rooms.AI.Types;
 

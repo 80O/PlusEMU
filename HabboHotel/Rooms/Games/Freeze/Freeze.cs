@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using Plus.Communication.Packets.Outgoing.Rooms.Avatar;
+﻿using Plus.Communication.Packets.Outgoing.Rooms.Avatar;
 using Plus.Communication.Packets.Outgoing.Rooms.Freeze;
 using Plus.HabboHotel.Items;
 using Plus.HabboHotel.Items.Wired;
 using Plus.HabboHotel.Rooms.Games.Teams;
+using System.Collections.Concurrent;
+using System.Drawing;
 
 namespace Plus.HabboHotel.Rooms.Games.Freeze;
 
@@ -175,10 +172,10 @@ public class Freeze
                     {
                         case FreezePowerUp.GreenArrow:
                         case FreezePowerUp.OrangeSnowball:
-                        {
-                            user.BanzaiPowerUp = FreezePowerUp.None;
-                            break;
-                        }
+                            {
+                                user.BanzaiPowerUp = FreezePowerUp.None;
+                                break;
+                            }
                     }
                     break;
                 }
@@ -214,26 +211,26 @@ public class Freeze
         switch (powerUp)
         {
             case FreezePowerUp.BlueArrow:
-            {
-                items = GetVerticalItems(item.GetX, item.GetY, 5);
-                break;
-            }
+                {
+                    items = GetVerticalItems(item.GetX, item.GetY, 5);
+                    break;
+                }
             case FreezePowerUp.GreenArrow:
-            {
-                items = GetDiagonalItems(item.GetX, item.GetY, 5);
-                break;
-            }
+                {
+                    items = GetDiagonalItems(item.GetX, item.GetY, 5);
+                    break;
+                }
             case FreezePowerUp.OrangeSnowball:
-            {
-                items = GetVerticalItems(item.GetX, item.GetY, 5);
-                items.AddRange(GetDiagonalItems(item.GetX, item.GetY, 5));
-                break;
-            }
+                {
+                    items = GetVerticalItems(item.GetX, item.GetY, 5);
+                    items.AddRange(GetDiagonalItems(item.GetX, item.GetY, 5));
+                    break;
+                }
             default:
-            {
-                items = GetVerticalItems(item.GetX, item.GetY, 3);
-                break;
-            }
+                {
+                    items = GetVerticalItems(item.GetX, item.GetY, 3);
+                    break;
+                }
         }
         HandleBanzaiFreezeItems(items);
     }
@@ -252,21 +249,21 @@ public class Freeze
             switch (item.GetBaseItem().InteractionType)
             {
                 case InteractionType.FreezeTile:
-                {
-                    item.ExtraData = "11000";
-                    item.UpdateState(false, true);
-                    continue;
-                }
+                    {
+                        item.ExtraData = "11000";
+                        item.UpdateState(false, true);
+                        continue;
+                    }
                 case InteractionType.FreezeTileBlock:
-                {
-                    SetRandomPowerUp(item);
-                    item.UpdateState(false, true);
-                    continue;
-                }
+                    {
+                        SetRandomPowerUp(item);
+                        item.UpdateState(false, true);
+                        continue;
+                    }
                 default:
-                {
-                    continue;
-                }
+                    {
+                        continue;
+                    }
             }
         }
     }
@@ -279,47 +276,47 @@ public class Freeze
         switch (next)
         {
             case 2:
-            {
-                item.ExtraData = "2000";
-                item.FreezePowerUp = FreezePowerUp.BlueArrow;
-                break;
-            }
+                {
+                    item.ExtraData = "2000";
+                    item.FreezePowerUp = FreezePowerUp.BlueArrow;
+                    break;
+                }
             case 3:
-            {
-                item.ExtraData = "3000";
-                item.FreezePowerUp = FreezePowerUp.Snowballs;
-                break;
-            }
+                {
+                    item.ExtraData = "3000";
+                    item.FreezePowerUp = FreezePowerUp.Snowballs;
+                    break;
+                }
             case 4:
-            {
-                item.ExtraData = "4000";
-                item.FreezePowerUp = FreezePowerUp.GreenArrow;
-                break;
-            }
+                {
+                    item.ExtraData = "4000";
+                    item.FreezePowerUp = FreezePowerUp.GreenArrow;
+                    break;
+                }
             case 5:
-            {
-                item.ExtraData = "5000";
-                item.FreezePowerUp = FreezePowerUp.OrangeSnowball;
-                break;
-            }
+                {
+                    item.ExtraData = "5000";
+                    item.FreezePowerUp = FreezePowerUp.OrangeSnowball;
+                    break;
+                }
             case 6:
-            {
-                item.ExtraData = "6000";
-                item.FreezePowerUp = FreezePowerUp.Heart;
-                break;
-            }
+                {
+                    item.ExtraData = "6000";
+                    item.FreezePowerUp = FreezePowerUp.Heart;
+                    break;
+                }
             case 7:
-            {
-                item.ExtraData = "7000";
-                item.FreezePowerUp = FreezePowerUp.Shield;
-                break;
-            }
+                {
+                    item.ExtraData = "7000";
+                    item.FreezePowerUp = FreezePowerUp.Shield;
+                    break;
+                }
             default:
-            {
-                item.ExtraData = "1000";
-                item.FreezePowerUp = FreezePowerUp.None;
-                break;
-            }
+                {
+                    item.ExtraData = "1000";
+                    item.FreezePowerUp = FreezePowerUp.None;
+                    break;
+                }
         }
         _room.GetGameMap().RemoveFromMap(item, false);
         item.UpdateState(false, true);
@@ -330,27 +327,27 @@ public class Freeze
         switch (item.FreezePowerUp)
         {
             case FreezePowerUp.Heart:
-            {
-                if (user.FreezeLives < 5)
                 {
-                    user.FreezeLives++;
-                    _room.GetGameManager().AddPointToTeam(user.Team, 10);
+                    if (user.FreezeLives < 5)
+                    {
+                        user.FreezeLives++;
+                        _room.GetGameManager().AddPointToTeam(user.Team, 10);
+                    }
+                    user.GetClient().SendPacket(new UpdateFreezeLivesComposer(user.InternalRoomId, user.FreezeLives));
+                    break;
                 }
-                user.GetClient().SendPacket(new UpdateFreezeLivesComposer(user.InternalRoomId, user.FreezeLives));
-                break;
-            }
             case FreezePowerUp.Shield:
-            {
-                ActivateShield(user);
-                break;
-            }
+                {
+                    ActivateShield(user);
+                    break;
+                }
             case FreezePowerUp.BlueArrow:
             case FreezePowerUp.GreenArrow:
             case FreezePowerUp.OrangeSnowball:
-            {
-                user.BanzaiPowerUp = item.FreezePowerUp;
-                break;
-            }
+                {
+                    user.BanzaiPowerUp = item.FreezePowerUp;
+                    break;
+                }
         }
         item.FreezePowerUp = FreezePowerUp.None;
         item.ExtraData = "1" + item.ExtraData;

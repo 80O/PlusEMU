@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
-using NLog;
+﻿using NLog;
 using Plus.Core;
 using Plus.HabboHotel.Users;
 

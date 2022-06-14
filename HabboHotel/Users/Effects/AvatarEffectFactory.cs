@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Plus.HabboHotel.Users.Effects;
+﻿namespace Plus.HabboHotel.Users.Effects;
 
 internal static class AvatarEffectFactory
 {

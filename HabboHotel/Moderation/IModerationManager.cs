@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Plus.HabboHotel.Moderation;
+﻿namespace Plus.HabboHotel.Moderation;
 
 public interface IModerationManager
 {

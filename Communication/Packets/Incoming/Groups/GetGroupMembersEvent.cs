@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Plus.Communication.Packets.Outgoing.Groups;
+﻿using Plus.Communication.Packets.Outgoing.Groups;
 using Plus.HabboHotel.Cache;
 using Plus.HabboHotel.Cache.Type;
 using Plus.HabboHotel.GameClients;
@@ -31,44 +28,44 @@ internal class GetGroupMembersEvent : IPacketEvent
         switch (requestType)
         {
             case 0:
-            {
-                var memberIds = group.GetAllMembers;
-                foreach (var id in memberIds.ToList())
                 {
-                    var groupMember = _cacheManager.GenerateUser(id);
-                    if (groupMember == null)
-                        continue;
-                    if (!members.Contains(groupMember))
-                        members.Add(groupMember);
+                    var memberIds = group.GetAllMembers;
+                    foreach (var id in memberIds.ToList())
+                    {
+                        var groupMember = _cacheManager.GenerateUser(id);
+                        if (groupMember == null)
+                            continue;
+                        if (!members.Contains(groupMember))
+                            members.Add(groupMember);
+                    }
+                    break;
                 }
-                break;
-            }
             case 1:
-            {
-                var adminIds = group.GetAdministrators;
-                foreach (var id in adminIds.ToList())
                 {
-                    var groupMember = _cacheManager.GenerateUser(id);
-                    if (groupMember == null)
-                        continue;
-                    if (!members.Contains(groupMember))
-                        members.Add(groupMember);
+                    var adminIds = group.GetAdministrators;
+                    foreach (var id in adminIds.ToList())
+                    {
+                        var groupMember = _cacheManager.GenerateUser(id);
+                        if (groupMember == null)
+                            continue;
+                        if (!members.Contains(groupMember))
+                            members.Add(groupMember);
+                    }
+                    break;
                 }
-                break;
-            }
             case 2:
-            {
-                var requestIds = group.GetRequests;
-                foreach (var id in requestIds.ToList())
                 {
-                    var groupMember = _cacheManager.GenerateUser(id);
-                    if (groupMember == null)
-                        continue;
-                    if (!members.Contains(groupMember))
-                        members.Add(groupMember);
+                    var requestIds = group.GetRequests;
+                    foreach (var id in requestIds.ToList())
+                    {
+                        var groupMember = _cacheManager.GenerateUser(id);
+                        if (groupMember == null)
+                            continue;
+                        if (!members.Contains(groupMember))
+                            members.Add(groupMember);
+                    }
+                    break;
                 }
-                break;
-            }
         }
         if (!string.IsNullOrEmpty(searchVal))
             members = members.Where(x => x.Username.StartsWith(searchVal)).ToList();

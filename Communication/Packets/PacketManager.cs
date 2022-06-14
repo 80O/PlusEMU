@@ -2,12 +2,8 @@
 using Plus.Communication.Attributes;
 using Plus.Communication.Packets.Incoming;
 using Plus.HabboHotel.GameClients;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Plus.Communication.Packets;
 
@@ -37,7 +33,7 @@ public sealed class PacketManager : IPacketManager, IDisposable
                 Log.Warn("No incoming header defined for {packet}", packet.GetType().Name);
                 continue;
             }
-            var header = (int) field.GetValue(null);
+            var header = (int)field.GetValue(null);
             _incomingPackets.Add(header, packet);
             _packetNames.Add(header, packet.GetType().Name);
             if (packet.GetType().GetCustomAttribute<NoAuthenticationRequiredAttribute>() != null)

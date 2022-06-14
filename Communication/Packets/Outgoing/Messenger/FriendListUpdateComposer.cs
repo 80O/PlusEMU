@@ -1,5 +1,4 @@
 ﻿using Plus.HabboHotel.Users.Messenger;
-using System.Collections.Generic;
 
 namespace Plus.Communication.Packets.Outgoing.Messenger;
 

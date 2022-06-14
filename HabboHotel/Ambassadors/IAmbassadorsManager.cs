@@ -1,5 +1,4 @@
 ﻿using Plus.HabboHotel.Users;
-using System.Threading.Tasks;
 
 namespace Plus.HabboHotel.Ambassadors
 {

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Plus.Utilities;
+﻿namespace Plus.Utilities;
 
 internal static class UnixTimestamp
 {

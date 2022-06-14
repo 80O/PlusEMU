@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Plus.HabboHotel.Users;
+﻿using Plus.HabboHotel.Users;
 
 namespace Plus.HabboHotel.Items;
 

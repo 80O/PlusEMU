@@ -1,6 +1,5 @@
-﻿using System;
+﻿using Plus.Utilities;
 using System.Data;
-using Plus.Utilities;
 
 namespace Plus.Communication.Packets.Outgoing.Moderation;
 

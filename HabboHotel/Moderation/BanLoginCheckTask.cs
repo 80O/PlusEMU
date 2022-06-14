@@ -1,6 +1,5 @@
 ﻿using Plus.HabboHotel.Users.Authentication;
 using Plus.HabboHotel.Users.UserData;
-using System.Threading.Tasks;
 
 namespace Plus.HabboHotel.Moderation
 {

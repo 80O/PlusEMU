@@ -1,8 +1,5 @@
-﻿using System;
+﻿using Plus.HabboHotel.Items;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using Plus.HabboHotel.Items;
 
 namespace Plus.HabboHotel.Users.Inventory.Furniture
 {

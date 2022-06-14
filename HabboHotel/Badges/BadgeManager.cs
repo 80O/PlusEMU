@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using Dapper;
+﻿using Dapper;
 using NLog;
 using Plus.Communication.Packets.Outgoing.Inventory.Badges;
 using Plus.Communication.Packets.Outgoing.Inventory.Furni;
 using Plus.Database;
 using Plus.HabboHotel.Users;
 using Plus.HabboHotel.Users.Badges;
+using System.Data;
 
 namespace Plus.HabboHotel.Badges;
 
@@ -60,8 +56,8 @@ public class BadgeManager : IBadgeManager
             badge = badge.Code
         });
         habbo.Inventory.Badges.AddBadge(new Badge(code, 0));
-            habbo.GetClient().SendPacket(new BadgesComposer(habbo.GetClient()));
-            habbo.GetClient().SendPacket(new FurniListNotificationComposer(1, 4));
+        habbo.GetClient().SendPacket(new BadgesComposer(habbo.GetClient()));
+        habbo.GetClient().SendPacket(new FurniListNotificationComposer(1, 4));
     }
 
     public async Task RemoveBadge(Habbo habbo, string badge)

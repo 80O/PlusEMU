@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Plus.HabboHotel.Items.Televisions;
+﻿using Plus.HabboHotel.Items.Televisions;
 
 namespace Plus.Communication.Packets.Outgoing.Rooms.Furni.YouTubeTelevisions;
 

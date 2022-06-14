@@ -1,8 +1,5 @@
 ﻿using Dapper;
 using Plus.Database;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Plus.HabboHotel.Users.Ignores
 {

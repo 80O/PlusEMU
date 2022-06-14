@@ -1,5 +1,4 @@
-﻿using System;
-using NLog;
+﻿using NLog;
 using Plus.Communication;
 using Plus.Communication.ConnectionManager;
 using Plus.Communication.Encryption.Crypto.Prng;

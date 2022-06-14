@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace Plus.Core.Settings;
+﻿namespace Plus.Core.Settings;
 
 public interface ISettingsManager
 {

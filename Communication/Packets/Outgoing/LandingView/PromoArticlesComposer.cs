@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Plus.HabboHotel.LandingView.Promotions;
+﻿using Plus.HabboHotel.LandingView.Promotions;
 
 namespace Plus.Communication.Packets.Outgoing.LandingView;
 

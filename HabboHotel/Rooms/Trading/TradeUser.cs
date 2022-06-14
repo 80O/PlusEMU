@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Plus.HabboHotel.Items;
+﻿using Plus.HabboHotel.Items;
 
 namespace Plus.HabboHotel.Rooms.Trading;
 

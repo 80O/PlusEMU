@@ -1,5 +1,4 @@
-﻿using System;
-using MySqlConnector;
+﻿using MySqlConnector;
 
 namespace Plus.Database.Interfaces;
 

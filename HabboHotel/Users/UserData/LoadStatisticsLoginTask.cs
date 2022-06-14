@@ -1,9 +1,7 @@
 ﻿using Plus.Core;
 using Plus.HabboHotel.Groups;
 using Plus.HabboHotel.Subscriptions;
-using System;
 using System.Data;
-using System.Threading.Tasks;
 
 namespace Plus.HabboHotel.Users.UserData
 {

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using Plus.Core;
+﻿using Plus.Core;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Rooms.PathFinding;
 using Plus.Utilities;

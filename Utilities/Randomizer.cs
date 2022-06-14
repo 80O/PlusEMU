@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Plus.Utilities;
+﻿namespace Plus.Utilities;
 
 public static class Randomizer
 {

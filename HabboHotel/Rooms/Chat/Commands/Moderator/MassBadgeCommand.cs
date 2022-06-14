@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Plus.HabboHotel.Badges;
+﻿using Plus.HabboHotel.Badges;
 using Plus.HabboHotel.GameClients;
 
 namespace Plus.HabboHotel.Rooms.Chat.Commands.Moderator;

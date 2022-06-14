@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace Plus;
+﻿namespace Plus;
 
 public interface IPlusEnvironment
 {

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Plus.HabboHotel.Users.Permissions;
+﻿namespace Plus.HabboHotel.Users.Permissions;
 
 /// <summary>
 /// Permissions for a specific Player.

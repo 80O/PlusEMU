@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Plus.HabboHotel.Catalog;
+﻿namespace Plus.HabboHotel.Catalog;
 
 public class CatalogPage
 {

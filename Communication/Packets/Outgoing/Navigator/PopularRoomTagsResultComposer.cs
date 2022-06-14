@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Plus.Communication.Packets.Outgoing.Navigator;
+﻿namespace Plus.Communication.Packets.Outgoing.Navigator;
 
 internal class PopularRoomTagsResultComposer : ServerPacket
 {

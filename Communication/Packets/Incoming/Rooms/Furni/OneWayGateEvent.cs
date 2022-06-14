@@ -1,6 +1,5 @@
 ﻿using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Items;
-using System.Threading.Tasks;
 
 namespace Plus.Communication.Packets.Incoming.Rooms.Furni
 {

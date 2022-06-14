@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Plus.HabboHotel.Rooms.PathFinding;
+﻿namespace Plus.HabboHotel.Rooms.PathFinding;
 
 public static class PathFinder
 {

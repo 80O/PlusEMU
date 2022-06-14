@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Plus.HabboHotel.Rooms.Chat.Emotions;
+﻿namespace Plus.HabboHotel.Rooms.Chat.Emotions;
 
 public sealed class ChatEmotionsManager : IChatEmotionsManager
 {

@@ -1,8 +1,7 @@
-﻿using System.Collections.Concurrent;
-using System.Linq;
-using Plus.Communication.Packets.Incoming;
+﻿using Plus.Communication.Packets.Incoming;
 using Plus.HabboHotel.Rooms;
 using Plus.HabboHotel.Users;
+using System.Collections.Concurrent;
 
 namespace Plus.HabboHotel.Items.Wired.Boxes.Effects;
 

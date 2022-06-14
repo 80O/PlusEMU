@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Plus.Communication.Packets.Outgoing.Rooms.Engine;
+﻿namespace Plus.Communication.Packets.Outgoing.Rooms.Engine;
 
 internal class HeightMapComposer : ServerPacket
 {

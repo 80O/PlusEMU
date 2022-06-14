@@ -8,13 +8,12 @@
 		<RootNamespace>Plus</RootNamespace>
 		<AssemblyName>Plus Emulator</AssemblyName>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
 	</PropertyGroup>
 
 	<ItemGroup>
 	  <PackageReference Include="Dapper" Version="2.0.123" />
-	  <PackageReference Include="Dapper.Contrib" Version="2.0.78" />
 	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
-	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
 	  <PackageReference Include="MySqlConnector" Version="2.1.8" />
 	  <PackageReference Include="NLog" Version="4.7.15" />
 	  <PackageReference Include="Scrutor" Version="4.1.0" />

@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace Plus.Communication.Rcon.Commands.User;
+﻿namespace Plus.Communication.Rcon.Commands.User;
 
 internal class ReloadUserVipRankCommand : IRconCommand
 {

@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace Plus.HabboHotel.Items.Wired;
+﻿namespace Plus.HabboHotel.Items.Wired;
 
 internal static class WiredBoxTypeUtility
 {

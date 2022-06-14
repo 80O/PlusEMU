@@ -59,7 +59,7 @@ internal class IpBanCommand : IChatCommand
         if (!string.IsNullOrEmpty(ipAddress))
             _moderationManager.BanUser(session.GetHabbo().Username, ModerationBanType.Ip, ipAddress, reason, expire);
         _moderationManager.BanUser(session.GetHabbo().Username, ModerationBanType.Username, habbo.Username, reason, expire);
-        var targetClient =_gameClientManager.GetClientByUsername(username);
+        var targetClient = _gameClientManager.GetClientByUsername(username);
         if (targetClient != null)
             targetClient.Disconnect();
         session.SendWhisper("Success, you have IP and account banned the user '" + username + "' for '" + reason + "'!");

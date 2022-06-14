@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Plus.Communication.Packets.Outgoing.Moderation;
+﻿namespace Plus.Communication.Packets.Outgoing.Moderation;
 
 internal class MutedComposer : ServerPacket
 {

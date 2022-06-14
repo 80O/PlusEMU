@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Plus.HabboHotel.Cache.Type;
+﻿using Plus.HabboHotel.Cache.Type;
 
 namespace Plus.HabboHotel.Cache;
 

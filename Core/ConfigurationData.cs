@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-
-namespace Plus.Core;
+﻿namespace Plus.Core;
 
 public class ConfigurationData
 {

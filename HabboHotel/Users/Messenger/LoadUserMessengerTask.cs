@@ -1,7 +1,5 @@
 ﻿using Plus.HabboHotel.Friends;
 using Plus.HabboHotel.Users.UserData;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Plus.HabboHotel.Users.Messenger
 {

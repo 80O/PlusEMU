@@ -1,9 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using Dapper;
 using Plus.Communication.Packets.Outgoing.Inventory.Trading;
 using Plus.Database;
 using Plus.HabboHotel.GameClients;
 using Plus.Utilities;
-using Dapper;
 
 namespace Plus.Communication.Packets.Incoming.Inventory.Trading;
 
@@ -24,7 +23,7 @@ internal class InitTradeEvent : IPacketEvent
         var room = session.GetHabbo().CurrentRoom;
         if (room == null)
             return Task.CompletedTask;
-        
+
         var roomUser = room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
         if (roomUser == null)
             return Task.CompletedTask;

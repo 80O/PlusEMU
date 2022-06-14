@@ -1,8 +1,4 @@
-﻿using System;
-using System.Data;
-using System.Threading;
-using System.Threading.Tasks;
-using Plus.Communication.Packets.Outgoing.Inventory.Furni;
+﻿using Plus.Communication.Packets.Outgoing.Inventory.Furni;
 using Plus.Communication.Packets.Outgoing.Rooms.Engine;
 using Plus.Communication.Packets.Outgoing.Rooms.Furni;
 using Plus.Database;
@@ -10,6 +6,7 @@ using Plus.HabboHotel.Cache;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Items;
 using Plus.HabboHotel.Rooms;
+using System.Data;
 
 namespace Plus.Communication.Packets.Incoming.Rooms.Furni;
 
@@ -19,7 +16,7 @@ internal class OpenGiftEvent : IPacketEvent
     private readonly ICacheManager _cacheManager;
     private readonly IDatabase _database;
 
-    public OpenGiftEvent(IItemDataManager itemDataManager, ICacheManager cacheManager , IDatabase database)
+    public OpenGiftEvent(IItemDataManager itemDataManager, ICacheManager cacheManager, IDatabase database)
     {
         _itemDataManger = itemDataManager;
         _cacheManager = cacheManager;
@@ -111,7 +108,7 @@ internal class OpenGiftEvent : IPacketEvent
         try
         {
             if (baseItem == null || present == null || room == null || row == null)
-            Thread.Sleep(1500);
+                Thread.Sleep(1500);
             var itemIsInRoom = true;
             room.GetRoomItemHandler().RemoveFurniture(session, present.Id);
             using (var dbClient = _database.GetQueryReactor())

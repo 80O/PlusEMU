@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Plus.Communication.Packets.Outgoing.Messenger;
+﻿namespace Plus.Communication.Packets.Outgoing.Messenger;
 
 internal class MessengerInitComposer : ServerPacket
 {

@@ -16,7 +16,7 @@ public class MarketOffer
     {
     }
 
-    public int OfferId { get; set;  }
+    public int OfferId { get; set; }
     public int ItemType { get; set; }
     public int SpriteId { get; set; }
     public int TotalPrice { get; set; }

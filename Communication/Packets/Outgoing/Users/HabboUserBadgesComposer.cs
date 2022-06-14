@@ -1,5 +1,4 @@
 ﻿using Plus.HabboHotel.Users;
-using System.Linq;
 
 namespace Plus.Communication.Packets.Outgoing.Users;
 

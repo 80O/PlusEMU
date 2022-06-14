@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Plus.HabboHotel.Catalog.Pets;
+﻿using Plus.HabboHotel.Catalog.Pets;
 
 namespace Plus.Communication.Packets.Outgoing.Catalog;
 

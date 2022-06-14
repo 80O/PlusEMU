@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Plus.Core.FigureData.Types;
+﻿namespace Plus.Core.FigureData.Types;
 
 internal class FigureSet
 {

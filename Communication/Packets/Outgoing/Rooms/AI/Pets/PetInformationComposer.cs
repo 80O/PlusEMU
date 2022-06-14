@@ -1,5 +1,4 @@
-﻿using System;
-using Plus.HabboHotel.Rooms;
+﻿using Plus.HabboHotel.Rooms;
 using Plus.HabboHotel.Rooms.AI;
 using Plus.HabboHotel.Users;
 using Plus.Utilities;

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using Dapper;
 using Plus.Communication.Packets.Outgoing.Handshake;
 using Plus.Communication.Packets.Outgoing.Inventory.Purse;
 using Plus.Communication.Packets.Outgoing.Navigator;
@@ -18,12 +15,12 @@ using Plus.HabboHotel.Users.Ignores;
 using Plus.HabboHotel.Users.Inventory;
 using Plus.HabboHotel.Users.Messenger;
 using Plus.HabboHotel.Users.Messenger.FriendBar;
+using Plus.HabboHotel.Users.Navigator;
 using Plus.HabboHotel.Users.Permissions;
 using Plus.HabboHotel.Users.Process;
 using Plus.Utilities;
-
-using Dapper;
-using Plus.HabboHotel.Users.Navigator;
+using System.Collections;
+using System.Collections.Concurrent;
 
 namespace Plus.HabboHotel.Users;
 
@@ -102,7 +99,7 @@ public class Habbo
 
     public double AccountCreated { get; set; }
 
-    public List<int> ClientVolume { get; set; } = new() { 0, 0, 0};
+    public List<int> ClientVolume { get; set; } = new() { 0, 0, 0 };
 
     public double LastNameChange { get; set; }
 

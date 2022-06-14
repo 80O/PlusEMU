@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Plus.Communication.Packets.Outgoing.Users;
+﻿using Plus.Communication.Packets.Outgoing.Users;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Groups;
 
@@ -21,7 +18,7 @@ internal class GetHabboGroupBadgesEvent : IPacketEvent
         if (room == null)
             return Task.CompletedTask;
         var badges = _groupManager.GetAllBadgesInRoom(room);
-        if(badges != null)
+        if (badges != null)
         {
             room.SendPacket(new HabboGroupBadgesComposer(badges));
             session.SendPacket(new HabboGroupBadgesComposer(badges));

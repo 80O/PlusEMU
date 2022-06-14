@@ -1,7 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-
-namespace Plus.Communication.Rcon.Commands.Hotel;
+﻿namespace Plus.Communication.Rcon.Commands.Hotel;
 
 internal class ReloadRanksCommand : IRconCommand
 {

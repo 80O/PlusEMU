@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Plus.Communication.Rcon.Commands;
+﻿using Plus.Communication.Rcon.Commands;
 
 namespace Plus.Communication.Rcon
 {

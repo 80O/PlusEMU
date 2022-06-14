@@ -1,7 +1,5 @@
 ﻿using Plus.HabboHotel.Rooms.AI;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Plus.HabboHotel.Users.Inventory.Pets
 {

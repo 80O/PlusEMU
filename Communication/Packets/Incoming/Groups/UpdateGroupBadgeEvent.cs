@@ -1,9 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using Dapper;
 using Plus.Communication.Packets.Outgoing.Groups;
 using Plus.Database;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Groups;
-using Dapper;
 
 namespace Plus.Communication.Packets.Incoming.Groups;
 

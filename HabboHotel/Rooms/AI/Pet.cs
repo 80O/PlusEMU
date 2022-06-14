@@ -1,5 +1,4 @@
-﻿using System;
-using Plus.Communication.Packets.Outgoing.Pets;
+﻿using Plus.Communication.Packets.Outgoing.Pets;
 using Plus.Communication.Packets.Outgoing.Rooms.AI.Pets;
 using Plus.Communication.Packets.Outgoing.Rooms.Chat;
 using Plus.Utilities;

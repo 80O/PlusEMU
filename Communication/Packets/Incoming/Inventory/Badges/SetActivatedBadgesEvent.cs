@@ -1,10 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using Dapper;
 using Plus.Communication.Packets.Outgoing.Users;
 using Plus.Database;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Quests;
 using Plus.HabboHotel.Rooms;
-using Dapper;
 
 namespace Plus.Communication.Packets.Incoming.Inventory.Badges;
 

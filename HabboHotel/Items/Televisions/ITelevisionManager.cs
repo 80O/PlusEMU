@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Plus.HabboHotel.Items.Televisions;
+﻿namespace Plus.HabboHotel.Items.Televisions;
 
 public interface ITelevisionManager
 {

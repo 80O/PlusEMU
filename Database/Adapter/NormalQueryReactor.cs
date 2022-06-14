@@ -1,5 +1,4 @@
-﻿using System;
-using Plus.Database.Interfaces;
+﻿using Plus.Database.Interfaces;
 
 namespace Plus.Database.Adapter;
 

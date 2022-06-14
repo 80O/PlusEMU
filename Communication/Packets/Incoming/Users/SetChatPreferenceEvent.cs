@@ -1,6 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using Plus.Database;
 using Plus.HabboHotel.GameClients;
-using Plus.Database;
 using Plus.Utilities;
 
 namespace Plus.Communication.Packets.Incoming.Users;

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Plus.Communication.Packets.Outgoing.Moderation;
+﻿using Plus.Communication.Packets.Outgoing.Moderation;
 using Plus.Communication.Packets.Outgoing.Rooms.Chat;
 using Plus.Core.Settings;
 using Plus.HabboHotel.GameClients;
@@ -80,7 +78,7 @@ public class ShoutEvent : IPacketEvent
                 return Task.CompletedTask;
             }
         }
-        
+
         _chatlogManager.StoreChatlog(new ChatlogEntry(session.GetHabbo().Id, room.Id, message, UnixTimestamp.GetNow(), session.GetHabbo(), room));
 
         if (message.StartsWith(":", StringComparison.CurrentCulture) && _commandManager.Parse(session, message))

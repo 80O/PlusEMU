@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Plus.HabboHotel.Talents;
+﻿namespace Plus.HabboHotel.Talents;
 
 public interface ITalentTrackManager
 {

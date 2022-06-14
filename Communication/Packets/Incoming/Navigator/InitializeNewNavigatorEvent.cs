@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Plus.Communication.Packets.Outgoing.Navigator.New;
+﻿using Plus.Communication.Packets.Outgoing.Navigator.New;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Navigator;
 

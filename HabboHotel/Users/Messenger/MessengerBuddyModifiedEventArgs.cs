@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Plus.HabboHotel.Users.Messenger
+﻿namespace Plus.HabboHotel.Users.Messenger
 {
     public class MessengerBuddyModifiedEventArgs : EventArgs
     {

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Drawing;
-using System.Linq;
-using Plus.Communication.Packets.Outgoing.Rooms.Avatar;
+﻿using Plus.Communication.Packets.Outgoing.Rooms.Avatar;
 using Plus.Communication.Packets.Outgoing.Rooms.Engine;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Items;
@@ -11,6 +7,8 @@ using Plus.HabboHotel.Rooms.Games.Teams;
 using Plus.HabboHotel.Rooms.PathFinding;
 using Plus.Utilities;
 using Plus.Utilities.Enclosure;
+using System.Collections.Concurrent;
+using System.Drawing;
 
 namespace Plus.HabboHotel.Rooms.Games.Banzai;
 
@@ -200,11 +198,11 @@ public class BattleBanzai
                 case InteractionType.Banzaiscoregreen:
                 case InteractionType.Banzaiscorered:
                 case InteractionType.Banzaiscoreyellow:
-                {
-                    item.ExtraData = "0";
-                    item.UpdateState();
-                    break;
-                }
+                    {
+                        item.ExtraData = "0";
+                        item.UpdateState();
+                        break;
+                    }
             }
         }
     }

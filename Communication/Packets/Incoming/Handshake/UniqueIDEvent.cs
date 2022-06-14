@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Plus.Communication.Attributes;
+﻿using Plus.Communication.Attributes;
 using Plus.Communication.Packets.Outgoing.Handshake;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Moderation;

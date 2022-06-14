@@ -4,10 +4,10 @@ namespace Plus.Utilities;
 
 internal static class StringCharFilter
 {
-    private static readonly Regex _allowedChars = new (@"^[a-zA-Z0-9-.]+$");
-    private static readonly Regex _allowedAlphaNum = new (@"^[a-zA-Z0-9]+$");
-    private static readonly Regex _scapesRegex = new (@"[\u0001-\u0008\u000B-\u000C\u000E-\u001F\u007F-\u009F]");
-    private static readonly Regex _breakLinesRegex = new (@"[\r\n]");
+    private static readonly Regex _allowedChars = new(@"^[a-zA-Z0-9-.]+$");
+    private static readonly Regex _allowedAlphaNum = new(@"^[a-zA-Z0-9]+$");
+    private static readonly Regex _scapesRegex = new(@"[\u0001-\u0008\u000B-\u000C\u000E-\u001F\u007F-\u009F]");
+    private static readonly Regex _breakLinesRegex = new(@"[\r\n]");
 
     public static bool IsValid(string input)
     {
@@ -16,9 +16,9 @@ internal static class StringCharFilter
 
     public static bool IsValidAlphaNumeric(char input)
     {
-        return  _allowedAlphaNum.IsMatch(input.ToString());
+        return _allowedAlphaNum.IsMatch(input.ToString());
     }
-    
+
     public static bool IsValidAlphaNumeric(string input)
     {
         return _allowedAlphaNum.IsMatch(input);
@@ -37,12 +37,12 @@ internal static class StringCharFilter
         {
             return string.Empty;
         }
-        
+
         if (!allowBreaks)
         {
             str = _breakLinesRegex.Replace(str, " ");
         }
-        
+
         return _scapesRegex.Replace(str, string.Empty);
     }
 }

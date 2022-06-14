@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Plus.HabboHotel.Catalog;
+﻿using Plus.HabboHotel.Catalog;
 using Plus.HabboHotel.Catalog.Utilities;
 using Plus.HabboHotel.Items;
 

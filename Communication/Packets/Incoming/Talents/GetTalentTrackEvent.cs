@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Plus.Communication.Packets.Outgoing.Talents;
+﻿using Plus.Communication.Packets.Outgoing.Talents;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Talents;
 

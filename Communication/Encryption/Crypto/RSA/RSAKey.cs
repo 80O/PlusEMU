@@ -1,5 +1,4 @@
-﻿using System;
-using Plus.Utilities;
+﻿using Plus.Utilities;
 
 namespace Plus.Communication.Encryption.Crypto.RSA;
 

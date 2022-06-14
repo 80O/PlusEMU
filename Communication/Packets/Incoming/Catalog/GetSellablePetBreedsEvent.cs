@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Plus.Communication.Packets.Outgoing.Catalog;
+﻿using Plus.Communication.Packets.Outgoing.Catalog;
 using Plus.HabboHotel.Catalog.Pets;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Items;

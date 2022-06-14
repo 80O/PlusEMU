@@ -218,10 +218,10 @@ public static class InteractionTypes
             case "pet":
                 return InteractionType.Pet;
             default:
-            {
-                //Logging.WriteLine("Unknown interaction type in parse code: " + pType, ConsoleColor.Yellow);
-                return InteractionType.None;
-            }
+                {
+                    //Logging.WriteLine("Unknown interaction type in parse code: " + pType, ConsoleColor.Yellow);
+                    return InteractionType.None;
+                }
         }
     }
 }

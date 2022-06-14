@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Plus.HabboHotel.Rooms;
+﻿namespace Plus.HabboHotel.Rooms;
 
 public class RoomModel
 {

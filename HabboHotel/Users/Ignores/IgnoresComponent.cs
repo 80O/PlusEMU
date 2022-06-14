@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Plus.HabboHotel.Users.Ignores;
+﻿namespace Plus.HabboHotel.Users.Ignores;
 
 public sealed class IgnoresComponent
 {

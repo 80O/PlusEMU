@@ -1,10 +1,9 @@
-﻿using System;
-using System.Data;
-using Plus.Communication.Packets.Outgoing.Inventory.Furni;
+﻿using Plus.Communication.Packets.Outgoing.Inventory.Furni;
 using Plus.Communication.Packets.Outgoing.Inventory.Purse;
 using Plus.Database;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Items;
+using System.Data;
 
 namespace Plus.HabboHotel.Rooms.Chat.Commands.User;
 

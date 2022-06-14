@@ -1,7 +1,5 @@
-﻿using Plus.HabboHotel.GameClients;
-using System.Threading.Tasks;
-using Plus.Communication.Packets.Outgoing.Rooms.Notifications;
-using Plus.HabboHotel.Ambassadors;
+﻿using Plus.HabboHotel.Ambassadors;
+using Plus.HabboHotel.GameClients;
 
 namespace Plus.Communication.Packets.Incoming.Ambassadors
 {
@@ -18,7 +16,7 @@ namespace Plus.Communication.Packets.Incoming.Ambassadors
             var target = PlusEnvironment.GetHabboById(userid);
 
             await _ambassadorsManager.Warn(session.GetHabbo(), target, "Alert");
-            
+
         }
     }
 }

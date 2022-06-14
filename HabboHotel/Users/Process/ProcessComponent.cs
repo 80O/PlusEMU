@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading;
-using NLog;
+﻿using NLog;
 using Plus.Communication.Packets.Outgoing.Handshake;
 
 namespace Plus.HabboHotel.Users.Process;

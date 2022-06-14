@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Plus.Communication.Packets.Outgoing.Catalog;
+﻿using Plus.Communication.Packets.Outgoing.Catalog;
 using Plus.Communication.Packets.Outgoing.Inventory.Furni;
 using Plus.Communication.Packets.Outgoing.Rooms.AI.Pets;
 using Plus.Communication.Packets.Outgoing.Rooms.Engine;
@@ -17,7 +16,7 @@ internal class RemoveSaddleFromHorseEvent : IPacketEvent
     private readonly IItemDataManager _itemDataManager;
     private readonly IDatabase _database;
 
-    public RemoveSaddleFromHorseEvent(IRoomManager roomManager, IItemDataManager itemDataManager ,IDatabase database)
+    public RemoveSaddleFromHorseEvent(IRoomManager roomManager, IItemDataManager itemDataManager, IDatabase database)
     {
         _roomManager = roomManager;
         _itemDataManager = itemDataManager;

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Plus.HabboHotel.Catalog.Clothing;
+﻿namespace Plus.HabboHotel.Catalog.Clothing;
 
 public interface IClothingManager
 {

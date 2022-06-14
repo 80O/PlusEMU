@@ -1,8 +1,6 @@
-﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using Plus.Communication.Packets.Incoming;
+﻿using Plus.Communication.Packets.Incoming;
 using Plus.HabboHotel.Rooms;
+using System.Collections.Concurrent;
 
 namespace Plus.HabboHotel.Items.Wired.Boxes.Triggers;
 

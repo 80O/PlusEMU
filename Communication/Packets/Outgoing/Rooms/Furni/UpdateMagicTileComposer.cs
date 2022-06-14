@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Plus.Communication.Packets.Outgoing.Rooms.Furni;
+﻿namespace Plus.Communication.Packets.Outgoing.Rooms.Furni;
 
 internal class UpdateMagicTileComposer : ServerPacket
 {

@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Plus.Communication.Packets.Outgoing.LandingView;
+﻿using Plus.Communication.Packets.Outgoing.LandingView;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.LandingView;
 

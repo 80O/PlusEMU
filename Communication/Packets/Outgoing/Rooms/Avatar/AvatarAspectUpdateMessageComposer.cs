@@ -1,4 +1,4 @@
-﻿namespace Plus.Communication.Packets.Outgoing.Rooms.Engine;
+﻿namespace Plus.Communication.Packets.Outgoing.Rooms.Avatar;
 
 internal class AvatarAspectUpdateMessageComposer : ServerPacket
 {

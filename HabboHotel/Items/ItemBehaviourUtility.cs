@@ -1,5 +1,4 @@
-﻿using System;
-using Plus.Communication.Packets.Outgoing;
+﻿using Plus.Communication.Packets.Outgoing;
 using Plus.HabboHotel.Groups;
 using Plus.HabboHotel.Items.Data.Toner;
 
@@ -81,19 +80,9 @@ internal static class ItemBehaviourUtility
                     packet.WriteInteger(0);
                 break;
             case InteractionType.Gift:
-            {
-                var extraData = item.ExtraData.Split(Convert.ToChar(5));
-                if (extraData.Length != 7)
                 {
-                    packet.WriteInteger(0);
-                    packet.WriteInteger(0);
-                    packet.WriteString(item.ExtraData);
-                }
-                else
-                {
-                    var style = int.Parse(extraData[6]) * 1000 + int.Parse(extraData[6]);
-                    var purchaser = PlusEnvironment.GetGame().GetCacheManager().GenerateUser(Convert.ToInt32(extraData[2]));
-                    if (purchaser == null)
+                    var extraData = item.ExtraData.Split(Convert.ToChar(5));
+                    if (extraData.Length != 7)
                     {
                         packet.WriteInteger(0);
                         packet.WriteInteger(0);
@@ -101,24 +90,34 @@ internal static class ItemBehaviourUtility
                     }
                     else
                     {
-                        packet.WriteInteger(style);
-                        packet.WriteInteger(1);
-                        packet.WriteInteger(6);
-                        packet.WriteString("EXTRA_PARAM");
-                        packet.WriteString("");
-                        packet.WriteString("MESSAGE");
-                        packet.WriteString(extraData[1]);
-                        packet.WriteString("PURCHASER_NAME");
-                        packet.WriteString(purchaser.Username);
-                        packet.WriteString("PURCHASER_FIGURE");
-                        packet.WriteString(purchaser.Look);
-                        packet.WriteString("PRODUCT_CODE");
-                        packet.WriteString("A1 KUMIANKKA");
-                        packet.WriteString("state");
-                        packet.WriteString(item.MagicRemove ? "1" : "0");
+                        var style = int.Parse(extraData[6]) * 1000 + int.Parse(extraData[6]);
+                        var purchaser = PlusEnvironment.GetGame().GetCacheManager().GenerateUser(Convert.ToInt32(extraData[2]));
+                        if (purchaser == null)
+                        {
+                            packet.WriteInteger(0);
+                            packet.WriteInteger(0);
+                            packet.WriteString(item.ExtraData);
+                        }
+                        else
+                        {
+                            packet.WriteInteger(style);
+                            packet.WriteInteger(1);
+                            packet.WriteInteger(6);
+                            packet.WriteString("EXTRA_PARAM");
+                            packet.WriteString("");
+                            packet.WriteString("MESSAGE");
+                            packet.WriteString(extraData[1]);
+                            packet.WriteString("PURCHASER_NAME");
+                            packet.WriteString(purchaser.Username);
+                            packet.WriteString("PURCHASER_FIGURE");
+                            packet.WriteString(purchaser.Look);
+                            packet.WriteString("PRODUCT_CODE");
+                            packet.WriteString("A1 KUMIANKKA");
+                            packet.WriteString("state");
+                            packet.WriteString(item.MagicRemove ? "1" : "0");
+                        }
                     }
                 }
-            }
                 break;
             case InteractionType.Mannequin:
                 packet.WriteInteger(0);

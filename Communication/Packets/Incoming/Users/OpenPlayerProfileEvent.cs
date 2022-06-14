@@ -2,7 +2,6 @@
 using Plus.HabboHotel.Friends;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Groups;
-using System.Threading.Tasks;
 
 namespace Plus.Communication.Packets.Incoming.Users;
 

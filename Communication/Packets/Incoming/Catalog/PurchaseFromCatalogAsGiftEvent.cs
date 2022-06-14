@@ -1,6 +1,4 @@
-﻿using System;
-using System.Globalization;
-using System.Threading.Tasks;
+﻿using Dapper;
 using Plus.Communication.Packets.Outgoing.Catalog;
 using Plus.Communication.Packets.Outgoing.Inventory.Furni;
 using Plus.Communication.Packets.Outgoing.Inventory.Purse;
@@ -14,7 +12,7 @@ using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Items;
 using Plus.HabboHotel.Quests;
 using Plus.Utilities;
-using Dapper;
+using System.Globalization;
 
 namespace Plus.Communication.Packets.Incoming.Catalog;
 
@@ -187,10 +185,10 @@ public class PurchaseFromCatalogAsGiftEvent : IPacketEvent
 
             //Insert the present, forever.
             connection.Execute("INSERT INTO `user_presents` (`item_id`,`base_id`,`extra_data`) VALUES (@itemId, @baseId, @extra_data)",
-                new {itemId = newItemId, baseId = item.Data.Id, extra_data = string.IsNullOrEmpty(itemExtraData) ? "" : itemExtraData });
+                new { itemId = newItemId, baseId = item.Data.Id, extra_data = string.IsNullOrEmpty(itemExtraData) ? "" : itemExtraData });
 
             //Here we're clearing up a record, this is dumb, but okay.
-            connection.Execute("DELETE FROM `items` WHERE `id` = @deleteId LIMIT 1", new { deleteId = newItemId});
+            connection.Execute("DELETE FROM `items` WHERE `id` = @deleteId LIMIT 1", new { deleteId = newItemId });
         }
         var giveItem = ItemFactory.CreateGiftItem(presentData, habbo, extra_data, extra_data, newItemId);
         if (giveItem != null)

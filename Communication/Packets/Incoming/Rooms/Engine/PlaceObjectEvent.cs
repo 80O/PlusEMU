@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Plus.Communication.Packets.Outgoing.Inventory.Furni;
+﻿using Plus.Communication.Packets.Outgoing.Inventory.Furni;
 using Plus.Communication.Packets.Outgoing.Rooms.Notifications;
 using Plus.Core.Settings;
 using Plus.HabboHotel.Achievements;
@@ -59,40 +55,40 @@ internal class PlaceObjectEvent : IPacketEvent
         switch (item.GetBaseItem().InteractionType)
         {
             case InteractionType.Moodlight:
-            {
-                var moodData = room.MoodlightData;
-                if (moodData != null && room.GetRoomItemHandler().GetItem(moodData.ItemId) != null)
                 {
-                    session.SendNotification("You can only have one background moodlight per room!");
-                    return Task.CompletedTask;
+                    var moodData = room.MoodlightData;
+                    if (moodData != null && room.GetRoomItemHandler().GetItem(moodData.ItemId) != null)
+                    {
+                        session.SendNotification("You can only have one background moodlight per room!");
+                        return Task.CompletedTask;
+                    }
+                    break;
                 }
-                break;
-            }
             case InteractionType.Toner:
-            {
-                var tonerData = room.TonerData;
-                if (tonerData != null && room.GetRoomItemHandler().GetItem(tonerData.ItemId) != null)
                 {
-                    session.SendNotification("You can only have one background toner per room!");
-                    return Task.CompletedTask;
+                    var tonerData = room.TonerData;
+                    if (tonerData != null && room.GetRoomItemHandler().GetItem(tonerData.ItemId) != null)
+                    {
+                        session.SendNotification("You can only have one background toner per room!");
+                        return Task.CompletedTask;
+                    }
+                    break;
                 }
-                break;
-            }
             case InteractionType.Hopper:
-            {
-                if (room.GetRoomItemHandler().HopperCount > 0)
                 {
-                    session.SendNotification("You can only have one hopper per room!");
-                    return Task.CompletedTask;
+                    if (room.GetRoomItemHandler().HopperCount > 0)
+                    {
+                        session.SendNotification("You can only have one hopper per room!");
+                        return Task.CompletedTask;
+                    }
+                    break;
                 }
-                break;
-            }
             case InteractionType.Tent:
             case InteractionType.TentSmall:
-            {
-                room.AddTent(item.Id);
-                break;
-            }
+                {
+                    room.AddTent(item.Id);
+                    break;
+                }
         }
         if (!item.IsWallItem)
         {

@@ -1,9 +1,8 @@
-﻿using System;
+﻿using NLog;
+using Plus.Communication.ConnectionManager.Socket_Exceptions;
 using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Sockets;
-using NLog;
-using Plus.Communication.ConnectionManager.Socket_Exceptions;
 
 namespace Plus.Communication.ConnectionManager;
 

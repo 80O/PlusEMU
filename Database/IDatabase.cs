@@ -1,6 +1,5 @@
-﻿using System;
+﻿using Plus.Database.Interfaces;
 using System.Data;
-using Plus.Database.Interfaces;
 
 namespace Plus.Database;
 

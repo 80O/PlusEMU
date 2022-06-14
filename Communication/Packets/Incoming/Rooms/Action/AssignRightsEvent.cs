@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Plus.Communication.Packets.Outgoing.Rooms.Permissions;
+﻿using Plus.Communication.Packets.Outgoing.Rooms.Permissions;
 using Plus.Communication.Packets.Outgoing.Rooms.Settings;
 using Plus.Core.Language;
 using Plus.Database;
@@ -52,7 +51,7 @@ internal class AssignRightsEvent : IPacketEvent
         }
         else
         {
-            var user =  _chacheManager.GenerateUser(userId);
+            var user = _chacheManager.GenerateUser(userId);
             if (user != null)
                 session.SendPacket(new FlatControllerAddedComposer(room.RoomId, user.Id, user.Username));
         }

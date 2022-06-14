@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using NLog;
+﻿using NLog;
 using Plus.Communication.ConnectionManager;
 using Plus.Communication.Packets.Incoming;
 using Plus.HabboHotel.GameClients;

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Data;
+﻿using System.Data;
 
 namespace Plus.HabboHotel.Rooms.Chat.Pets.Locale;
 

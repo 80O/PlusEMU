@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Plus.Database.Interfaces;
+﻿namespace Plus.Database.Interfaces;
 
 public interface IQueryAdapter : IRegularQueryAdapter, IDisposable
 {

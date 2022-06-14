@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Plus.HabboHotel.Rooms;
+﻿using Plus.HabboHotel.Rooms;
 
 namespace Plus.Communication.Packets.Outgoing.Rooms.Settings;
 

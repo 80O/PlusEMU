@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Drawing;
-using System.Linq;
-using Plus.Communication.Packets.Incoming;
+﻿using Plus.Communication.Packets.Incoming;
 using Plus.Communication.Packets.Outgoing.Rooms.Engine;
 using Plus.HabboHotel.Rooms;
+using System.Collections.Concurrent;
+using System.Drawing;
 
 namespace Plus.HabboHotel.Items.Wired.Boxes.Effects;
 
@@ -143,31 +141,31 @@ internal class MoveAndRotateBox : IWiredItem, IWiredCycle
         switch (mode)
         {
             case 1:
-            {
-                rotation += 2;
-                if (rotation > 6) rotation = 0;
-                break;
-            }
-            case 2:
-            {
-                rotation -= 2;
-                if (rotation < 0) rotation = 6;
-                break;
-            }
-            case 3:
-            {
-                if (Random.Shared.Next(0, 3) == 0)
                 {
                     rotation += 2;
                     if (rotation > 6) rotation = 0;
+                    break;
                 }
-                else
+            case 2:
                 {
                     rotation -= 2;
                     if (rotation < 0) rotation = 6;
+                    break;
                 }
-                break;
-            }
+            case 3:
+                {
+                    if (Random.Shared.Next(0, 3) == 0)
+                    {
+                        rotation += 2;
+                        if (rotation > 6) rotation = 0;
+                    }
+                    else
+                    {
+                        rotation -= 2;
+                        if (rotation < 0) rotation = 6;
+                    }
+                    break;
+                }
         }
         return rotation;
     }
@@ -178,65 +176,65 @@ internal class MoveAndRotateBox : IWiredItem, IWiredCycle
         switch (mode)
         {
             case 0:
-            {
-                newPos = position;
-                break;
-            }
-            case 1:
-            {
-                switch (Random.Shared.Next(1, 5))
                 {
-                    case 1:
-                        newPos = new Point(position.X + 1, position.Y);
-                        break;
-                    case 2:
-                        newPos = new Point(position.X - 1, position.Y);
-                        break;
-                    case 3:
-                        newPos = new Point(position.X, position.Y + 1);
-                        break;
-                    case 4:
-                        newPos = new Point(position.X, position.Y - 1);
-                        break;
+                    newPos = position;
+                    break;
                 }
-                break;
-            }
+            case 1:
+                {
+                    switch (Random.Shared.Next(1, 5))
+                    {
+                        case 1:
+                            newPos = new Point(position.X + 1, position.Y);
+                            break;
+                        case 2:
+                            newPos = new Point(position.X - 1, position.Y);
+                            break;
+                        case 3:
+                            newPos = new Point(position.X, position.Y + 1);
+                            break;
+                        case 4:
+                            newPos = new Point(position.X, position.Y - 1);
+                            break;
+                    }
+                    break;
+                }
             case 2:
-            {
-                if (Random.Shared.Next(0, 3) == 1)
-                    newPos = new Point(position.X - 1, position.Y);
-                else
-                    newPos = new Point(position.X + 1, position.Y);
-                break;
-            }
+                {
+                    if (Random.Shared.Next(0, 3) == 1)
+                        newPos = new Point(position.X - 1, position.Y);
+                    else
+                        newPos = new Point(position.X + 1, position.Y);
+                    break;
+                }
             case 3:
-            {
-                if (Random.Shared.Next(0, 3) == 1)
-                    newPos = new Point(position.X, position.Y - 1);
-                else
-                    newPos = new Point(position.X, position.Y + 1);
-                break;
-            }
+                {
+                    if (Random.Shared.Next(0, 3) == 1)
+                        newPos = new Point(position.X, position.Y - 1);
+                    else
+                        newPos = new Point(position.X, position.Y + 1);
+                    break;
+                }
             case 4:
-            {
-                newPos = new Point(position.X, position.Y - 1);
-                break;
-            }
+                {
+                    newPos = new Point(position.X, position.Y - 1);
+                    break;
+                }
             case 5:
-            {
-                newPos = new Point(position.X + 1, position.Y);
-                break;
-            }
+                {
+                    newPos = new Point(position.X + 1, position.Y);
+                    break;
+                }
             case 6:
-            {
-                newPos = new Point(position.X, position.Y + 1);
-                break;
-            }
+                {
+                    newPos = new Point(position.X, position.Y + 1);
+                    break;
+                }
             case 7:
-            {
-                newPos = new Point(position.X - 1, position.Y);
-                break;
-            }
+                {
+                    newPos = new Point(position.X - 1, position.Y);
+                    break;
+                }
         }
         return newPos;
     }

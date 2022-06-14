@@ -1,6 +1,5 @@
 ﻿using Plus.HabboHotel.Navigator;
 using Plus.HabboHotel.Users.UserData;
-using System.Threading.Tasks;
 
 namespace Plus.HabboHotel.Users.Navigator
 {

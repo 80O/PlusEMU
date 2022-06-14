@@ -1,7 +1,6 @@
 ﻿using Plus.Communication.Packets.Outgoing;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Rooms;
-using System;
 
 namespace Plus.HabboHotel.Users.Messenger;
 

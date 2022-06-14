@@ -1,5 +1,4 @@
-﻿using System;
-using Plus.HabboHotel.Rooms;
+﻿using Plus.HabboHotel.Rooms;
 
 namespace Plus.HabboHotel.Items;
 

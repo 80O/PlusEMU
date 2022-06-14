@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Plus.Communication.Packets.Outgoing.Sound;
+﻿namespace Plus.Communication.Packets.Outgoing.Sound;
 
 internal class SoundSettingsComposer : ServerPacket
 {

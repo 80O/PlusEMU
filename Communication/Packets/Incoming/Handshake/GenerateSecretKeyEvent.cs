@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Plus.Communication.Attributes;
+﻿using Plus.Communication.Attributes;
 using Plus.Communication.Encryption;
 using Plus.Communication.Encryption.Crypto.Prng;
 using Plus.Communication.Packets.Outgoing.Handshake;

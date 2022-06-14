@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Plus.Communication.Packets.Outgoing.Users;
+﻿namespace Plus.Communication.Packets.Outgoing.Users;
 
 internal class NameChangeUpdateComposer : ServerPacket
 {

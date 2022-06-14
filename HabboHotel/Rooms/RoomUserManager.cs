@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
+﻿using Dapper;
 using Plus.Communication.Packets.Outgoing.Handshake;
 using Plus.Communication.Packets.Outgoing.Rooms.Avatar;
 using Plus.Communication.Packets.Outgoing.Rooms.Engine;
@@ -16,8 +12,8 @@ using Plus.HabboHotel.Rooms.Games.Teams;
 using Plus.HabboHotel.Rooms.PathFinding;
 using Plus.HabboHotel.Rooms.Trading;
 using Plus.Utilities;
-
-using Dapper;
+using System.Collections.Concurrent;
+using System.Drawing;
 
 namespace Plus.HabboHotel.Rooms;
 
@@ -277,7 +273,7 @@ public class RoomUserManager
                 }
 
                 //Session.GetHabbo().CurrentRoomId = 0;
-                    session.GetHabbo().GetMessenger()?.NotifyChangesToFriends();
+                session.GetHabbo().GetMessenger()?.NotifyChangesToFriends();
                 using (var dbClient = PlusEnvironment.GetDatabaseManager().Connection())
                 {
                     dbClient.Execute("UPDATE user_roomvisits SET exit_timestamp = @exitTimestamp WHERE room_id = @roomId AND user_id = @userId ORDER BY exit_timestamp DESC LIMIT 1",

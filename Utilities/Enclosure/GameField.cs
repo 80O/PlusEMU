@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using Astar.Algorithm;
+﻿using Astar.Algorithm;
 using Plus.Utilities.Enclosure.Algorithm;
+using System.Drawing;
 
 namespace Plus.Utilities.Enclosure;
 

@@ -1,6 +1,5 @@
 ﻿using Plus.HabboHotel.Permissions;
 using Plus.HabboHotel.Users.UserData;
-using System.Threading.Tasks;
 
 namespace Plus.HabboHotel.Users.Permissions
 {

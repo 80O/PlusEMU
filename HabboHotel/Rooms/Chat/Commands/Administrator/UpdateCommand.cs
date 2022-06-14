@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Plus.Communication.Packets.Outgoing.Catalog;
+﻿using Plus.Communication.Packets.Outgoing.Catalog;
 using Plus.Core.FigureData;
 using Plus.Core.Settings;
 using Plus.HabboHotel.Achievements;
@@ -107,262 +106,262 @@ internal class UpdateCommand : IChatCommand
             case "cata":
             case "catalog":
             case "catalogue":
-            {
-                if (!session.GetHabbo().GetPermissions().HasCommand("command_update_catalog"))
                 {
-                    session.SendWhisper("Oops, you do not have the 'command_update_catalog' permission.");
+                    if (!session.GetHabbo().GetPermissions().HasCommand("command_update_catalog"))
+                    {
+                        session.SendWhisper("Oops, you do not have the 'command_update_catalog' permission.");
+                        break;
+                    }
+                    _catalogManager.Init(_itemDataManager);
+                    _clientManager.SendPacket(new CatalogUpdatedComposer());
+                    session.SendWhisper("Catalogue successfully updated.");
                     break;
                 }
-                _catalogManager.Init(_itemDataManager);
-                _clientManager.SendPacket(new CatalogUpdatedComposer());
-                session.SendWhisper("Catalogue successfully updated.");
-                break;
-            }
             case "items":
             case "furni":
             case "furniture":
-            {
-                if (!session.GetHabbo().GetPermissions().HasCommand("command_update_furni"))
                 {
-                    session.SendWhisper("Oops, you do not have the 'command_update_furni' permission.");
+                    if (!session.GetHabbo().GetPermissions().HasCommand("command_update_furni"))
+                    {
+                        session.SendWhisper("Oops, you do not have the 'command_update_furni' permission.");
+                        break;
+                    }
+                    _itemDataManager.Init();
+                    session.SendWhisper("Items successfully updated.");
                     break;
                 }
-                _itemDataManager.Init();
-                session.SendWhisper("Items successfully updated.");
-                break;
-            }
             case "models":
-            {
-                if (!session.GetHabbo().GetPermissions().HasCommand("command_update_models"))
                 {
-                    session.SendWhisper("Oops, you do not have the 'command_update_models' permission.");
+                    if (!session.GetHabbo().GetPermissions().HasCommand("command_update_models"))
+                    {
+                        session.SendWhisper("Oops, you do not have the 'command_update_models' permission.");
+                        break;
+                    }
+                    _roomManager.LoadModels();
+                    session.SendWhisper("Room models successfully updated.");
                     break;
                 }
-                _roomManager.LoadModels();
-                session.SendWhisper("Room models successfully updated.");
-                break;
-            }
             case "promotions":
-            {
-                if (!session.GetHabbo().GetPermissions().HasCommand("command_update_promotions"))
                 {
-                    session.SendWhisper("Oops, you do not have the 'command_update_promotions' permission.");
+                    if (!session.GetHabbo().GetPermissions().HasCommand("command_update_promotions"))
+                    {
+                        session.SendWhisper("Oops, you do not have the 'command_update_promotions' permission.");
+                        break;
+                    }
+                    _landingViewManager.Reload();
+                    session.SendWhisper("Landing view promotions successfully updated.");
                     break;
                 }
-                _landingViewManager.Reload();
-                session.SendWhisper("Landing view promotions successfully updated.");
-                break;
-            }
             case "youtube":
-            {
-                if (!session.GetHabbo().GetPermissions().HasCommand("command_update_youtube"))
                 {
-                    session.SendWhisper("Oops, you do not have the 'command_update_youtube' permission.");
+                    if (!session.GetHabbo().GetPermissions().HasCommand("command_update_youtube"))
+                    {
+                        session.SendWhisper("Oops, you do not have the 'command_update_youtube' permission.");
+                        break;
+                    }
+                    _televisionManager.Init();
+                    session.SendWhisper("Youtube televisions playlist successfully updated.");
                     break;
                 }
-                _televisionManager.Init();
-                session.SendWhisper("Youtube televisions playlist successfully updated.");
-                break;
-            }
             case "filter":
-            {
-                if (!session.GetHabbo().GetPermissions().HasCommand("command_update_filter"))
                 {
-                    session.SendWhisper("Oops, you do not have the 'command_update_filter' permission.");
+                    if (!session.GetHabbo().GetPermissions().HasCommand("command_update_filter"))
+                    {
+                        session.SendWhisper("Oops, you do not have the 'command_update_filter' permission.");
+                        break;
+                    }
+                    _wordFilterManager.Init();
+                    session.SendWhisper("Filter definitions successfully updated.");
                     break;
                 }
-                _wordFilterManager.Init();
-                session.SendWhisper("Filter definitions successfully updated.");
-                break;
-            }
             case "navigator":
-            {
-                if (!session.GetHabbo().GetPermissions().HasCommand("command_update_navigator"))
                 {
-                    session.SendWhisper("Oops, you do not have the 'command_update_navigator' permission.");
+                    if (!session.GetHabbo().GetPermissions().HasCommand("command_update_navigator"))
+                    {
+                        session.SendWhisper("Oops, you do not have the 'command_update_navigator' permission.");
+                        break;
+                    }
+                    _navigatorManager.Init();
+                    session.SendWhisper("Navigator items successfully updated.");
                     break;
                 }
-                _navigatorManager.Init();
-                session.SendWhisper("Navigator items successfully updated.");
-                break;
-            }
             case "ranks":
             case "rights":
             case "permissions":
-            {
-                if (!session.GetHabbo().GetPermissions().HasCommand("command_update_rights"))
                 {
-                    session.SendWhisper("Oops, you do not have the 'command_update_rights' permission.");
+                    if (!session.GetHabbo().GetPermissions().HasCommand("command_update_rights"))
+                    {
+                        session.SendWhisper("Oops, you do not have the 'command_update_rights' permission.");
+                        break;
+                    }
+                    _permissionManager.Init();
+                    foreach (var client in _clientManager.GetClients.ToList())
+                    {
+                        if (client == null || client.GetHabbo() == null || client.GetHabbo().GetPermissions() == null)
+                            continue;
+                        client.GetHabbo().GetPermissions().Init(client.GetHabbo());
+                    }
+                    session.SendWhisper("Rank definitions successfully updated.");
                     break;
                 }
-                _permissionManager.Init();
-                foreach (var client in _clientManager.GetClients.ToList())
-                {
-                    if (client == null || client.GetHabbo() == null || client.GetHabbo().GetPermissions() == null)
-                        continue;
-                    client.GetHabbo().GetPermissions().Init(client.GetHabbo());
-                }
-                session.SendWhisper("Rank definitions successfully updated.");
-                break;
-            }
             case "config":
             case "settings":
-            {
-                if (!session.GetHabbo().GetPermissions().HasCommand("command_update_configuration"))
                 {
-                    session.SendWhisper("Oops, you do not have the 'command_update_configuration' permission.");
+                    if (!session.GetHabbo().GetPermissions().HasCommand("command_update_configuration"))
+                    {
+                        session.SendWhisper("Oops, you do not have the 'command_update_configuration' permission.");
+                        break;
+                    }
+                    _settingsManager.Reload();
+                    session.SendWhisper("Server configuration successfully updated.");
                     break;
                 }
-                _settingsManager.Reload();
-                session.SendWhisper("Server configuration successfully updated.");
-                break;
-            }
             case "bans":
-            {
-                if (!session.GetHabbo().GetPermissions().HasCommand("command_update_bans"))
                 {
-                    session.SendWhisper("Oops, you do not have the 'command_update_bans' permission.");
+                    if (!session.GetHabbo().GetPermissions().HasCommand("command_update_bans"))
+                    {
+                        session.SendWhisper("Oops, you do not have the 'command_update_bans' permission.");
+                        break;
+                    }
+                    _moderationManager.ReCacheBans();
+                    session.SendWhisper("Ban cache re-loaded.");
                     break;
                 }
-                _moderationManager.ReCacheBans();
-                session.SendWhisper("Ban cache re-loaded.");
-                break;
-            }
             case "quests":
-            {
-                if (!session.GetHabbo().GetPermissions().HasCommand("command_update_quests"))
                 {
-                    session.SendWhisper("Oops, you do not have the 'command_update_quests' permission.");
+                    if (!session.GetHabbo().GetPermissions().HasCommand("command_update_quests"))
+                    {
+                        session.SendWhisper("Oops, you do not have the 'command_update_quests' permission.");
+                        break;
+                    }
+                    _questManager.Init();
+                    session.SendWhisper("Quest definitions successfully updated.");
                     break;
                 }
-                _questManager.Init();
-                session.SendWhisper("Quest definitions successfully updated.");
-                break;
-            }
             case "achievements":
-            {
-                if (!session.GetHabbo().GetPermissions().HasCommand("command_update_achievements"))
                 {
-                    session.SendWhisper("Oops, you do not have the 'command_update_achievements' permission.");
+                    if (!session.GetHabbo().GetPermissions().HasCommand("command_update_achievements"))
+                    {
+                        session.SendWhisper("Oops, you do not have the 'command_update_achievements' permission.");
+                        break;
+                    }
+                    _achievementManager.Init();
+                    session.SendWhisper("Achievement definitions bans successfully updated.");
                     break;
                 }
-                _achievementManager.Init();
-                session.SendWhisper("Achievement definitions bans successfully updated.");
-                break;
-            }
             case "moderation":
-            {
-                if (!session.GetHabbo().GetPermissions().HasCommand("command_update_moderation"))
                 {
-                    session.SendWhisper("Oops, you do not have the 'command_update_moderation' permission.");
+                    if (!session.GetHabbo().GetPermissions().HasCommand("command_update_moderation"))
+                    {
+                        session.SendWhisper("Oops, you do not have the 'command_update_moderation' permission.");
+                        break;
+                    }
+                    _moderationManager.Init();
+                    _clientManager.ModAlert("Moderation presets have been updated. Please reload the client to view the new presets.");
+                    session.SendWhisper("Moderation configuration successfully updated.");
                     break;
                 }
-                _moderationManager.Init();
-                _clientManager.ModAlert("Moderation presets have been updated. Please reload the client to view the new presets.");
-                session.SendWhisper("Moderation configuration successfully updated.");
-                break;
-            }
             case "vouchers":
-            {
-                if (!session.GetHabbo().GetPermissions().HasCommand("command_update_vouchers"))
                 {
-                    session.SendWhisper("Oops, you do not have the 'command_update_vouchers' permission.");
+                    if (!session.GetHabbo().GetPermissions().HasCommand("command_update_vouchers"))
+                    {
+                        session.SendWhisper("Oops, you do not have the 'command_update_vouchers' permission.");
+                        break;
+                    }
+                    _catalogManager.GetVoucherManager().Init();
+                    session.SendWhisper("Catalogue vouche cache successfully updated.");
                     break;
                 }
-                _catalogManager.GetVoucherManager().Init();
-                session.SendWhisper("Catalogue vouche cache successfully updated.");
-                break;
-            }
             case "gc":
             case "games":
             case "gamecenter":
-            {
-                if (!session.GetHabbo().GetPermissions().HasCommand("command_update_game_center"))
                 {
-                    session.SendWhisper("Oops, you do not have the 'command_update_game_center' permission.");
+                    if (!session.GetHabbo().GetPermissions().HasCommand("command_update_game_center"))
+                    {
+                        session.SendWhisper("Oops, you do not have the 'command_update_game_center' permission.");
+                        break;
+                    }
+                    _gameDataManager.Init();
+                    session.SendWhisper("Game Center cache successfully updated.");
                     break;
                 }
-                _gameDataManager.Init();
-                session.SendWhisper("Game Center cache successfully updated.");
-                break;
-            }
             case "pet_locale":
-            {
-                if (!session.GetHabbo().GetPermissions().HasCommand("command_update_pet_locale"))
                 {
-                    session.SendWhisper("Oops, you do not have the 'command_update_pet_locale' permission.");
+                    if (!session.GetHabbo().GetPermissions().HasCommand("command_update_pet_locale"))
+                    {
+                        session.SendWhisper("Oops, you do not have the 'command_update_pet_locale' permission.");
+                        break;
+                    }
+                    _petLocale.Init();
+                    session.SendWhisper("Pet locale cache successfully updated.");
                     break;
                 }
-                _petLocale.Init();
-                session.SendWhisper("Pet locale cache successfully updated.");
-                break;
-            }
             case "locale":
-            {
-                if (!session.GetHabbo().GetPermissions().HasCommand("command_update_locale"))
                 {
-                    session.SendWhisper("Oops, you do not have the 'command_update_locale' permission.");
+                    if (!session.GetHabbo().GetPermissions().HasCommand("command_update_locale"))
+                    {
+                        session.SendWhisper("Oops, you do not have the 'command_update_locale' permission.");
+                        break;
+                    }
+                    PlusEnvironment.GetLanguageManager().Reload();
+                    session.SendWhisper("Locale cache successfully updated.");
                     break;
                 }
-                PlusEnvironment.GetLanguageManager().Reload();
-                session.SendWhisper("Locale cache successfully updated.");
-                break;
-            }
             case "mutant":
-            {
-                if (!session.GetHabbo().GetPermissions().HasCommand("command_update_anti_mutant"))
                 {
-                    session.SendWhisper("Oops, you do not have the 'command_update_anti_mutant' permission.");
+                    if (!session.GetHabbo().GetPermissions().HasCommand("command_update_anti_mutant"))
+                    {
+                        session.SendWhisper("Oops, you do not have the 'command_update_anti_mutant' permission.");
+                        break;
+                    }
+                    _figureDataManager.Init();
+                    session.SendWhisper("FigureData manager successfully reloaded.");
                     break;
                 }
-                _figureDataManager.Init();
-                session.SendWhisper("FigureData manager successfully reloaded.");
-                break;
-            }
             case "bots":
-            {
-                if (!session.GetHabbo().GetPermissions().HasCommand("command_update_bots"))
                 {
-                    session.SendWhisper("Oops, you do not have the 'command_update_bots' permission.");
+                    if (!session.GetHabbo().GetPermissions().HasCommand("command_update_bots"))
+                    {
+                        session.SendWhisper("Oops, you do not have the 'command_update_bots' permission.");
+                        break;
+                    }
+                    _botManager.Init();
+                    session.SendWhisper("Bot managaer successfully reloaded.");
                     break;
                 }
-                _botManager.Init();
-                session.SendWhisper("Bot managaer successfully reloaded.");
-                break;
-            }
             case "rewards":
-            {
-                if (!session.GetHabbo().GetPermissions().HasCommand("command_update_rewards"))
                 {
-                    session.SendWhisper("Oops, you do not have the 'command_update_rewards' permission.");
+                    if (!session.GetHabbo().GetPermissions().HasCommand("command_update_rewards"))
+                    {
+                        session.SendWhisper("Oops, you do not have the 'command_update_rewards' permission.");
+                        break;
+                    }
+                    _rewardManager.Init();
+                    session.SendWhisper("Rewards managaer successfully reloaded.");
                     break;
                 }
-                _rewardManager.Init();
-                session.SendWhisper("Rewards managaer successfully reloaded.");
-                break;
-            }
             case "chat_styles":
-            {
-                if (!session.GetHabbo().GetPermissions().HasCommand("command_update_chat_styles"))
                 {
-                    session.SendWhisper("Oops, you do not have the 'command_update_chat_styles' permission.");
+                    if (!session.GetHabbo().GetPermissions().HasCommand("command_update_chat_styles"))
+                    {
+                        session.SendWhisper("Oops, you do not have the 'command_update_chat_styles' permission.");
+                        break;
+                    }
+                    _chatStyleManager.Init();
+                    session.SendWhisper("Chat Styles successfully reloaded.");
                     break;
                 }
-                _chatStyleManager.Init();
-                session.SendWhisper("Chat Styles successfully reloaded.");
-                break;
-            }
             case "badge_definitions":
-            {
-                if (!session.GetHabbo().GetPermissions().HasCommand("command_update_badge_definitions"))
                 {
-                    session.SendWhisper("Oops, you do not have the 'command_update_badge_definitions' permission.");
+                    if (!session.GetHabbo().GetPermissions().HasCommand("command_update_badge_definitions"))
+                    {
+                        session.SendWhisper("Oops, you do not have the 'command_update_badge_definitions' permission.");
+                        break;
+                    }
+                    _badgeManager.Init();
+                    session.SendWhisper("Badge definitions successfully reloaded.");
                     break;
                 }
-                _badgeManager.Init();
-                session.SendWhisper("Badge definitions successfully reloaded.");
-                break;
-            }
             default:
                 session.SendWhisper("'" + updateVariable + "' is not a valid thing to reload.");
                 break;

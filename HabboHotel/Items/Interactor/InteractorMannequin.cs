@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Plus.Communication.Packets.Outgoing.Rooms.Engine;
+﻿using Plus.Communication.Packets.Outgoing.Rooms.Engine;
 using Plus.HabboHotel.GameClients;
 
 namespace Plus.HabboHotel.Items.Interactor;

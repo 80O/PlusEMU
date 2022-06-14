@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using Plus.Core;
+﻿using Plus.Core;
 using Plus.HabboHotel.Items;
 using Plus.HabboHotel.Rooms.Games.Teams;
 using Plus.HabboHotel.Rooms.PathFinding;
+using System.Collections.Concurrent;
+using System.Drawing;
 
 namespace Plus.HabboHotel.Rooms;
 
@@ -407,46 +404,46 @@ public class Gamemap
                 }
                 break;
             case InteractionType.Banzaifloor:
-            {
-                _room.GetBanzai().AddTile(item, item.Id);
-                break;
-            }
+                {
+                    _room.GetBanzai().AddTile(item, item.Id);
+                    break;
+                }
             case InteractionType.Banzaipyramid:
-            {
-                _room.GetGameItemHandler().AddPyramid(item, item.Id);
-                break;
-            }
+                {
+                    _room.GetGameItemHandler().AddPyramid(item, item.Id);
+                    break;
+                }
             case InteractionType.Banzaitele:
-            {
-                _room.GetGameItemHandler().AddTeleport(item, item.Id);
-                item.ExtraData = "";
-                break;
-            }
+                {
+                    _room.GetGameItemHandler().AddTeleport(item, item.Id);
+                    item.ExtraData = "";
+                    break;
+                }
             case InteractionType.Banzaipuck:
-            {
-                _room.GetBanzai().AddPuck(item);
-                break;
-            }
+                {
+                    _room.GetBanzai().AddPuck(item);
+                    break;
+                }
             case InteractionType.Football:
-            {
-                _room.GetSoccer().AddBall(item);
-                break;
-            }
+                {
+                    _room.GetSoccer().AddBall(item);
+                    break;
+                }
             case InteractionType.FreezeTileBlock:
-            {
-                _room.GetFreeze().AddFreezeBlock(item);
-                break;
-            }
+                {
+                    _room.GetFreeze().AddFreezeBlock(item);
+                    break;
+                }
             case InteractionType.FreezeTile:
-            {
-                _room.GetFreeze().AddFreezeTile(item);
-                break;
-            }
+                {
+                    _room.GetFreeze().AddFreezeTile(item);
+                    break;
+                }
             case InteractionType.Freezeexit:
-            {
-                _room.GetFreeze().AddExitTile(item);
-                break;
-            }
+                {
+                    _room.GetFreeze().AddExitTile(item);
+                    break;
+                }
         }
     }
 
@@ -536,55 +533,55 @@ public class Gamemap
                 case InteractionType.Banzaigatered:
                 case InteractionType.Freezeredcounter:
                 case InteractionType.FreezeRedGate:
-                {
-                    if (!_room.GetRoomItemHandler().GetFloor.Contains(item))
-                        _room.GetGameManager().AddFurnitureToTeam(item, Team.Red);
-                    break;
-                }
+                    {
+                        if (!_room.GetRoomItemHandler().GetFloor.Contains(item))
+                            _room.GetGameManager().AddFurnitureToTeam(item, Team.Red);
+                        break;
+                    }
                 case InteractionType.FootballGoalGreen:
                 case InteractionType.Footballcountergreen:
                 case InteractionType.Banzaiscoregreen:
                 case InteractionType.Banzaigategreen:
                 case InteractionType.Freezegreencounter:
                 case InteractionType.FreezeGreenGate:
-                {
-                    if (!_room.GetRoomItemHandler().GetFloor.Contains(item))
-                        _room.GetGameManager().AddFurnitureToTeam(item, Team.Green);
-                    break;
-                }
+                    {
+                        if (!_room.GetRoomItemHandler().GetFloor.Contains(item))
+                            _room.GetGameManager().AddFurnitureToTeam(item, Team.Green);
+                        break;
+                    }
                 case InteractionType.FootballGoalBlue:
                 case InteractionType.Footballcounterblue:
                 case InteractionType.Banzaiscoreblue:
                 case InteractionType.Banzaigateblue:
                 case InteractionType.Freezebluecounter:
                 case InteractionType.FreezeBlueGate:
-                {
-                    if (!_room.GetRoomItemHandler().GetFloor.Contains(item))
-                        _room.GetGameManager().AddFurnitureToTeam(item, Team.Blue);
-                    break;
-                }
+                    {
+                        if (!_room.GetRoomItemHandler().GetFloor.Contains(item))
+                            _room.GetGameManager().AddFurnitureToTeam(item, Team.Blue);
+                        break;
+                    }
                 case InteractionType.FootballGoalYellow:
                 case InteractionType.Footballcounteryellow:
                 case InteractionType.Banzaiscoreyellow:
                 case InteractionType.Banzaigateyellow:
                 case InteractionType.Freezeyellowcounter:
                 case InteractionType.FreezeYellowGate:
-                {
-                    if (!_room.GetRoomItemHandler().GetFloor.Contains(item))
-                        _room.GetGameManager().AddFurnitureToTeam(item, Team.Yellow);
-                    break;
-                }
+                    {
+                        if (!_room.GetRoomItemHandler().GetFloor.Contains(item))
+                            _room.GetGameManager().AddFurnitureToTeam(item, Team.Yellow);
+                        break;
+                    }
                 case InteractionType.Freezeexit:
-                {
-                    _room.GetFreeze().AddExitTile(item);
-                    break;
-                }
+                    {
+                        _room.GetFreeze().AddExitTile(item);
+                        break;
+                    }
                 case InteractionType.Roller:
-                {
-                    if (!_room.GetRoomItemHandler().GetRollers().Contains(item))
-                        _room.GetRoomItemHandler().TryAddRoller(item.Id, item);
-                    break;
-                }
+                    {
+                        if (!_room.GetRoomItemHandler().GetRollers().Contains(item))
+                            _room.GetRoomItemHandler().TryAddRoller(item.Id, item);
+                        break;
+                    }
             }
         }
         if (item.GetBaseItem().Type != 's')

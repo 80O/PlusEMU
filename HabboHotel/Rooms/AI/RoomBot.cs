@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using Plus.HabboHotel.Catalog.Utilities;
+﻿using Plus.HabboHotel.Catalog.Utilities;
 using Plus.HabboHotel.Rooms.AI.Speech;
 using Plus.HabboHotel.Rooms.AI.Types;
+using System.Drawing;
 
 namespace Plus.HabboHotel.Rooms.AI;
 

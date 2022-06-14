@@ -1,11 +1,9 @@
-﻿using System.Drawing;
-using System.Linq;
-using System.Threading.Tasks;
-using Plus.Communication.Packets.Outgoing.Inventory.Pets;
+﻿using Plus.Communication.Packets.Outgoing.Inventory.Pets;
 using Plus.Communication.Packets.Outgoing.Rooms.Engine;
 using Plus.Database;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Rooms;
+using System.Drawing;
 
 namespace Plus.Communication.Packets.Incoming.Rooms.AI.Pets;
 
@@ -26,10 +24,10 @@ internal class PickUpPetEvent : IPacketEvent
     {
         if (!session.GetHabbo().InRoom)
             return Task.CompletedTask;
-     
+
         if (!_roomManager.TryGetRoom(session.GetHabbo().CurrentRoomId, out var room))
             return Task.CompletedTask;
-            
+
         var petId = packet.PopInt();
         if (!room.GetRoomUserManager().TryGetPet(petId, out var pet))
         {

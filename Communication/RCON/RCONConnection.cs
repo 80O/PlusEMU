@@ -1,7 +1,6 @@
-﻿using System;
+﻿using NLog;
 using System.Net.Sockets;
 using System.Text;
-using NLog;
 
 namespace Plus.Communication.Rcon;
 

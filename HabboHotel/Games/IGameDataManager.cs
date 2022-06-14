@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Plus.HabboHotel.Games;
+﻿namespace Plus.HabboHotel.Games;
 
 public interface IGameDataManager
 {

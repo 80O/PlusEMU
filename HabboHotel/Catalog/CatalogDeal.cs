@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Plus.HabboHotel.Items;
 using System.Data;
-using Plus.HabboHotel.Items;
 
 namespace Plus.HabboHotel.Catalog;
 

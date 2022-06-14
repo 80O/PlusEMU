@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Dapper;
+﻿using Dapper;
 using NLog;
 using Plus.Communication.ConnectionManager;
 using Plus.Communication.Packets.Outgoing;
@@ -16,6 +7,11 @@ using Plus.Communication.Packets.Outgoing.Notifications;
 using Plus.Core;
 using Plus.Database;
 using Plus.HabboHotel.Users.Messenger;
+using System.Collections;
+using System.Collections.Concurrent;
+using System.Data;
+using System.Diagnostics;
+using System.Text;
 
 namespace Plus.HabboHotel.GameClients;
 
@@ -177,7 +173,7 @@ public class GameClientManager : IGameClientManager
     {
         if (!TryGetClient(clientId, out var client))
             return;
-        
+
         if (client != null)
             client.Dispose();
         _clients.TryRemove(clientId, out client);

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Net.Sockets;
+﻿using System.Net.Sockets;
 
 namespace Plus.Communication.ConnectionManager;
 
@@ -174,7 +173,7 @@ public class ConnectionInformation : IDisposable
         }
         if (bytesReceived == 0)
         {
-         //   Disconnect();
+            //   Disconnect();
             return;
         }
         try

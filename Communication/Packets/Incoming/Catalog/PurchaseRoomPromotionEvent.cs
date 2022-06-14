@@ -1,14 +1,13 @@
-﻿using System.Threading.Tasks;
+﻿using Dapper;
 using Plus.Communication.Packets.Outgoing.Catalog;
 using Plus.Communication.Packets.Outgoing.Rooms.Engine;
 using Plus.Database;
+using Plus.HabboHotel.Badges;
+using Plus.HabboHotel.Friends;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Rooms;
 using Plus.HabboHotel.Rooms.Chat.Filter;
 using Plus.HabboHotel.Users.Messenger;
-using Dapper;
-using Plus.HabboHotel.Badges;
-using Plus.HabboHotel.Friends;
 
 namespace Plus.Communication.Packets.Incoming.Catalog;
 

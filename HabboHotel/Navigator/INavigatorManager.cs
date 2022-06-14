@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Plus.HabboHotel.Users;
+﻿using Plus.HabboHotel.Users;
 using Plus.HabboHotel.Users.Navigator.SavedSearches;
 
 namespace Plus.HabboHotel.Navigator;

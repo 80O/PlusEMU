@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace Plus.HabboHotel.Users.UserData
+﻿namespace Plus.HabboHotel.Users.UserData
 {
     public interface IUserDataFactory
     {

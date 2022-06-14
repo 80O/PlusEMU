@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using Dapper;
 using Plus.Communication.Packets.Outgoing.Catalog;
 using Plus.Communication.Packets.Outgoing.Inventory.Furni;
 using Plus.Database;
@@ -9,7 +7,6 @@ using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Items;
 using Plus.HabboHotel.Rooms.AI;
 using Plus.HabboHotel.Rooms.AI.Speech;
-using Dapper;
 
 namespace Plus.Communication.Packets.Incoming.Catalog;
 
@@ -52,7 +49,7 @@ internal class CheckGnomeNameEvent : IPacketEvent
         //Quickly delete it from the database.
         using (var connection = _database.Connection())
         {
-            connection.Execute("DELETE FROM `items` WHERE `id` = @ItemId LIMIT 1", new { ItemId = item.Id});
+            connection.Execute("DELETE FROM `items` WHERE `id` = @ItemId LIMIT 1", new { ItemId = item.Id });
         }
 
         //Remove the item.

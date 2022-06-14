@@ -1,10 +1,7 @@
-﻿using Plus.HabboHotel.Users.Messenger;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Dapper;
+﻿using Dapper;
 using Plus.Database;
 using Plus.HabboHotel.Users;
+using Plus.HabboHotel.Users.Messenger;
 using Plus.Utilities;
 
 namespace Plus.HabboHotel.Friends

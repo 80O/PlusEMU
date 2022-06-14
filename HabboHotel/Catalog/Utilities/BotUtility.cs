@@ -1,8 +1,7 @@
-﻿using System;
-using System.Data;
-using Plus.HabboHotel.Items;
+﻿using Plus.HabboHotel.Items;
 using Plus.HabboHotel.Rooms.AI;
 using Plus.HabboHotel.Users.Inventory.Bots;
+using System.Data;
 
 namespace Plus.HabboHotel.Catalog.Utilities;
 

@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using NLog;
 using System.Data;
-using NLog;
 
 namespace Plus.HabboHotel.Subscriptions;
 

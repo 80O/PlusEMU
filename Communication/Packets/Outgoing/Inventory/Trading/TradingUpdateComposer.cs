@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Plus.HabboHotel.Items;
+﻿using Plus.HabboHotel.Items;
 using Plus.HabboHotel.Rooms.Trading;
 
 namespace Plus.Communication.Packets.Outgoing.Inventory.Trading;

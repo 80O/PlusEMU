@@ -1,5 +1,5 @@
-﻿using System.Collections.Concurrent;
-using Plus.HabboHotel.Rooms.Trading;
+﻿using Plus.HabboHotel.Rooms.Trading;
+using System.Collections.Concurrent;
 
 namespace Plus.HabboHotel.Rooms.Instance;
 

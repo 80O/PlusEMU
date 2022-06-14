@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Dapper;
+﻿using Dapper;
 using Plus.Communication.Packets.Outgoing.Rooms.Action;
 using Plus.Database;
 using Plus.HabboHotel.GameClients;

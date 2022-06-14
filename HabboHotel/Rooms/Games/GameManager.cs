@@ -1,9 +1,7 @@
-﻿using System;
+﻿using Plus.HabboHotel.Items;
+using Plus.HabboHotel.Rooms.Games.Teams;
 using System.Collections.Concurrent;
 using System.Drawing;
-using System.Linq;
-using Plus.HabboHotel.Items;
-using Plus.HabboHotel.Rooms.Games.Teams;
 
 namespace Plus.HabboHotel.Rooms.Games;
 

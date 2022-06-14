@@ -1,9 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using Dapper;
 using Plus.Core.FigureData;
 using Plus.Database;
 using Plus.HabboHotel.GameClients;
-
-using Dapper;
 
 namespace Plus.Communication.Packets.Incoming.Avatar;
 

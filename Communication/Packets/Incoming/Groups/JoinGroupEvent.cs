@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using Plus.Communication.Packets.Outgoing.Catalog;
+﻿using Plus.Communication.Packets.Outgoing.Catalog;
 using Plus.Communication.Packets.Outgoing.Groups;
 using Plus.Communication.Packets.Outgoing.Moderation;
 using Plus.HabboHotel.GameClients;
@@ -35,8 +33,8 @@ internal class JoinGroupEvent : IPacketEvent
         if (group.Type == GroupType.Locked)
         {
             var groupAdmins = (from client in _clientManager.GetClients.ToList()
-                where client != null && client.GetHabbo() != null && @group.IsAdmin(client.GetHabbo().Id)
-                select client).ToList();
+                               where client != null && client.GetHabbo() != null && @group.IsAdmin(client.GetHabbo().Id)
+                               select client).ToList();
             foreach (var client in groupAdmins) client.SendPacket(new GroupMembershipRequestedComposer(group.Id, session.GetHabbo(), 3));
             session.SendPacket(new GroupInfoComposer(group, session));
         }
