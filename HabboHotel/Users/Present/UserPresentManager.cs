@@ -19,11 +19,11 @@ namespace Plus.HabboHotel.Users.Present
 		public async Task<int> CreatePresent(int itemID, int baseItemID, string itemExtraData)
         {
 			using var connection = _database.Connection();
-			var InsertQuery = await connection.ExecuteAsync(
+			var insertQuery = await connection.ExecuteAsync(
 				"INSERT INTO `user_presents` (`item_id`,`base_id`,`extra_data`) VALUES (@itemID, @baseItemID, @itemExtraData)",
 				new { itemID = itemID, baseItemID = baseItemID, itemExtraData = itemExtraData }
 			);
-			return Convert.ToInt32(InsertQuery);
+			return Convert.ToInt32(insertQuery);
 		}
 	}
 }
