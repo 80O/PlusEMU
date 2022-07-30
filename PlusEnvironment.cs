@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Text;
 using Dapper;
 using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Logging;
+using NLog;
 using Plus.Communication.Encryption;
 using Plus.Communication.Encryption.Keys;
 using Plus.Communication.Flash;
@@ -27,7 +27,7 @@ public class PlusEnvironment : IPlusEnvironment
 {
     public const string PrettyVersion = "Plus Emulator";
     public const string PrettyBuild = "3.4.3.0";
-    private readonly ILogger<PlusEnvironment> _logger;
+    private static readonly ILogger Log = LogManager.GetLogger("Plus.PlusEnvironment");
 
     private static Encoding _defaultEncoding;
     public static CultureInfo CultureInfo;
@@ -64,8 +64,7 @@ public class PlusEnvironment : IPlusEnvironment
         IRconSocket rconSocket,
         IOptions<RconConfiguration> rconConfiguration,
         IFlashServer flashServer,
-        INitroServer nitroServer,
-        ILogger<PlusEnvironment> logger)
+        INitroServer nitroServer)
     {
         _database = database;
         _languageManager = languageManager;
@@ -77,7 +76,6 @@ public class PlusEnvironment : IPlusEnvironment
         _flashServer = flashServer;
         _nitroServer = nitroServer;
         _rconConfiguration = rconConfiguration.Value;
-        _logger = logger;
     }
 
     public async Task<bool> Start()
@@ -103,11 +101,11 @@ public class PlusEnvironment : IPlusEnvironment
         {
             if (!_database.IsConnected())
             {
-                _logger.LogError("Failed to Connect to the specified MySQL server.");
+                Log.Error("Failed to Connect to the specified MySQL server.");
                 Console.ReadKey(true);
                 return false;
             }
-            _logger.LogInformation("Connected to Database!");
+            Log.Info("Connected to Database!");
 
             //Reset our statistics first.
             await ResetStatistics();
@@ -135,28 +133,28 @@ public class PlusEnvironment : IPlusEnvironment
             _game.StartGameLoop();
             var timeUsed = DateTime.Now - ServerStarted;
             Console.WriteLine();
-            _logger.LogInformation("EMULATOR -> READY! (" + timeUsed.Seconds + " s, " + timeUsed.Milliseconds + " ms)");
+            Log.Info("EMULATOR -> READY! (" + timeUsed.Seconds + " s, " + timeUsed.Milliseconds + " ms)");
         }
 #pragma warning disable CS0168 // The variable 'e' is declared but never used
         catch (KeyNotFoundException e)
 #pragma warning restore CS0168 // The variable 'e' is declared but never used
         {
-            _logger.LogError("Please check your configuration file - some values appear to be missing.");
-            _logger.LogError("Press any key to shut down ...");
+            Log.Error("Please check your configuration file - some values appear to be missing.");
+            Log.Error("Press any key to shut down ...");
             Console.ReadKey(true);
             return false;
         }
         catch (InvalidOperationException e)
         {
-            _logger.LogError("Failed to initialize PlusEmulator: " + e.Message);
-            _logger.LogError("Press any key to shut down ...");
+            Log.Error("Failed to initialize PlusEmulator: " + e.Message);
+            Log.Error("Press any key to shut down ...");
             Console.ReadKey(true);
             return false;
         }
         catch (Exception e)
         {
-            _logger.LogError("Fatal error during startup: " + e);
-            _logger.LogError("Press a key to exit");
+            Log.Error("Fatal error during startup: " + e);
+            Log.Error("Press a key to exit");
             Console.ReadKey();
             return false;
         }
@@ -300,11 +298,10 @@ public class PlusEnvironment : IPlusEnvironment
         }
     }
 
-
     public static void PerformShutDown()
     {
         Console.Clear();
-        _logger.LogInformation("Server shutting down...");
+        Log.Info("Server shutting down...");
         Console.Title = "PLUS EMULATOR: SHUTTING DOWN!";
         GetGame().GetClientManager().SendPacket(new BroadcastMessageAlertComposer(GetLanguageManager().TryGetValue("server.shutdown.message")));
         GetGame().StopGameLoop();
@@ -324,7 +321,7 @@ public class PlusEnvironment : IPlusEnvironment
                 dbClient.RunQuery("UPDATE `server_status` SET `users_online` = '0', `loaded_rooms` = '0'");
             }
         }
-        _logger.LogInformation("Plus Emulator has successfully shutdown.");
+        Log.Info("Plus Emulator has successfully shutdown.");
         Thread.Sleep(1000);
         Environment.Exit(0);
     }

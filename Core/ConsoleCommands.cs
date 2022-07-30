@@ -1,16 +1,11 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using NLog;
 using Plus.Communication.Packets.Outgoing.Moderation;
 
 namespace Plus.Core;
 
-internal class ConsoleCommands
+public static class ConsoleCommands
 {
-    private readonly ILogger<ConsoleCommands> _logger;
-
-    public ConsoleCommands(ILogger<ConsoleCommands> logger)
-    {
-        _logger = logger;
-    }
+    private static readonly ILogger Log = LogManager.GetLogger("Plus.Core.ConsoleCommands");
 
     public static void InvokeCommand(string inputData)
     {
@@ -23,28 +18,29 @@ internal class ConsoleCommands
             {
                 case "stop":
                 case "shutdown":
-                {
-                    _logger.Warn("The server is saving users furniture, rooms, etc. WAIT FOR THE SERVER TO CLOSE, DO NOT EXIT THE PROCESS IN TASK MANAGER!!");
-                    PlusEnvironment.PerformShutDown();
-                    break;
-                }
+                    {
+                        Log.Warn("The server is saving users furniture, rooms, etc. WAIT FOR THE SERVER TO CLOSE, DO NOT EXIT THE PROCESS IN TASK MANAGER!!");
+                        PlusEnvironment.PerformShutDown();
+                        break;
+                    }
                 case "alert":
-                {
-                    var notice = inputData.Substring(6);
-                    PlusEnvironment.GetGame().GetClientManager().SendPacket(new BroadcastMessageAlertComposer(PlusEnvironment.GetLanguageManager().TryGetValue("server.console.alert") + "\n\n" + notice));
-                    _logger.Info("Alert successfully sent.");
-                    break;
-                }
+                    {
+                        var notice = inputData.Substring(6);
+                        PlusEnvironment.GetGame().GetClientManager()
+                            .SendPacket(new BroadcastMessageAlertComposer(PlusEnvironment.GetLanguageManager().TryGetValue("server.console.alert") + "\n\n" + notice));
+                        Log.Info("Alert successfully sent.");
+                        break;
+                    }
                 default:
-                {
-                    _logger.Error(parameters[0].ToLower() + " is an unknown or unsupported command. Type help for more information");
-                    break;
-                }
+                    {
+                        Log.Error(parameters[0].ToLower() + " is an unknown or unsupported command. Type help for more information");
+                        break;
+                    }
             }
         }
         catch (Exception e)
         {
-            _logger.Error("Error in command [" + inputData + "]: " + e);
+            Log.Error("Error in command [" + inputData + "]: " + e);
         }
     }
 }
