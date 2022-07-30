@@ -34,17 +34,17 @@ internal class PetCommand : IChatCommand
             }
             return;
         }
-        if (parameters.Length == 1)
+        if (parameters.Length == 0)
         {
             session.SendWhisper("Oops, you forgot to choose the type of pet you'd like to turn into! Use :pet list to see the availiable morphs!");
             return;
         }
-        if (parameters[1].ToLower() == "list")
+        if (parameters[0].ToLower() == "list")
         {
             session.SendWhisper("Habbo, Dog, Cat, Terrier, Croc, Bear, Pig, Lion, Rhino, Spider, Turtle, Chick, Frog, Drag, Monkey, Horse, Bunny, Pigeon, Demon and Gnome.");
             return;
         }
-        var targetPetId = GetPetIdByString(parameters[1]);
+        var targetPetId = GetPetIdByString(parameters[0]);
         if (targetPetId == 0)
         {
             session.SendWhisper("Oops, couldn't find a pet by that name!");

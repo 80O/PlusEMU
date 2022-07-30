@@ -214,7 +214,7 @@ public class Habbo
 
     public int CreditsUpdateTick { get; set; }
 
-    public IChatCommand ChatCommand { get; set; }
+    public ICommandBase ChatCommand { get; set; }
 
     public DateTime LastGiftPurchaseTime { get; set; }
 

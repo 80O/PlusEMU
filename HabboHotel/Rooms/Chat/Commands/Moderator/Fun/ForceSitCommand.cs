@@ -1,8 +1,9 @@
 ﻿using Plus.HabboHotel.GameClients;
+using Plus.HabboHotel.Users;
 
 namespace Plus.HabboHotel.Rooms.Chat.Commands.Moderator.Fun;
 
-internal class ForceSitCommand : IChatCommand
+internal class ForceSitCommand : ITargetChatCommand
 {
     public string Key => "forcesit";
     public string PermissionRequired => "command_forcesit";
@@ -11,24 +12,21 @@ internal class ForceSitCommand : IChatCommand
 
     public string Description => "Force another to user sit.";
 
-    public void Execute(GameClient session, Room room, string[] parameters)
+    public bool MustBeInSameRoom => true;
+
+    public Task Execute(GameClient session, Room room, Habbo target, string[] parameters)
     {
-        if (parameters.Length == 1)
-        {
-            session.SendWhisper("Oops, you forgot to choose a target user!");
-            return;
-        }
-        var user = room.GetRoomUserManager().GetRoomUserByHabbo(parameters[1]);
+        var user = room.GetRoomUserManager().GetRoomUserByHabbo(target.Id);
         if (user == null)
-            return;
+            return Task.CompletedTask;
         if (user.Statusses.ContainsKey("lie") || user.IsLying || user.RidingHorse || user.IsWalking)
-            return;
+            return Task.CompletedTask;
         if (!user.Statusses.ContainsKey("sit"))
         {
             if (user.RotBody % 2 == 0)
             {
                 if (user == null)
-                    return;
+                    return Task.CompletedTask;
                 try
                 {
                     user.Statusses.Add("sit", "1.0");
@@ -55,5 +53,6 @@ internal class ForceSitCommand : IChatCommand
             user.IsSitting = false;
             user.UpdateNeeded = true;
         }
+        return Task.CompletedTask;
     }
 }

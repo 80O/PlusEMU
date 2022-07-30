@@ -1,8 +1,9 @@
 ﻿using Plus.HabboHotel.GameClients;
+using Plus.HabboHotel.Users;
 
 namespace Plus.HabboHotel.Rooms.Chat.Commands.Moderator.Fun;
 
-internal class FreezeCommand : IChatCommand
+internal class FreezeCommand : ITargetChatCommand
 {
     private readonly IGameClientManager _gameClientManager;
     public string Key => "freeze";
@@ -12,27 +13,19 @@ internal class FreezeCommand : IChatCommand
 
     public string Description => "Prevent another user from walking.";
 
+    public bool MustBeInSameRoom => true;
+
     public FreezeCommand(IGameClientManager gameClientManager)
     {
         _gameClientManager = gameClientManager;
     }
 
-    public void Execute(GameClient session, Room room, string[] parameters)
+    public Task Execute(GameClient session, Room room, Habbo target, string[] parameters)
     {
-        if (parameters.Length == 1)
-        {
-            session.SendWhisper("Please enter the username of the user you wish to freeze.");
-            return;
-        }
-        var targetClient = _gameClientManager.GetClientByUsername(parameters[1]);
-        if (targetClient == null)
-        {
-            session.SendWhisper("An error occoured whilst finding that user, maybe they're not online.");
-            return;
-        }
-        var targetUser = session.GetHabbo().CurrentRoom.GetRoomUserManager().GetRoomUserByHabbo(parameters[1]);
+        var targetUser = session.GetHabbo().CurrentRoom.GetRoomUserManager().GetRoomUserByHabbo(target.Id);
         if (targetUser != null)
             targetUser.Frozen = true;
-        session.SendWhisper("Successfully froze " + targetClient.GetHabbo().Username + "!");
+        session.SendWhisper($"Successfully froze {target.Username}!");
+        return Task.CompletedTask;
     }
 }

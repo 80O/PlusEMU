@@ -1,8 +1,9 @@
 ﻿using Plus.HabboHotel.GameClients;
+using Plus.HabboHotel.Users;
 
 namespace Plus.HabboHotel.Rooms.Chat.Commands.User.Fun;
 
-internal class FollowCommand : IChatCommand
+internal class FollowCommand : ITargetChatCommand
 {
     private readonly IGameClientManager _gameClientManager;
     public string Key => "follow";
@@ -12,44 +13,36 @@ internal class FollowCommand : IChatCommand
 
     public string Description => "Want to visit a specific user? Use this command!";
 
+    public bool MustBeInSameRoom => false;
+
     public FollowCommand(IGameClientManager gameClientManager)
     {
         _gameClientManager = gameClientManager;
     }
 
-    public void Execute(GameClient session, Room room, string[] parameters)
+    public Task Execute(GameClient session, Room room, Habbo target, string[] parameters)
     {
-        if (parameters.Length == 1)
+        if (target.CurrentRoom == session.GetHabbo().CurrentRoom)
         {
-            session.SendWhisper("Please enter the username of the user you wish to follow.");
-            return;
+            session.SendWhisper("Hey you, open your eyes! " + target.Username + " is in this room!");
+            return Task.CompletedTask;
         }
-        var targetClient = _gameClientManager.GetClientByUsername(parameters[1]);
-        if (targetClient == null)
+        if (target.Username == session.GetHabbo().Username)
         {
-            session.SendWhisper("An error occoured whilst finding that user, maybe they're not online.");
-            return;
+            session.SendWhisper("* Windows shutdown noise *");
+            return Task.CompletedTask;
         }
-        if (targetClient.GetHabbo().CurrentRoom == session.GetHabbo().CurrentRoom)
-        {
-            session.SendWhisper("Hey you, open your eyes! " + targetClient.GetHabbo().Username + " is in this room!");
-            return;
-        }
-        if (targetClient.GetHabbo().Username == session.GetHabbo().Username)
-        {
-            session.SendWhisper("Sadooooooooo!");
-            return;
-        }
-        if (!targetClient.GetHabbo().InRoom)
+        if (!target.InRoom)
         {
             session.SendWhisper("That user currently isn't in a room!");
-            return;
+            return Task.CompletedTask;
         }
-        if (targetClient.GetHabbo().CurrentRoom.Access != RoomAccess.Open && !session.GetHabbo().GetPermissions().HasRight("mod_tool"))
+        if (target.CurrentRoom.Access != RoomAccess.Open && !session.GetHabbo().GetPermissions().HasRight("mod_tool"))
         {
             session.SendWhisper("Oops, the room that user is either locked, passworded or invisible. You cannot follow!");
-            return;
+            return Task.CompletedTask;
         }
-        session.GetHabbo().PrepareRoom(targetClient.GetHabbo().CurrentRoom.RoomId, "");
+        session.GetHabbo().PrepareRoom(target.CurrentRoom.RoomId, "");
+        return Task.CompletedTask;
     }
 }

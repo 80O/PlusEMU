@@ -1,11 +1,11 @@
 ﻿using Plus.Communication.Packets.Outgoing.Handshake;
 using Plus.HabboHotel.GameClients;
+using Plus.HabboHotel.Users;
 
 namespace Plus.HabboHotel.Rooms.Chat.Commands.Moderator;
 
-internal class FlagUserCommand : IChatCommand
+internal class FlagUserCommand : ITargetChatCommand
 {
-    private readonly IGameClientManager _gameClientManager;
     public string Key => "flaguser";
     public string PermissionRequired => "command_flaguser";
 
@@ -13,33 +13,19 @@ internal class FlagUserCommand : IChatCommand
 
     public string Description => "Forces the specified user to change their name.";
 
-    public FlagUserCommand(IGameClientManager gameClientManager)
-    {
-        _gameClientManager = gameClientManager;
-    }
+    public bool MustBeInSameRoom => false;
 
-    public void Execute(GameClient session, Room room, string[] parameters)
+    public Task Execute(GameClient session, Room room, Habbo target, string[] parameters)
     {
-        if (parameters.Length == 1)
-        {
-            session.SendWhisper("Please enter the username you wish to flag.");
-            return;
-        }
-        var targetClient = _gameClientManager.GetClientByUsername(parameters[1]);
-        if (targetClient == null)
-        {
-            session.SendWhisper("An error occoured whilst finding that user, maybe they're not online.");
-            return;
-        }
-        if (targetClient.GetHabbo().GetPermissions().HasRight("mod_tool"))
+        if (target.GetPermissions().HasRight("mod_tool"))
         {
             session.SendWhisper("You are not allowed to flag that user.");
-            return;
+            return Task.CompletedTask;
         }
-        targetClient.GetHabbo().LastNameChange = 0;
-        targetClient.GetHabbo().ChangingName = true;
-        targetClient.SendNotification(
-            "Please be aware that if your username is deemed as inappropriate, you will be banned without question.\r\rAlso note that Staff will NOT allow you to change your username again should you have an issue with what you have chosen.\r\rClose this window and click yourself to begin choosing a new username!");
-        targetClient.Send(new UserObjectComposer(targetClient.GetHabbo()));
+        target.LastNameChange = 0;
+        target.ChangingName = true;
+        target.GetClient().SendNotification("Please be aware that if your username is deemed as inappropriate, you will be banned without question.\r\rAlso note that Staff will NOT allow you to change your username again should you have an issue with what you have chosen.\r\rClose this window and click yourself to begin choosing a new username!");
+        target.GetClient().Send(new UserObjectComposer(target));
+        return Task.CompletedTask;
     }
 }

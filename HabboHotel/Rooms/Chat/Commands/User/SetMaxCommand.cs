@@ -22,13 +22,13 @@ internal class SetMaxCommand : IChatCommand
     {
         if (!room.CheckRights(session, true))
             return;
-        if (parameters.Length == 1)
+        if (!parameters.Any())
         {
             session.SendWhisper("Please enter a value for the room visitor limit.");
             return;
         }
         int maxAmount;
-        if (int.TryParse(parameters[1], out maxAmount))
+        if (int.TryParse(parameters[0], out maxAmount))
         {
             if (maxAmount == 0)
             {

@@ -95,12 +95,12 @@ internal class UpdateCommand : IChatCommand
 
     public void Execute(GameClient session, Room room, string[] parameters)
     {
-        if (parameters.Length == 1)
+        if (parameters.Length == 0)
         {
             session.SendWhisper("You must inculde a thing to update, e.g. :update catalog");
             return;
         }
-        var updateVariable = parameters[1];
+        var updateVariable = parameters[0];
         switch (updateVariable.ToLower())
         {
             case "cata":

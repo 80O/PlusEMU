@@ -17,13 +17,13 @@ internal class DanceCommand : IChatCommand
         var thisUser = session.GetHabbo().CurrentRoom.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
         if (thisUser == null)
             return;
-        if (parameters.Length == 1)
+        if (parameters.Length == 0)
         {
             session.SendWhisper("Please enter an ID of a dance.");
             return;
         }
         int danceId;
-        if (int.TryParse(parameters[1], out danceId))
+        if (int.TryParse(parameters[0], out danceId))
         {
             if (danceId > 4 || danceId < 0)
             {

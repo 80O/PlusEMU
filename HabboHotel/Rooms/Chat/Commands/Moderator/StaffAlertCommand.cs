@@ -20,12 +20,12 @@ internal class StaffAlertCommand : IChatCommand
 
     public void Execute(GameClient session, Room room, string[] parameters)
     {
-        if (parameters.Length == 1)
+        var message = CommandManager.MergeParams(parameters);
+        if (string.IsNullOrWhiteSpace(message))
         {
             session.SendWhisper("Please enter a message to send.");
             return;
         }
-        var message = CommandManager.MergeParams(parameters, 1);
-        _gameClientManager.StaffAlert(new BroadcastMessageAlertComposer("Staff Alert:\r\r" + message + "\r\n" + "- " + session.GetHabbo().Username));
+        _gameClientManager.StaffAlert(new BroadcastMessageAlertComposer($"Staff Alert:\r\r{message}\r\n- {session.GetHabbo().Username}"));
     }
 }

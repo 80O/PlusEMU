@@ -20,11 +20,9 @@ internal class EventAlertCommand : IChatCommand
         _gameClientManager = gameClientManager;
     }
 
-    public void Execute(GameClient session, Room room, string[] @params)
+    public void Execute(GameClient session, Room room, string[] parameters)
     {
-        if (@params.Length != 1)
-            session.SendWhisper("Invalid command! :eventalert");
-        else if (_lastEvent == null || DateTime.Now - _lastEvent > TimeSpan.FromHours(1))
+        if (_lastEvent == null || DateTime.Now - _lastEvent > TimeSpan.FromHours(1))
         {
             _gameClientManager.SendPacket(new BroadcastMessageAlertComposer($":follow {session.GetHabbo().Username} for events! win prizes!\r\n- {session.GetHabbo().Username}"));
             _lastEvent = DateTime.Now;

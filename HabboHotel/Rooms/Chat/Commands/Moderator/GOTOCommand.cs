@@ -13,17 +13,16 @@ internal class GotoCommand : IChatCommand
 
     public void Execute(GameClient session, Room room, string[] parameters)
     {
-        if (parameters.Length == 1)
+        if (!parameters.Any())
         {
             session.SendWhisper("You must specify a room id!");
             return;
         }
-        if (!int.TryParse(parameters[1], out var roomId))
+        if (!int.TryParse(parameters[0], out var roomId))
             session.SendWhisper("You must enter a valid room ID");
         else
         {
-            RoomData data = null;
-            if (!RoomFactory.TryGetData(roomId, out data))
+            if (!RoomFactory.TryGetData(roomId, out var data))
             {
                 session.SendWhisper("This room does not exist!");
                 return;

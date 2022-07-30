@@ -40,16 +40,16 @@ public class ChatEvent : IPacketEvent
         _questManager = questManager;
     }
 
-    public Task Parse(GameClient session, IIncomingPacket packet)
+    public async Task Parse(GameClient session, IIncomingPacket packet)
     {
         if (!session.GetHabbo().InRoom)
-            return Task.CompletedTask;
+            return;
         var room = session.GetHabbo().CurrentRoom;
         if (room == null)
-            return Task.CompletedTask;
+            return;
         var user = room.GetRoomUserManager().GetRoomUserByHabbo(session.GetHabbo().Id);
         if (user == null)
-            return Task.CompletedTask;
+            return;
         var message = StringCharFilter.Escape(packet.ReadString());
         if (message.Length > 100)
             message = message.Substring(0, 100);
@@ -59,16 +59,16 @@ public class ChatEvent : IPacketEvent
             colour = 0;
         user.UnIdle();
         if (UnixTimestamp.GetNow() < session.GetHabbo().FloodTime && session.GetHabbo().FloodTime != 0)
-            return Task.CompletedTask;
+            return;
         if (session.GetHabbo().TimeMuted > 0)
         {
             session.Send(new MutedComposer(session.GetHabbo().TimeMuted));
-            return Task.CompletedTask;
+            return;
         }
         if (!session.GetHabbo().GetPermissions().HasRight("room_ignore_mute") && room.CheckMute(session))
         {
             session.SendWhisper("Oops, you're currently muted.");
-            return Task.CompletedTask;
+            return;
         }
 
         user.LastBubble = session.GetHabbo().CustomBubbleId == 0 ? colour : session.GetHabbo().CustomBubbleId;
@@ -78,14 +78,14 @@ public class ChatEvent : IPacketEvent
             if (user.IncrementAndCheckFlood(out var muteTime))
             {
                 session.Send(new FloodControlComposer(muteTime));
-                return Task.CompletedTask;
+                return;
             }
         }
         
         _chatlogManager.StoreChatlog(new ChatlogEntry(session.GetHabbo().Id, room.Id, message, UnixTimestamp.GetNow(), session.GetHabbo(), room));
         
-        if (message.StartsWith(":", StringComparison.CurrentCulture) && _commandManager.Parse(session, message))
-            return Task.CompletedTask;
+        if (message.StartsWith(":", StringComparison.CurrentCulture) && await _commandManager.Parse(session, message))
+            return;
         if (_wordFilterManager.CheckBannedWords(message))
         {
             session.GetHabbo().BannedPhraseCount++;
@@ -94,15 +94,15 @@ public class ChatEvent : IPacketEvent
                 _moderationManager.BanUser("System", ModerationBanType.Username, session.GetHabbo().Username, "Spamming banned phrases (" + message + ")",
                     UnixTimestamp.GetNow() + 78892200);
                 session.Disconnect();
-                return Task.CompletedTask;
+                return;
             }
             session.Send(new ChatComposer(user.VirtualId, message, 0, colour));
-            return Task.CompletedTask;
+            return;
         }
         if (!session.GetHabbo().GetPermissions().HasRight("word_filter_override"))
             message = _wordFilterManager.CheckMessage(message);
         _questManager.ProgressUserQuest(session, QuestType.SocialChat);
         user.OnChat(user.LastBubble, message, false);
-        return Task.CompletedTask;
+        return;
     }
 }

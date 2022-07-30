@@ -22,7 +22,7 @@ internal class SellRoomCommand : IChatCommand
     {
         if (!room.CheckRights(session, true))
             return;
-        if (parameters.Length == 1)
+        if (!parameters.Any())
         {
             session.SendWhisper("Oops, you forgot to choose a price to sell the room for.");
             return;
@@ -32,7 +32,7 @@ internal class SellRoomCommand : IChatCommand
             session.SendWhisper("Oops, this room has a group. You must delete the group before you can sell the room.");
             return;
         }
-        if (!int.TryParse(parameters[1], out var price))
+        if (!int.TryParse(parameters[0], out var price))
         {
             session.SendWhisper("Oops, you've entered an invalid integer.");
             return;

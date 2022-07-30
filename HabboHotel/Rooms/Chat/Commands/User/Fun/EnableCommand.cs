@@ -14,7 +14,7 @@ internal class EnableCommand : IChatCommand
 
     public void Execute(GameClient session, Room room, string[] parameters)
     {
-        if (parameters.Length == 1)
+        if (parameters.Length == 0)
         {
             session.SendWhisper("You must enter an effect ID!");
             return;
@@ -37,7 +37,7 @@ internal class EnableCommand : IChatCommand
         if (thisUser.IsLying)
             return;
         var effectId = 0;
-        if (!int.TryParse(parameters[1], out effectId))
+        if (!int.TryParse(parameters[0], out effectId))
             return;
         if (effectId > int.MaxValue || effectId < int.MinValue)
             return;

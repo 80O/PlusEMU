@@ -1,10 +1,10 @@
 ﻿using Plus.HabboHotel.GameClients;
+using Plus.HabboHotel.Users;
 
 namespace Plus.HabboHotel.Rooms.Chat.Commands.Moderator;
 
-internal class AlertCommand : IChatCommand
+internal class AlertCommand : ITargetChatCommand
 {
-    private readonly IGameClientManager _gameClientManager;
     public string Key => "alert";
     public string PermissionRequired => "command_alert_user";
 
@@ -12,36 +12,18 @@ internal class AlertCommand : IChatCommand
 
     public string Description => "Alert a user with a message of your choice.";
 
-    public AlertCommand(IGameClientManager gameClientManager)
-    {
-        _gameClientManager = gameClientManager;
-    }
+    public bool MustBeInSameRoom => false;
 
-    public void Execute(GameClient session, Room room, string[] parameters)
+    public Task Execute(GameClient session, Room room, Habbo habbo, string[] parameters)
     {
-        if (parameters.Length == 1)
-        {
-            session.SendWhisper("Please enter the username of the user you wish to alert.");
-            return;
-        }
-        var targetClient = _gameClientManager.GetClientByUsername(parameters[1]);
-        if (targetClient == null)
-        {
-            session.SendWhisper("An error occoured whilst finding that user, maybe they're not online.");
-            return;
-        }
-        if (targetClient.GetHabbo() == null)
-        {
-            session.SendWhisper("An error occoured whilst finding that user, maybe they're not online.");
-            return;
-        }
-        if (targetClient.GetHabbo().Username == session.GetHabbo().Username)
+        if (habbo.Username == session.GetHabbo().Username)
         {
             session.SendWhisper("Get a life.");
-            return;
+            return Task.CompletedTask;
         }
-        var message = CommandManager.MergeParams(parameters, 2);
-        targetClient.SendNotification(session.GetHabbo().Username + " alerted you with the following message:\n\n" + message);
-        session.SendWhisper("Alert successfully sent to " + targetClient.GetHabbo().Username);
+        var message = CommandManager.MergeParams(parameters);
+        habbo.GetClient().SendNotification($"{session.GetHabbo().Username} alerted you with the following message:\n\n{message}");
+        session.SendWhisper($"Alert successfully sent to {habbo.Username}");
+        return Task.CompletedTask;
     }
 }

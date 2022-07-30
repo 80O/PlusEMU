@@ -20,12 +20,12 @@ internal class HotelAlertCommand : IChatCommand
 
     public void Execute(GameClient session, Room room, string[] parameters)
     {
-        if (parameters.Length == 1)
+        if (!parameters.Any())
         {
             session.SendWhisper("Please enter a message to send.");
             return;
         }
-        var message = CommandManager.MergeParams(parameters, 1);
-        _gameClientManager.SendPacket(new BroadcastMessageAlertComposer(message + "\r\n" + "- " + session.GetHabbo().Username));
+        var message = CommandManager.MergeParams(parameters);
+        _gameClientManager.SendPacket(new BroadcastMessageAlertComposer($"{message}\r\n- {session.GetHabbo().Username}"));
     }
 }

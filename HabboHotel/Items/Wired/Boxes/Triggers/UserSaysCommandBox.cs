@@ -1,9 +1,8 @@
-﻿using System.Collections.Concurrent;
-using Plus.Communication.Packets.Outgoing.Rooms.Chat;
+﻿using Plus.Communication.Packets.Outgoing.Rooms.Chat;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Rooms;
-using Plus.HabboHotel.Rooms.Chat.Commands;
 using Plus.HabboHotel.Users;
+using System.Collections.Concurrent;
 
 namespace Plus.HabboHotel.Items.Wired.Boxes.Triggers;
 
@@ -44,8 +43,7 @@ internal class UserSaysCommandBox : IWiredItem
             return false;
         if (BoolData && Instance.OwnerId != player.Id || string.IsNullOrWhiteSpace(StringData))
             return false;
-        IChatCommand chatCommand = null;
-        if (!PlusEnvironment.GetGame().GetChatManager().GetCommands().TryGetCommand(StringData.Replace(":", "").ToLower(), out chatCommand))
+        if (!PlusEnvironment.GetGame().GetChatManager().GetCommands().TryGetCommand(StringData.Replace(":", "").ToLower(), out var chatCommand))
             return false;
         if (player.ChatCommand == chatCommand)
         {

@@ -1,9 +1,10 @@
 ﻿using Plus.Database;
 using Plus.HabboHotel.GameClients;
+using Plus.HabboHotel.Users;
 
 namespace Plus.HabboHotel.Rooms.Chat.Commands.Moderator;
 
-internal class TradeBanCommand : IChatCommand
+internal class TradeBanCommand : ITargetChatCommand
 {
     private readonly IDatabase _database;
     public string Key => "tradeban";
@@ -13,40 +14,37 @@ internal class TradeBanCommand : IChatCommand
 
     public string Description => "Trade ban another user.";
 
+    public bool MustBeInSameRoom => false;
+
     public TradeBanCommand(IDatabase database)
     {
         _database = database;
     }
 
-    public void Execute(GameClient session, Room room, string[] parameters)
+    public Task Execute(GameClient session, Room room, Habbo target, string[] parameters)
     {
-        if (parameters.Length == 1)
+        if (!parameters.Any())
         {
-            session.SendWhisper("Please enter a username and a valid length in days (min 1 day, max 365 days).");
-            return;
+            session.SendWhisper("Please define tohe amount of days. Use 0 to reset.");
+            return Task.CompletedTask;
         }
-        var habbo = PlusEnvironment.GetHabboByUsername(parameters[1]);
-        if (habbo == null)
-        {
-            session.SendWhisper("An error occoured whilst finding that user in the database.");
-            return;
-        }
-        if (Convert.ToDouble(parameters[2]) == 0)
+
+        if (Convert.ToDouble(parameters[0]) == 0)
         {
             using (var dbClient = _database.GetQueryReactor())
             {
-                dbClient.RunQuery("UPDATE `user_info` SET `trading_locked` = '0' WHERE `user_id` = '" + habbo.Id + "' LIMIT 1");
+                dbClient.RunQuery("UPDATE `user_info` SET `trading_locked` = '0' WHERE `user_id` = '" + target.Id + "' LIMIT 1");
             }
-            if (habbo.GetClient() != null)
+            if (target.GetClient() != null)
             {
-                habbo.TradingLockExpiry = 0;
-                habbo.GetClient().SendNotification("Your outstanding trade ban has been removed.");
+                target.TradingLockExpiry = 0;
+                target.GetClient().SendNotification("Your outstanding trade ban has been removed.");
             }
-            session.SendWhisper("You have successfully removed " + habbo.Username + "'s trade ban.");
-            return;
+            session.SendWhisper("You have successfully removed " + target.Username + "'s trade ban.");
+            return Task.CompletedTask;
         }
         double days;
-        if (double.TryParse(parameters[2], out days))
+        if (double.TryParse(parameters[0], out days))
         {
             if (days < 1)
                 days = 1;
@@ -55,16 +53,17 @@ internal class TradeBanCommand : IChatCommand
             var length = PlusEnvironment.GetUnixTimestamp() + days * 86400;
             using (var dbClient = _database.GetQueryReactor())
             {
-                dbClient.RunQuery("UPDATE `user_info` SET `trading_locked` = '" + length + "', `trading_locks_count` = `trading_locks_count` + '1' WHERE `user_id` = '" + habbo.Id + "' LIMIT 1");
+                dbClient.RunQuery("UPDATE `user_info` SET `trading_locked` = '" + length + "', `trading_locks_count` = `trading_locks_count` + '1' WHERE `user_id` = '" + target.Id + "' LIMIT 1");
             }
-            if (habbo.GetClient() != null)
+            if (target.GetClient() != null)
             {
-                habbo.TradingLockExpiry = length;
-                habbo.GetClient().SendNotification("You have been trade banned for " + days + " day(s)!");
+                target.TradingLockExpiry = length;
+                target.GetClient().SendNotification("You have been trade banned for " + days + " day(s)!");
             }
-            session.SendWhisper("You have successfully trade banned " + habbo.Username + " for " + days + " day(s).");
+            session.SendWhisper("You have successfully trade banned " + target.Username + " for " + days + " day(s).");
         }
         else
             session.SendWhisper("Please enter a valid integer.");
+        return Task.CompletedTask;
     }
 }

@@ -1,10 +1,10 @@
 ﻿using Plus.HabboHotel.GameClients;
+using Plus.HabboHotel.Users;
 
 namespace Plus.HabboHotel.Rooms.Chat.Commands.Moderator;
 
-internal class DisconnectCommand : IChatCommand
+internal class DisconnectCommand : ITargetChatCommand
 {
-    private readonly IGameClientManager _gameClientManager;
     public string Key => "dc";
     public string PermissionRequired => "command_disconnect";
 
@@ -12,28 +12,16 @@ internal class DisconnectCommand : IChatCommand
 
     public string Description => "Disconnects another user from the hotel.";
 
-    public DisconnectCommand(IGameClientManager gameClientManager)
+    public bool MustBeInSameRoom => false;
+
+    public Task Execute(GameClient session, Room room, Habbo target, string[] parameters)
     {
-        _gameClientManager = gameClientManager;
-    }
-    public void Execute(GameClient session, Room room, string[] parameters)
-    {
-        if (parameters.Length == 1)
-        {
-            session.SendWhisper("Please enter the username of the user you wish to Disconnect.");
-            return;
-        }
-        var targetClient = _gameClientManager.GetClientByUsername(parameters[1]);
-        if (targetClient == null)
-        {
-            session.SendWhisper("An error occoured whilst finding that user, maybe they're not online.");
-            return;
-        }
-        if (targetClient.GetHabbo().GetPermissions().HasRight("mod_tool") && !session.GetHabbo().GetPermissions().HasRight("mod_disconnect_any"))
+        if (target.GetPermissions().HasRight("mod_tool") && !target.GetPermissions().HasRight("mod_disconnect_any"))
         {
             session.SendWhisper("You are not allowed to Disconnect that user.");
-            return;
+            return Task.CompletedTask;
         }
-        targetClient.Disconnect();
+        target.GetClient().Disconnect();
+        return Task.CompletedTask;
     }
 }

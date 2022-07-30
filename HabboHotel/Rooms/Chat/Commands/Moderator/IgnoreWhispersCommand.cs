@@ -14,6 +14,6 @@ internal class IgnoreWhispersCommand : IChatCommand
     public void Execute(GameClient session, Room room, string[] parameters)
     {
         session.GetHabbo().IgnorePublicWhispers = !session.GetHabbo().IgnorePublicWhispers;
-        session.SendWhisper("You're " + (session.GetHabbo().IgnorePublicWhispers ? "now" : "no longer") + " ignoring public whispers!");
+        session.SendWhisper($"You're {(session.GetHabbo().IgnorePublicWhispers ? "now" : "no longer")} ignoring public whispers!");
     }
 }
