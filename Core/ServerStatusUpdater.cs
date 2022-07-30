@@ -8,10 +8,9 @@ public class ServerStatusUpdater : IDisposable, IServerStatusUpdater
     private readonly ILogger<ServerStatusUpdater> _logger;
     private Timer _timer;
 
-    public ServerStatusUpdater(ILogger<ServerStatusUpdater> logger, Timer timer)
+    public ServerStatusUpdater(ILogger<ServerStatusUpdater> logger)
     {
         _logger = logger;
-        _timer = timer;
     }
 
 
