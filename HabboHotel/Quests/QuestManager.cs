@@ -1,5 +1,5 @@
 ﻿using System.Data;
-using NLog;
+using Microsoft.Extensions.Logging;
 using Plus.Communication.Packets.Incoming;
 using Plus.Communication.Packets.Outgoing.Inventory.Purse;
 using Plus.Communication.Packets.Outgoing.Quests;
@@ -14,15 +14,16 @@ public class QuestManager : IQuestManager
 {
     private readonly IDatabase _database;
     private readonly IMessengerDataLoader _messengerDataLoader;
-    private static readonly ILogger Log = LogManager.GetLogger("Plus.HabboHotel.Quests.QuestManager");
+    private readonly ILogger<QuestManager> _logger;
     private readonly Dictionary<string, int> _questCount;
 
     private readonly Dictionary<int, Quest> _quests;
 
-    public QuestManager(IDatabase database, IMessengerDataLoader messengerDataLoader)
+    public QuestManager(IDatabase database, IMessengerDataLoader messengerDataLoader, ILogger<QuestManager> logger)
     {
         _database = database;
         _messengerDataLoader = messengerDataLoader;
+        _logger = logger;
         _quests = new Dictionary<int, Quest>();
         _questCount = new Dictionary<string, int>();
     }
@@ -55,7 +56,7 @@ public class QuestManager : IQuestManager
                 }
             }
         }
-        Log.Info("Quest Manager -> LOADED");
+        _logger.LogInformation("Quest Manager -> LOADED");
     }
 
     private void AddToCounter(string category)

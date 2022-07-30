@@ -1,4 +1,4 @@
-﻿using NLog;
+﻿using Microsoft.Extensions.Logging;
 using Plus.Communication.Attributes;
 using Plus.Communication.Packets.Incoming;
 using Plus.HabboHotel.GameClients;
@@ -9,7 +9,7 @@ namespace Plus.Communication.Packets;
 
 public sealed class PacketManager : IPacketManager, IDisposable
 {
-    private static readonly ILogger Log = LogManager.GetLogger("Plus.Communication.Packets");
+    private readonly ILogger<PacketManager> _logger;
 
     private readonly Dictionary<uint, IPacketEvent> _incomingPackets = new();
     private readonly HashSet<Type> _handshakePackets = new();
@@ -22,15 +22,16 @@ public sealed class PacketManager : IPacketManager, IDisposable
     private readonly TimeSpan _maximumRunTimeInSec; // 5 minutes in debug. 30 seconds in release.
     private readonly CancellationTokenSource _cancellationTokenSource = new();
 
-    public PacketManager(IEnumerable<IPacketEvent> incomingPackets)
+    public PacketManager(IEnumerable<IPacketEvent> incomingPackets, ILogger<PacketManager> logger)
     {
         _maximumRunTimeInSec = Debugger.IsAttached ? TimeSpan.FromMinutes(30) : TimeSpan.FromSeconds(5);
+        _logger = logger;
         foreach (var packet in incomingPackets)
         {
             var field = typeof(ClientPacketHeader).GetField(packet.GetType().Name, BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
             if (field == null)
             {
-                Log.Warn("No incoming header defined for {packet}", packet.GetType().Name);
+                _logger.LogWarning("No incoming header defined for {packet}", packet.GetType().Name);
                 continue;
             }
             var header = (uint) field.GetValue(null);
@@ -46,21 +47,21 @@ public sealed class PacketManager : IPacketManager, IDisposable
         if (!_incomingPackets.TryGetValue(messageId, out var pak))
         {
             if (Debugger.IsAttached)
-                Log.Debug("Unhandled Packet: " + messageId);
+                _logger.LogDebug("Unhandled Packet: " + messageId);
             return;
         }
 
         if (Debugger.IsAttached)
         {
             if (_packetNames.ContainsKey(messageId))
-                Log.Debug("Handled Packet: [" + messageId + "] " + _packetNames[messageId]);
+                _logger.LogDebug("Handled Packet: [" + messageId + "] " + _packetNames[messageId]);
             else
-                Log.Debug("Handled Packet: [" + messageId + "] UnnamedPacketEvent");
+                _logger.LogDebug("Handled Packet: [" + messageId + "] UnnamedPacketEvent");
         }
 
         if (!_handshakePackets.Contains(pak.GetType()) && session.GetHabbo() == null)
         {
-            Log.Debug($"Session {session.Id} tried execute packet {messageId} but didn't handshake yet.");
+            _logger.LogDebug($"Session {session.Id} tried execute packet {messageId} but didn't handshake yet.");
             return;
         }
 
@@ -79,7 +80,7 @@ public sealed class PacketManager : IPacketManager, IDisposable
             {
                 foreach (var e in t.Exception.Flatten().InnerExceptions)
                 {
-                    Log.Error("Error handling packet {packetId} for session {session} @ Habbo  {username}: {message} {stacktrace}", pak.GetType().Name, session.Id, session.GetHabbo()?.Username ?? string.Empty, e.Message, e.StackTrace);
+                    _logger.LogError("Error handling packet {packetId} for session {session} @ Habbo  {username}: {message} {stacktrace}", pak.GetType().Name, session.Id, session.GetHabbo()?.Username ?? string.Empty, e.Message, e.StackTrace);
                     session.Disconnect();
                 }
             }

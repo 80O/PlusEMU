@@ -1,11 +1,16 @@
-﻿using NLog;
+﻿using Microsoft.Extensions.Logging;
 using Plus.Communication.Packets.Outgoing.Handshake;
 
 namespace Plus.HabboHotel.Users.Process;
 
 internal sealed class ProcessComponent
 {
-    private static readonly ILogger Log = LogManager.GetLogger("Plus.HabboHotel.Users.Process.ProcessComponent");
+    private readonly ILogger<ProcessComponent> _logger;
+
+    public ProcessComponent(ILogger<ProcessComponent> logger)
+    {
+        _logger = logger;
+    }
 
     /// <summary>
     /// How often the timer should execute.
@@ -72,7 +77,7 @@ internal sealed class ProcessComponent
             if (_timerRunning)
             {
                 _timerLagging = true;
-                Log.Warn("<Player " + _player.Id + "> Server can't keep up, Player timer is lagging behind.");
+                _logger.LogWarning("<Player " + _player.Id + "> Server can't keep up, Player timer is lagging behind.");
                 return;
             }
             _resetEvent.Reset();

@@ -1,5 +1,5 @@
 ﻿using System.Data;
-using NLog;
+using Microsoft.Extensions.Logging;
 using Plus.HabboHotel.Rooms.AI;
 using Plus.HabboHotel.Rooms.AI.Responses;
 using Plus.Database;
@@ -9,14 +9,15 @@ namespace Plus.HabboHotel.Bots;
 public class BotManager : IBotManager
 {
     private readonly IDatabase _database;
-    private static readonly ILogger Log = LogManager.GetLogger("Plus.HabboHotel.Bots.BotManager");
+    private readonly ILogger<BotManager> _logger;
 
     private readonly List<BotResponse> _responses;
 
-    public BotManager(IDatabase database)
+    public BotManager(IDatabase database, ILogger<BotManager> logger)
     {
         _responses = new List<BotResponse>();
         _database = database;
+        _logger = logger;
     }
 
     public void Init()

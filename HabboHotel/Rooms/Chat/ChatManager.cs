@@ -1,4 +1,4 @@
-﻿using NLog;
+﻿using Microsoft.Extensions.Logging;
 using Plus.HabboHotel.Rooms.Chat.Commands;
 using Plus.HabboHotel.Rooms.Chat.Emotions;
 using Plus.HabboHotel.Rooms.Chat.Filter;
@@ -11,7 +11,7 @@ namespace Plus.HabboHotel.Rooms.Chat;
 
 public sealed class ChatManager : IChatManager
 {
-    private static readonly ILogger Log = LogManager.GetLogger("Plus.HabboHotel.Rooms.Chat.ChatManager");
+    private readonly ILogger<ChatManager> _logger;
 
     /// <summary>
     /// Chat styles.
@@ -57,7 +57,8 @@ public sealed class ChatManager : IChatManager
         IChatlogManager chatlogManager,
         IWordFilterManager wordFilterManager,
         IPetCommandManager petCommandManager,
-        IPetLocale petLocale)
+        IPetLocale petLocale,
+        ILogger<ChatManager> logger)
     {
         _emotions = chatEmotionsManager;
         _logs = chatlogManager;
@@ -66,6 +67,7 @@ public sealed class ChatManager : IChatManager
         _petCommands = petCommandManager;
         _petLocale = petLocale;
         _chatStyles = chatStyleManager;
+        _logger = logger;
     }
 
     public void Init()
@@ -74,7 +76,7 @@ public sealed class ChatManager : IChatManager
         _filter.Init();
         _petCommands.Init();
         _petLocale.Init();
-        Log.Info("Chat Manager -> LOADED");
+        _logger.LogInformation("Chat Manager -> LOADED");
     }
 
     public IChatEmotionsManager GetEmotions() => _emotions;

@@ -1,16 +1,17 @@
 ﻿using System.Data;
-using NLog;
+using Microsoft.Extensions.Logging;
 
 namespace Plus.HabboHotel.Rooms.Chat.Styles;
 
 public sealed class ChatStyleManager : IChatStyleManager
 {
-    private static readonly ILogger Log = LogManager.GetLogger("Plus.HabboHotel.Rooms.Chat.Styles.ChatStyleManager");
+    private readonly ILogger<ChatStyleManager> _logger;
 
     private readonly Dictionary<int, ChatStyle> _styles;
 
-    public ChatStyleManager()
+    public ChatStyleManager(ILogger<ChatStyleManager> logger)
     {
+        _logger = logger;
         _styles = new Dictionary<int, ChatStyle>();
     }
 
@@ -34,12 +35,12 @@ public sealed class ChatStyleManager : IChatStyleManager
                     }
                     catch (Exception ex)
                     {
-                        Log.Error("Unable to load ChatBubble for ID [" + Convert.ToInt32(row["id"]) + "]", ex);
+                        _logger.LogError("Unable to load ChatBubble for ID [" + Convert.ToInt32(row["id"]) + "]", ex);
                     }
                 }
             }
         }
-        Log.Info("Loaded " + _styles.Count + " chat styles.");
+        _logger.LogInformation("Loaded " + _styles.Count + " chat styles.");
     }
 
     public bool TryGetStyle(int id, out ChatStyle style) => _styles.TryGetValue(id, out style);

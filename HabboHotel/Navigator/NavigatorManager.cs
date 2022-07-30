@@ -1,6 +1,6 @@
 ﻿using System.Data;
 using Dapper;
-using NLog;
+using Microsoft.Extensions.Logging;
 using Plus.Database;
 using Plus.HabboHotel.Rooms;
 using Plus.HabboHotel.Users;
@@ -11,15 +11,16 @@ namespace Plus.HabboHotel.Navigator;
 public sealed class NavigatorManager : INavigatorManager
 {
     private readonly IDatabase _database;
-    private static readonly ILogger Log = LogManager.GetLogger("Plus.HabboHotel.Navigator.NavigatorManager");
+    private readonly ILogger<NavigatorManager> _logger;
 
     private readonly Dictionary<int, FeaturedRoom> _featuredRooms;
     private readonly Dictionary<int, SearchResultList> _searchResultLists;
     private readonly Dictionary<int, TopLevelItem> _topLevelItems;
 
-    public NavigatorManager(IDatabase database)
+    public NavigatorManager(IDatabase database, ILogger<NavigatorManager> logger)
     {
         _database = database;
+        _logger = logger;
         _topLevelItems = new Dictionary<int, TopLevelItem>();
         _searchResultLists = new Dictionary<int, SearchResultList>();
 
@@ -75,7 +76,7 @@ public sealed class NavigatorManager : INavigatorManager
                 }
             }
         }
-        Log.Info("Navigator -> LOADED");
+        _logger.LogInformation("Navigator -> LOADED");
     }
 
     public List<SearchResultList> GetCategorysForSearch(string category)

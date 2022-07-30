@@ -1,5 +1,5 @@
 ﻿using System.Data;
-using NLog;
+using Microsoft.Extensions.Logging;
 using Plus.HabboHotel.Catalog.Clothing;
 using Plus.HabboHotel.Catalog.Marketplace;
 using Plus.HabboHotel.Catalog.Pets;
@@ -11,7 +11,7 @@ namespace Plus.HabboHotel.Catalog;
 
 public class CatalogManager : ICatalogManager
 {
-    private static readonly ILogger Log = LogManager.GetLogger("Plus.HabboHotel.Catalog.CatalogManager");
+    private readonly ILogger<CatalogManager> _logger;
     private readonly Dictionary<int, CatalogBot> _botPresets;
     private readonly Dictionary<int, CatalogDeal> _deals;
     private readonly Dictionary<int, Dictionary<int, CatalogItem>> _items;
@@ -24,12 +24,13 @@ public class CatalogManager : ICatalogManager
     private readonly IPetRaceManager _petRaceManager;
     private readonly IVoucherManager _voucherManager;
 
-    public CatalogManager(IMarketplaceManager marketplace, IPetRaceManager petRaceManager, IVoucherManager voucherManager, IClothingManager clothingManager)
+    public CatalogManager(IMarketplaceManager marketplace, IPetRaceManager petRaceManager, IVoucherManager voucherManager, IClothingManager clothingManager, ILogger<CatalogManager> logger)
     {
         _marketplace = marketplace;
         _petRaceManager = petRaceManager;
         _voucherManager = voucherManager;
         _clothingManager = clothingManager;
+        _logger = logger;
         _itemOffers = new Dictionary<int, int>();
         _pages = new Dictionary<int, CatalogPage>();
         _botPresets = new Dictionary<int, CatalogBot>();
@@ -71,7 +72,7 @@ public class CatalogManager : ICatalogManager
                     var offerId = Convert.ToInt32(row["offer_id"]);
                     if (!itemDataManager.GetItem(baseId, out var data))
                     {
-                        Log.Error("Couldn't load Catalog Item " + itemId + ", no furniture record found.");
+                        _logger.LogError("Couldn't load Catalog Item " + itemId + ", no furniture record found.");
                         continue;
                     }
                     if (!_items.ContainsKey(pageId))
@@ -141,7 +142,7 @@ public class CatalogManager : ICatalogManager
             _petRaceManager.Init();
             _clothingManager.Init();
         }
-        Log.Info("Catalog Manager -> LOADED");
+        _logger.LogInformation("Catalog Manager -> LOADED");
     }
 
     public bool TryGetBot(int itemId, out CatalogBot bot) => _botPresets.TryGetValue(itemId, out bot);

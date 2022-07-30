@@ -1,5 +1,5 @@
 ﻿using System.Xml;
-using NLog;
+using Microsoft.Extensions.Logging;
 using Plus.Core.FigureData.Types;
 using Plus.HabboHotel.Users.Clothing.Parts;
 using Plus.Utilities;
@@ -8,14 +8,15 @@ namespace Plus.Core.FigureData;
 
 public class FigureDataManager : IFigureDataManager
 {
-    private static readonly ILogger Log = LogManager.GetLogger("Plus.Core.FigureData");
+    private readonly ILogger<FigureDataManager> _logger;
     private readonly Dictionary<int, Palette> _palettes; //pallet id, Pallet
 
     private readonly List<string> _requirements;
     private readonly Dictionary<string, FigureSet> _setTypes; //type (hr, ch, etc), Set
 
-    public FigureDataManager()
+    public FigureDataManager(ILogger<FigureDataManager> logger)
     {
+        _logger = logger;
         _palettes = new Dictionary<int, Palette>();
         _setTypes = new Dictionary<string, FigureSet>();
         _requirements = new List<string>
@@ -77,8 +78,8 @@ public class FigureDataManager : IFigureDataManager
 
         //Faceless.
         _setTypes["hd"].Sets.Add(99999, new Set(99999, "U", 0, true, false, false));
-        Log.Info("Loaded " + _palettes.Count + " Color Palettes");
-        Log.Info("Loaded " + _setTypes.Count + " Set Types");
+        _logger.LogInformation("Loaded " + _palettes.Count + " Color Palettes");
+        _logger.LogInformation("Loaded " + _setTypes.Count + " Set Types");
     }
 
     public string ProcessFigure(string figure, string gender, ICollection<ClothingParts> clothingParts, bool hasHabboClub)

@@ -1,16 +1,17 @@
 ﻿using System.Data;
-using NLog;
+using Microsoft.Extensions.Logging;
 
 namespace Plus.HabboHotel.Talents;
 
 public class TalentTrackManager : ITalentTrackManager
 {
-    private static readonly ILogger _log = LogManager.GetLogger("Plus.HabboHotel.Talents.TalentManager");
+    private readonly ILogger<TalentTrackManager> _logger;
 
     private readonly Dictionary<int, TalentTrackLevel> _citizenshipLevels;
 
-    public TalentTrackManager()
+    public TalentTrackManager(ILogger<TalentTrackManager> logger)
     {
+        _logger = logger;
         _citizenshipLevels = new Dictionary<int, TalentTrackLevel>();
     }
 
@@ -30,7 +31,7 @@ public class TalentTrackManager : ITalentTrackManager
                     new TalentTrackLevel(Convert.ToString(row["type"]), Convert.ToInt32(row["level"]), Convert.ToString(row["data_actions"]), Convert.ToString(row["data_gifts"])));
             }
         }
-        _log.Info("Loaded " + _citizenshipLevels.Count + " talent track levels");
+        _logger.LogInformation("Loaded " + _citizenshipLevels.Count + " talent track levels");
     }
 
     public ICollection<TalentTrackLevel> GetLevels() => _citizenshipLevels.Values;

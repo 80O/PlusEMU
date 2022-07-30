@@ -1,6 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Data;
-using NLog;
+using Microsoft.Extensions.Logging;
 using Plus.Database;
 
 namespace Plus.HabboHotel.Moderation;
@@ -8,7 +8,7 @@ namespace Plus.HabboHotel.Moderation;
 public sealed class ModerationManager : IModerationManager
 {
     private readonly IDatabase _database;
-    private static readonly ILogger _log = LogManager.GetLogger("Plus.HabboHotel.Moderation.ModerationManager");
+    private readonly ILogger<ModerationManager> _logger;
     private readonly Dictionary<string, ModerationBan> _bans = new();
     private readonly Dictionary<int, List<ModerationPresetActions>> _moderationCfhTopicActions = new();
 
@@ -28,9 +28,10 @@ public sealed class ModerationManager : IModerationManager
 
     public ICollection<ModerationTicket> GetTickets => _modTickets.Values;
 
-    public ModerationManager(IDatabase database)
+    public ModerationManager(IDatabase database, ILogger<ModerationManager> logger)
     {
         _database = database;
+        _logger = logger;
     }
 
     public Dictionary<string, List<ModerationPresetActions>> UserActionPresets
@@ -171,10 +172,10 @@ public sealed class ModerationManager : IModerationManager
                 }
             }
         }
-        _log.Info("Loaded " + (_userPresets.Count + _roomPresets.Count) + " moderation presets.");
-        _log.Info("Loaded " + _userActionPresetCategories.Count + " moderation categories.");
-        _log.Info("Loaded " + _userActionPresetMessages.Count + " moderation action preset messages.");
-        _log.Info("Cached " + _bans.Count + " username and machine bans.");
+        _logger.LogInformation("Loaded " + (_userPresets.Count + _roomPresets.Count) + " moderation presets.");
+        _logger.LogInformation("Loaded " + _userActionPresetCategories.Count + " moderation categories.");
+        _logger.LogInformation("Loaded " + _userActionPresetMessages.Count + " moderation action preset messages.");
+        _logger.LogInformation("Cached " + _bans.Count + " username and machine bans.");
     }
 
     public void ReCacheBans()
@@ -212,7 +213,7 @@ public sealed class ModerationManager : IModerationManager
                 }
             }
         }
-        _log.Info("Cached " + _bans.Count + " username and machine bans.");
+        _logger.LogInformation("Cached " + _bans.Count + " username and machine bans.");
     }
 
     public void BanUser(string mod, ModerationBanType type, string banValue, string reason, double expireTimestamp)

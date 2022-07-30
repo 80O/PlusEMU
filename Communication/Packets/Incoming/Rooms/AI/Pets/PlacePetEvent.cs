@@ -1,4 +1,4 @@
-﻿using NLog;
+﻿using Microsoft.Extensions.Logging;
 using Plus.Communication.Packets.Outgoing.Inventory.Pets;
 using Plus.Communication.Packets.Outgoing.Rooms.Notifications;
 using Plus.Core.Settings;
@@ -11,14 +11,15 @@ namespace Plus.Communication.Packets.Incoming.Rooms.AI.Pets;
 
 internal class PlacePetEvent : IPacketEvent
 {
-    private static readonly ILogger Log = LogManager.GetLogger("Plus.Communication.Packets.Incoming.Rooms.AI.Pets.PlacePetEvent");
+    private readonly ILogger<PlacePetEvent> _logger;
     private readonly IRoomManager _roomManager;
     private readonly ISettingsManager _settingsManager;
 
-    public PlacePetEvent(IRoomManager roomManager, ISettingsManager settingsManager)
+    public PlacePetEvent(IRoomManager roomManager, ISettingsManager settingsManager, ILogger<PlacePetEvent> logger)
     {
         _roomManager = roomManager;
         _settingsManager = settingsManager;
+        _logger = logger;
     }
 
     public Task Parse(GameClient session, IIncomingPacket packet)

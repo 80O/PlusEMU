@@ -1,5 +1,5 @@
 ﻿using System.Collections.Concurrent;
-using NLog;
+using Microsoft.Extensions.Logging;
 using Plus.HabboHotel.Cache.Process;
 using Plus.HabboHotel.Cache.Type;
 
@@ -7,21 +7,22 @@ namespace Plus.HabboHotel.Cache;
 
 public class CacheManager : ICacheManager
 {
-    private static readonly ILogger Log = LogManager.GetLogger("Plus.HabboHotel.Cache.CacheManager");
+    private readonly ILogger<CacheManager> _logger;
     private readonly IProcessComponent _process;
     private readonly ConcurrentDictionary<int, UserCache> _usersCached;
 
-    public CacheManager(IProcessComponent processComponent)
+    public CacheManager(IProcessComponent processComponent, ILogger<CacheManager> logger)
     {
         _usersCached = new ConcurrentDictionary<int, UserCache>();
         _process = processComponent;
+        _logger = logger;
     }
 
     public void Init()
     {
 
         _process.Init();
-        Log.Info("Cache Manager -> LOADED");
+        _logger.LogInformation("Cache Manager -> LOADED");
     }
 
     public bool ContainsUser(int id) => _usersCached.ContainsKey(id);

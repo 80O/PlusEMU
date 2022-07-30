@@ -1,13 +1,18 @@
 ﻿using System.Data;
-using NLog;
+using Microsoft.Extensions.Logging;
 
 namespace Plus.HabboHotel.Subscriptions;
 
 public class SubscriptionManager : ISubscriptionManager
 {
-    private static readonly ILogger _log = LogManager.GetLogger("Plus.HabboHotel.Subscriptions.SubscriptionManager");
+    private readonly ILogger<SubscriptionManager> _logger;
 
     private readonly Dictionary<int, SubscriptionData> _subscriptions = new();
+
+    public SubscriptionManager(ILogger<SubscriptionManager> logger)
+    {
+        _logger = logger;
+    }
 
     public void Init()
     {
@@ -30,7 +35,7 @@ public class SubscriptionManager : ISubscriptionManager
                 }
             }
         }
-        _log.Info("Loaded " + _subscriptions.Count + " subscriptions.");
+        _logger.LogInformation("Loaded " + _subscriptions.Count + " subscriptions.");
     }
 
     public bool TryGetSubscriptionData(int id, out SubscriptionData data) => _subscriptions.TryGetValue(id, out data);

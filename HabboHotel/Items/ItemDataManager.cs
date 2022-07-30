@@ -1,13 +1,18 @@
 ﻿using System.Data;
-using NLog;
+using Microsoft.Extensions.Logging;
 
 namespace Plus.HabboHotel.Items;
 
 public class ItemDataManager : IItemDataManager
 {
-    private static readonly ILogger Log = LogManager.GetLogger("Plus.HabboHotel.Items.ItemDataManager");
+    private readonly ILogger<ItemDataManager> _logger;
     public Dictionary<int, ItemDefinition> Gifts = new(0); //<SpriteId, Item>
     public Dictionary<int, ItemDefinition> Items = new(0);
+
+    public ItemDataManager(ILogger<ItemDataManager> logger)
+    {
+        _logger = logger;
+    }
 
     public void Init()
     {
@@ -69,7 +74,7 @@ public class ItemDataManager : IItemDataManager
                 }
             }
         }
-        Log.Info("Item Manager -> LOADED");
+        _logger.LogInformation("Item Manager -> LOADED");
     }
 
     [Obsolete("Cannot use this in an async context!")]

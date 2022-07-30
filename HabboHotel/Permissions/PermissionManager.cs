@@ -1,5 +1,5 @@
 ﻿using System.Data;
-using NLog;
+using Microsoft.Extensions.Logging;
 using Plus.Database;
 using Plus.HabboHotel.Users;
 
@@ -8,7 +8,7 @@ namespace Plus.HabboHotel.Permissions;
 public sealed class PermissionManager : IPermissionManager
 {
     private readonly IDatabase _database;
-    private static readonly ILogger Log = LogManager.GetLogger("Plus.HabboHotel.Permissions.PermissionManager");
+    private readonly ILogger<PermissionManager> _logger;
 
     private readonly Dictionary<string, PermissionCommand> _commands = new();
 
@@ -20,9 +20,10 @@ public sealed class PermissionManager : IPermissionManager
 
     private readonly Dictionary<int, List<string>> _permissionSubscriptionRights = new();
 
-    public PermissionManager(IDatabase database)
+    public PermissionManager(IDatabase database, ILogger<PermissionManager> logger)
     {
         _database = database;
+        _logger = logger;
     }
 
     public void Init()
@@ -113,10 +114,10 @@ public sealed class PermissionManager : IPermissionManager
                 }
             }
         }
-        Log.Info("Loaded " + _permissions.Count + " permissions.");
-        Log.Info("Loaded " + _permissionGroups.Count + " permissions groups.");
-        Log.Info("Loaded " + _permissionGroupRights.Count + " permissions group rights.");
-        Log.Info("Loaded " + _permissionSubscriptionRights.Count + " permissions subscription rights.");
+        _logger.LogInformation("Loaded " + _permissions.Count + " permissions.");
+        _logger.LogInformation("Loaded " + _permissionGroups.Count + " permissions groups.");
+        _logger.LogInformation("Loaded " + _permissionGroupRights.Count + " permissions group rights.");
+        _logger.LogInformation("Loaded " + _permissionSubscriptionRights.Count + " permissions subscription rights.");
     }
 
     public bool TryGetGroup(int id, out PermissionGroup group) => _permissionGroups.TryGetValue(id, out group);

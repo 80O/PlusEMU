@@ -1,11 +1,10 @@
-﻿using NLog;
+﻿using Dapper;
+using Microsoft.Extensions.Logging;
 using Plus.Communication.Packets.Outgoing.Inventory.Achievements;
 using Plus.Communication.Packets.Outgoing.Inventory.Purse;
+using Plus.Database;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Users.Messenger;
-
-using Plus.Database;
-using Dapper;
 using Plus.HabboHotel.Badges;
 using Plus.HabboHotel.Users;
 
@@ -13,18 +12,19 @@ namespace Plus.HabboHotel.Achievements;
 
 public class AchievementManager : IAchievementManager
 {
-    private static readonly ILogger Log = LogManager.GetLogger("Plus.HabboHotel.Achievements.AchievementManager");
+    private readonly ILogger<AchievementManager> _logger;
 
     public Dictionary<string, Achievement> Achievements { get; private set; }
 
     private readonly IDatabase _database;
     private readonly IBadgeManager _badgeManager;
 
-    public AchievementManager(IDatabase database, IBadgeManager badgeManager)
+    public AchievementManager(IDatabase database, IBadgeManager badgeManager, ILogger<AchievementManager> logger)
     {
         Achievements = new Dictionary<string, Achievement>();
         _database = database;
         _badgeManager = badgeManager;
+        _logger = logger;
     }
 
     public void Init()

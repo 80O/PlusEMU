@@ -4,7 +4,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Text;
 using Dapper;
-using NLog;
+using Microsoft.Extensions.Logging;
 using Plus.Communication.Packets;
 using Plus.Communication.Packets.Outgoing.Handshake;
 using Plus.Communication.Packets.Outgoing.Notifications;
@@ -17,7 +17,7 @@ namespace Plus.HabboHotel.GameClients;
 public class GameClientManager : IGameClientManager
 {
     private readonly IDatabase _database;
-    private static readonly ILogger Log = LogManager.GetLogger("Plus.HabboHotel.GameClients.GameClientManager");
+    private readonly ILogger<GameClientManager> _logger;
 
     private readonly Stopwatch _clientPingStopwatch;
 
@@ -27,9 +27,10 @@ public class GameClientManager : IGameClientManager
     private readonly ConcurrentDictionary<int, GameClient> _userIdRegister;
     private readonly ConcurrentDictionary<string, GameClient> _usernameRegister;
 
-    public GameClientManager(IDatabase database)
+    public GameClientManager(IDatabase database, ILogger<GameClientManager> logger)
     {
         _database = database;
+        _logger = logger;
         _clients = new ConcurrentDictionary<int, GameClient>();
         _userIdRegister = new ConcurrentDictionary<int, GameClient>();
         _usernameRegister = new ConcurrentDictionary<string, GameClient>();
@@ -197,13 +198,13 @@ public class GameClientManager : IGameClientManager
                         dbClient.RunQuery(client.GetHabbo().GetQueryString);
                     }
                     Console.Clear();
-                    Log.Info("<<- SERVER SHUTDOWN ->> IVNENTORY IS SAVING");
+                    _logger.LogInformation("<<- SERVER SHUTDOWN ->> IVNENTORY IS SAVING");
                 }
                 catch { }
             }
         }
-        Log.Info("Done saving users inventory!");
-        Log.Info("Closing server connections...");
+        _logger.LogInformation("Done saving users inventory!");
+        _logger.LogInformation("Closing server connections...");
         //try
         //{
         //    foreach (var client in GetClients.ToList())
@@ -223,7 +224,7 @@ public class GameClientManager : IGameClientManager
         //}
         if (_clients.Count > 0)
             _clients.Clear();
-        Log.Info("Connections closed!");
+        _logger.LogInformation("Connections closed!");
     }
 
     private void TestClientConnections()

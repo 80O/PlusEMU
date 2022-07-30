@@ -1,5 +1,5 @@
 ﻿using System.Data;
-using NLog;
+using Microsoft.Extensions.Logging;
 using Plus.Database;
 
 namespace Plus.HabboHotel.Games;
@@ -7,14 +7,15 @@ namespace Plus.HabboHotel.Games;
 public class GameDataManager : IGameDataManager
 {
     private readonly IDatabase _database;
-    private static readonly ILogger Log = LogManager.GetLogger("Plus.HabboHotel.Games.GameDataManager");
+    private readonly ILogger<GameDataManager> _logger;
 
     private readonly Dictionary<int, GameData> _games;
 
-    public GameDataManager(IDatabase database)
+    public GameDataManager(IDatabase database, ILogger<GameDataManager> logger)
     {
         _games = new Dictionary<int, GameData>();
         _database = database;
+        _logger = logger;
     }
 
     public ICollection<GameData> GameData => _games.Values;
@@ -41,7 +42,7 @@ public class GameDataManager : IGameDataManager
                 }
             }
         }
-        Log.Info("Game Data Manager -> LOADED");
+        _logger.LogInformation("Game Data Manager -> LOADED");
     }
 
     public bool TryGetGame(int gameId, out GameData data) => _games.TryGetValue(gameId, out data);

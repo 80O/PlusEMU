@@ -1,5 +1,5 @@
 ﻿using Dapper;
-using NLog;
+using Microsoft.Extensions.Logging;
 using Plus.Database;
 
 namespace Plus.Core.Settings;
@@ -7,19 +7,20 @@ namespace Plus.Core.Settings;
 public class SettingsManager : ISettingsManager
 {
     private readonly IDatabase _database;
-    private static readonly ILogger Log = LogManager.GetLogger("Plus.Core.Settings.SettingsManager");
+    private readonly ILogger<SettingsManager> _logger;
     private Dictionary<string, string> _settings = new(0);
 
-    public SettingsManager(IDatabase database)
+    public SettingsManager(IDatabase database, ILogger<SettingsManager> logger)
     {
         _database = database;
+        _logger = logger;
     }
 
     public async Task Reload()
     {
         using var connection = _database.Connection();
         _settings = (await connection.QueryAsync<(string, string)>("SELECT `key`, `value` FROM `server_settings`")).ToDictionary(x => x.Item1, x => x.Item2.ToLower());
-        Log.Info("Loaded " + _settings.Count + " server settings.");
+        _logger.LogInformation("Loaded " + _settings.Count + " server settings.");
     }
 
     public string TryGetValue(string value) => _settings.ContainsKey(value) ? _settings[value] : "0";

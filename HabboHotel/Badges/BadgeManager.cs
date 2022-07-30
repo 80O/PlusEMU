@@ -1,6 +1,6 @@
 ﻿using System.Data;
 using Dapper;
-using NLog;
+using Microsoft.Extensions.Logging;
 using Plus.Communication.Packets.Outgoing.Inventory.Badges;
 using Plus.Communication.Packets.Outgoing.Inventory.Furni;
 using Plus.Database;
@@ -12,16 +12,16 @@ namespace Plus.HabboHotel.Badges;
 public class BadgeManager : IBadgeManager
 {
     private readonly IDatabase _database;
+    private readonly ILogger<BadgeManager> _logger;
 
-    public BadgeManager(IDatabase database)
+    private readonly Dictionary<string, BadgeDefinition> _badges;
+
+    public BadgeManager(IDatabase database, ILogger<BadgeManager> logger)
     {
         _database = database;
         _badges = new Dictionary<string, BadgeDefinition>();
+        _logger = logger;
     }
-
-    private static readonly ILogger Log = LogManager.GetLogger("Plus.HabboHotel.Badges.BadgeManager");
-
-    private readonly Dictionary<string, BadgeDefinition> _badges;
 
     public void Init()
     {
@@ -36,7 +36,7 @@ public class BadgeManager : IBadgeManager
                     _badges.Add(code, new BadgeDefinition(code, Convert.ToString(row["required_right"])));
             }
         }
-        Log.Info("Loaded " + _badges.Count + " badge definitions.");
+        _logger.LogInformation("Loaded " + _badges.Count + " badge definitions.");
     }
 
     public bool TryGetBadge(string code, out BadgeDefinition badge) => _badges.TryGetValue(code.ToUpper(), out badge);

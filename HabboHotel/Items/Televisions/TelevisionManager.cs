@@ -1,15 +1,19 @@
 ﻿using System.Data;
-using NLog;
+using Microsoft.Extensions.Logging;
 using Plus.Utilities;
 
 namespace Plus.HabboHotel.Items.Televisions;
 
 public class TelevisionManager : ITelevisionManager
 {
-    private static readonly ILogger Log = LogManager.GetLogger("Plus.HabboHotel.Items.Televisions.TelevisionManager");
+    private readonly ILogger<TelevisionManager> _logger;
 
     public Dictionary<int, TelevisionItem> Televisions { get; } = new();
 
+    public TelevisionManager(ILogger<TelevisionManager> logger)
+    {
+        _logger = logger;
+    }   
 
     public ICollection<TelevisionItem> TelevisionList => Televisions.Values;
 
@@ -32,7 +36,7 @@ public class TelevisionManager : ITelevisionManager
                 }
             }
         }
-        Log.Info("Television Items -> LOADED");
+        _logger.LogInformation("Television Items -> LOADED");
     }
 
     public bool TryGet(int itemId, out TelevisionItem televisionItem)

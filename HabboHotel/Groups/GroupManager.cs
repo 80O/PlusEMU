@@ -1,6 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Data;
-using NLog;
+using Microsoft.Extensions.Logging;
 using Plus.HabboHotel.Rooms;
 using Plus.HabboHotel.Users;
 using Plus.Utilities;
@@ -9,7 +9,7 @@ namespace Plus.HabboHotel.Groups;
 
 public class GroupManager : IGroupManager
 {
-    private static readonly ILogger Log = LogManager.GetLogger("Plus.HabboHotel.Groups.GroupManager");
+    private readonly ILogger<GroupManager> _logger;
     private readonly Dictionary<int, GroupColours> _backgroundColours;
     private readonly List<GroupColours> _baseColours;
 
@@ -20,8 +20,9 @@ public class GroupManager : IGroupManager
     private readonly Dictionary<int, GroupColours> _symbolColours;
     private readonly List<GroupBadgeParts> _symbols;
 
-    public GroupManager()
+    public GroupManager(ILogger<GroupManager> logger)
     {
+        _logger = logger;
         _groupLoadingSync = new object();
         _groups = new ConcurrentDictionary<int, Group>();
         _bases = new List<GroupBadgeParts>();
