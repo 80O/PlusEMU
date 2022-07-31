@@ -10,10 +10,9 @@ public class RconConnection
     private byte[] _buffer = new byte[1024];
     private Socket _socket;
 
-    public RconConnection(Socket socket, ILogger<RconConnection> logger)
+    public RconConnection(Socket socket)
     {
         _socket = socket;
-        _logger = logger;
         try
         {
             _socket.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, OnCallBack, _socket);
