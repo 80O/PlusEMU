@@ -1,6 +1,7 @@
 ﻿using System.Net.Sockets;
 using Microsoft.Extensions.Logging;
 using Microsoft.IO;
+using NLog;
 using Plus.Communication.Encryption.Crypto.Prng;
 using Plus.Communication.Flash;
 using Plus.Communication.Packets;
