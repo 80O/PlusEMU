@@ -1,21 +1,21 @@
-﻿using Microsoft.Extensions.Options;
+﻿using System.Collections.Concurrent;
+using Microsoft.Extensions.Options;
 using NetCoreServer;
+using Plus.Communication.Flash;
 using Plus.Communication.Packets;
 using Plus.HabboHotel.GameClients;
-using System.Collections.Concurrent;
-using Plus.Communication.Flash;
 
 namespace Plus.Communication.Abstractions
 {
-    public abstract class TcpGameServer<TGameServerOptions> : TcpServer, IGameServer
+    public abstract class WebsocketGameServer<TGameServerOptions> : WsServer, IGameServer
         where TGameServerOptions : class, IGameServerOptions
     {
-        private readonly IGameClientFactory<TcpSessionProxy, TcpServer> _clientFactory;
+        private readonly IGameClientFactory<WsSessionProxy, WsServer> _clientFactory;
         private readonly IPacketManager _packetManager;
-        private readonly ConcurrentDictionary<Guid, TcpSession> _connectedClients = new();
+        private readonly ConcurrentDictionary<Guid, WsSessionProxy> _connectedClients = new();
 
-        protected TcpGameServer(IOptions<TGameServerOptions> options,
-            IGameClientFactory<TcpSessionProxy, TcpServer> clientFactory,
+        protected WebsocketGameServer(IOptions<TGameServerOptions> options,
+            IGameClientFactory<WsSessionProxy, WsServer> clientFactory,
             IPacketManager packetManager) : base(options.Value.Hostname,
             options.Value.Port)
         {
@@ -23,11 +23,11 @@ namespace Plus.Communication.Abstractions
             _packetManager = packetManager;
         }
 
-        protected override TcpSession CreateSession() => _clientFactory.Create(this);
+        protected override WsSession CreateSession() => _clientFactory.Create(this);
 
         protected override void OnConnected(TcpSession session)
         {
-            if (session is not TcpSessionProxy gameClient)
+            if (session is not WsSessionProxy gameClient)
             {
                 session.Disconnect();
                 //_logger.LogWarning("Expected {TGameClient} to be connected. Got {type}", typeof(TGameClient), session.GetType());
@@ -46,13 +46,9 @@ namespace Plus.Communication.Abstractions
             _connectedClients.TryRemove(session.Id, out _);
         }
 
+
         // TODO @80O: Allow packet content to be modified before executing.
         // TODO @80O: Add hooks before & after packet execution.
         public Task PacketReceived(GameClient client, uint messageId, IIncomingPacket packet) => _packetManager.TryExecutePacket(client, messageId, packet);
-    }
-
-    public interface IGameClientFactory<TGameClient, TServer> : IGameClientFactory
-    {
-        TGameClient Create(TServer server);
     }
 }

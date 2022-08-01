@@ -1,7 +1,6 @@
 ﻿using System.Net.Sockets;
 using Microsoft.Extensions.Logging;
 using Microsoft.IO;
-using NetCoreServer;
 using Plus.Communication.Encryption.Crypto.Prng;
 using Plus.Communication.Flash;
 using Plus.Communication.Packets;
@@ -10,77 +9,12 @@ using Plus.HabboHotel.Users;
 
 namespace Plus.HabboHotel.GameClients;
 
-public interface IGameClient
-{
-    event EventHandler<EventArgs>? ConnectionConnected;
-    event EventHandler<EventArgs>? ConnectionDisconnected;
-    Arc4? Rc4Client { get; set; }
-    bool IsAuthenticated { get; set; }
-    DateTime TimeConnected { get; set; }
-    string MachineId { get; set; }
-    int PingCount { get; set; }
-    Revision Revision { get; set; }
-    Habbo GetHabbo();
-    void SetHabbo(Habbo habbo);
-    void Send(IServerPacket composer);
-    bool Disconnect();
-}
-
-public class TcpSessionProxy : TcpSession
-{
-    private readonly GameClient _client;
-    public TcpSessionProxy(TcpServer server, GameClient client) : base(server)
-    {
-        _client = client;
-        _client.Id = Id;
-        _client.SendCallback = args => Socket.SendAsync(args);
-        _client.DisconnectRequested = () => Disconnect();
-    }
-
-    protected override void OnConnected()
-    {
-        Socket.DontFragment = true;
-        _client.OnConnected();
-    }
-
-    protected override void OnDisconnected() => _client.OnDisconnected();
-
-    protected override void OnReceived(byte[] buffer, long offset, long size) => _client.OnReceived(buffer, offset, size);
-}
-
-public class WsSessionProxy : WsSession
-{
-    private readonly GameClient _client;
-    public WsSessionProxy(WsServer server, GameClient client) : base(server)
-    {
-        _client = client;
-        _client.SendCallback = args =>
-        {
-            var buffer = args.MemoryBuffer.ToArray();
-            return SendBinaryAsync(buffer, 0, buffer.Length);
-        };
-        _client.DisconnectRequested = () => Disconnect();
-    }
-
-    protected override void OnConnected()
-    {
-        Socket.DontFragment = true;
-        _client.OnConnected();
-    }
-
-    protected override void OnDisconnected() => _client.OnDisconnected();
-
-    public override void OnWsReceived(byte[] buffer, long offset, long size) => _client.OnReceived(buffer, offset, size);
-}
-
 public abstract class GameClient
 {
     private readonly ILogger<GameClient> _logger;
     private readonly IGameServer _server;
     private readonly IPacketFactory _packetFactory;
     private Habbo? _habbo;
-    public event EventHandler<EventArgs>? ConnectionConnected;
-    public event EventHandler<EventArgs>? ConnectionDisconnected;
 
     public RecyclableMemoryStream? _incompleteStream;
     public Arc4? Rc4Client { get; set; }
@@ -114,12 +48,7 @@ public abstract class GameClient
         _server = server;
     }
 
-    internal void OnConnected()
-    {
-        ConnectionConnected?.Invoke(this, EventArgs.Empty);
-    }
-
-    internal void OnDisconnected() => ConnectionDisconnected?.Invoke(this, EventArgs.Empty);
+    internal void OnDisconnected() => _habbo?.OnDisconnect();
 
     internal abstract (bool Complete, uint MessageId, int HeaderLength, int Length) GetMessageIdAndPacketLength(ReadOnlyMemory<byte> buffer);
     internal virtual async void OnReceived(byte[] buffer, long offset, long size)

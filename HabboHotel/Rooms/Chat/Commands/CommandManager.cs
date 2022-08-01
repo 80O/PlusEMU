@@ -77,7 +77,7 @@ public class CommandManager : ICommandManager
 
             if (command is IChatCommand chatCommand)
             {
-                chatCommand.Execute(session, session.GetHabbo().CurrentRoom, split);
+                chatCommand.Execute(session, session.GetHabbo().CurrentRoom, parameters);
             }
             else if (command is ITargetChatCommand targetChatCommand)
             {

@@ -330,12 +330,12 @@ public class Habbo
             using var dbClient = PlusEnvironment.GetDatabaseManager().GetQueryReactor();
             dbClient.RunQuery("UPDATE `users` SET `online` = '0', `last_online` = '" + (int)UnixTimestamp.GetNow() + "', `activity_points` = '" + Duckets + "', `credits` = '" + Credits +
                               "', `vip_points` = '" + Diamonds + "', `home_room` = '" + HomeRoom + "', `gotw_points` = '" + GotwPoints + "', `time_muted` = '" + TimeMuted +
-                              "',`friend_bar_state` = '" + FriendBarStateUtility.GetInt(FriendbarState) + "' WHERE id = '" + Id + "' LIMIT 1;UPDATE `user_statistics` SET `roomvisits` = '" +
+                              "',`friend_bar_state` = '" + FriendBarStateUtility.GetInt(FriendbarState) + "', `bubble_id` = '" + CustomBubbleId + "' WHERE id = '" + Id + "' LIMIT 1;UPDATE `user_statistics` SET `roomvisits` = '" +
                               _habboStats.RoomVisits + "', `onlineTime` = '" + (int)(UnixTimestamp.GetNow() - SessionStart + _habboStats.OnlineTime) + "', `respect` = '" + _habboStats.Respect +
                               "', `respectGiven` = '" + _habboStats.RespectGiven + "', `giftsGiven` = '" + _habboStats.GiftsGiven + "', `giftsReceived` = '" + _habboStats.GiftsReceived +
                               "', `dailyRespectPoints` = '" + _habboStats.DailyRespectPoints + "', `dailyPetRespectPoints` = '" + _habboStats.DailyPetRespectPoints + "', `AchievementScore` = '" +
                               _habboStats.AchievementPoints + "', `quest_id` = '" + _habboStats.QuestId + "', `quest_progress` = '" + _habboStats.QuestProgress + "', `groupid` = '" +
-                              _habboStats.FavouriteGroupId + "',`forum_posts` = '" + _habboStats.ForumPosts + "', `bubble_id` = '" + CustomBubbleId + "' WHERE `id` = '" + Id + "' LIMIT 1;");
+                              _habboStats.FavouriteGroupId + "',`forum_posts` = '" + _habboStats.ForumPosts + "' WHERE `id` = '" + Id + "' LIMIT 1;");
             if (GetPermissions().HasRight("mod_tickets"))
                 dbClient.RunQuery("UPDATE `moderation_tickets` SET `status` = 'open', `moderator_id` = '0' WHERE `status` ='picked' AND `moderator_id` = '" + Id + "'");
         }
