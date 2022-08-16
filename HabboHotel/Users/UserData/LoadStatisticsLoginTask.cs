@@ -35,7 +35,6 @@ namespace Plus.HabboHotel.Users.UserData
                     if (Convert.ToString(statRow["respectsTimestamp"]) != DateTime.Today.ToString("MM/dd"))
                     {
                         stats.RespectsTimestamp = DateTime.Today.ToString("MM/dd");
-                        SubscriptionData subData = null;
                         var dailyRespects = 10;
                         //if (_permissions.HasRight("mod_tool"))
                         //    dailyRespects = 20;

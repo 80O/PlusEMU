@@ -12,7 +12,6 @@ namespace Plus.HabboHotel.Users.Messenger
         public IReadOnlyCollection<int> OutstandingFriendRequests => _outstandingFriendRequests;
 
         public event EventHandler<MessengerBuddyModifiedEventArgs>? FriendUpdated;
-        public event EventHandler<MessengerBuddiesModifiedEventArgs>? FriendsUpdated;
 
         public event EventHandler<FriendRequestModifiedEventArgs>? FriendRequestUpdated;
         public event EventHandler<MessengerMessageEventArgs>? RoomInviteReceived;
