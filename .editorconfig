@@ -18,6 +18,9 @@ csharp_style_expression_bodied_local_functions = false:silent
 csharp_style_throw_expression = true:suggestion
 csharp_style_prefer_null_check_over_type_check = true:suggestion
 
+# CS0414: The field 'ProcessComponent._timerLagging' is assigned but its value is never used
+dotnet_diagnostic.CS0414.severity = silent
+
 [*.{cs,vb}]
 #### Naming styles ####
 
