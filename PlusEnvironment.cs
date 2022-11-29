@@ -316,7 +316,7 @@ public class PlusEnvironment : IPlusEnvironment
             using (var dbClient = _database.GetQueryReactor())
             {
                 dbClient.RunQuery("TRUNCATE `catalog_marketplace_data`");
-                dbClient.RunQuery("UPDATE `users` SET `online` = false, `auth_ticket` = NULL");
+                dbClient.RunQuery("UPDATE `users` SET `online` = false");
                 dbClient.RunQuery("UPDATE `rooms` SET `users_now` = '0' WHERE `users_now` > '0'");
                 dbClient.RunQuery("UPDATE `server_status` SET `users_online` = '0', `loaded_rooms` = '0'");
             }

@@ -39,9 +39,9 @@ public class GameClientManager : IGameClientManager
         _clientPingStopwatch.Start();
     }
 
-    public int Count => _clients.Count;
+    public int Count => _userIdRegister.Count;
 
-    public ICollection<GameClient> GetClients => _clients.Values;
+    public ICollection<GameClient> GetClients => _userIdRegister.Values;
 
     public void OnCycle()
     {
@@ -147,7 +147,7 @@ public class GameClientManager : IGameClientManager
 
     public void SendPacket(IServerPacket packet, string fuse = "")
     {
-        foreach (var client in _clients.Values.ToList())
+        foreach (var client in GetClients.ToList())
         {
             if (client == null || client.GetHabbo() == null)
                 continue;

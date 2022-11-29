@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Plus.Core.Settings;
 using Plus.Database;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Users.UserData;
@@ -12,15 +13,17 @@ namespace Plus.HabboHotel.Users.Authentication
         private readonly IGameClientManager _gameClientManager;
         private readonly IUserDataFactory _userDataFactory;
         private readonly IDatabase _database;
+        private readonly ISettingsManager _settingsManager;
 
         public event EventHandler<HabboEventArgs>? HabboLoggedIn;
 
-        public Authenticator(IEnumerable<IAuthenticationTask> authenticationTasks, IGameClientManager gameClientManager, IUserDataFactory userDataFactory, IDatabase database)
+        public Authenticator(IEnumerable<IAuthenticationTask> authenticationTasks, IGameClientManager gameClientManager, IUserDataFactory userDataFactory, IDatabase database, ISettingsManager settingsManager)
         {
             _authenticationTasks = authenticationTasks;
             _gameClientManager = gameClientManager;
             _userDataFactory = userDataFactory;
             _database = database;
+            _settingsManager = settingsManager;
         }
 
         public async Task<AuthenticationError?> AuthenticateUsingSSO(GameClient session, string sso)
@@ -29,15 +32,18 @@ namespace Plus.HabboHotel.Users.Authentication
             if (string.IsNullOrEmpty(sso))
                 return AuthenticationError.EmptySSO;//|| sso.Length < 15)
 
-            if (!Debugger.IsAttached && sso.Length < 15)
-                return AuthenticationError.InvalidSSO;
+            if (_settingsManager.TryGetValue("sso.less_15") == "0")
+            {
+                if (!Debugger.IsAttached && sso.Length < 15)
+                    return AuthenticationError.InvalidSSO;
+            }
 
             var userId = await GetUserIdFromSso(sso);
             if (userId == default)
                 return AuthenticationError.NoAccountFound;
 
-            if (!Debugger.IsAttached)
-                await ResetSso(userId);
+            /*if (!Debugger.IsAttached)
+                await ResetSso(userId);*/
 
             var canLogin = await CanLogin(userId);
             if (!canLogin)

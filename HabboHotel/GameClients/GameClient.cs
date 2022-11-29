@@ -1,4 +1,5 @@
-﻿using System.Net.Sockets;
+﻿using System.Diagnostics;
+using System.Net.Sockets;
 using Microsoft.IO;
 using NLog;
 using Plus.Communication.Encryption.Crypto.Prng;
@@ -114,7 +115,8 @@ public abstract class GameClient
         CreateHeader(memory, outgoingMessageId);
         args.SetBuffer(memory);
         SendCallback(args);
-        Log.Debug($"Send Packet: {composer.GetType().Name} (EmuId: {composer.MessageId}, ClientId: {outgoingMessageId})");
+        if (Debugger.IsAttached)
+            Log.Debug($"Send Packet: {composer.GetType().Name} (EmuId: {composer.MessageId}, ClientId: {outgoingMessageId})");
         stream.Dispose();
     }
 
