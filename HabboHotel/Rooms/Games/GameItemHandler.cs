@@ -84,28 +84,18 @@ public class GameItemHandler
 
     public void OnTeleportRoomUserEnter(RoomUser user, Item item)
     {
-        var items = _banzaiTeleports.Values.Where(p => p.Id != item.Id);
-        var count = items.Count();
-        var countId = Random.Shared.Next(0, count);
-        var countAmount = 0;
-        if (count == 0)
+        if (_banzaiTeleports.Count <= 1) 
             return;
-        foreach (var i in items.ToList())
-        {
-            if (i == null)
-                continue;
-            if (countAmount == countId)
-            {
-                i.ExtraData = "1";
-                i.UpdateNeeded = true;
-                _room.GetGameMap().TeleportToItem(user, item);
-                i.ExtraData = "1";
-                i.UpdateNeeded = true;
-                i.UpdateState();
-                i.UpdateState();
-            }
-            countAmount++;
-        }
+
+        var banzais = _banzaiTeleports.Values.Where(_banzai => _banzai.Id != item.Id).ToArray();
+        var banzai = banzais[Random.Shared.Next(0, banzais.Length)];
+
+        banzai.ExtraData = "1";
+        banzai.UpdateNeeded = true;
+        banzai.UpdateState();
+
+        _room.GetGameMap().TeleportToItem(user, banzai);
+
     }
 
     public void Dispose()
