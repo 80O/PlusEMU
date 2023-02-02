@@ -7,7 +7,7 @@ namespace Plus.Communication.Packets.Outgoing.Groups;
 public class GroupMembersComposer : IServerPacket
 {
     private readonly Group _group;
-    private readonly ICollection<UserCache> _members;
+    private readonly ICollection<CachedUser> _members;
     private readonly int _membersCount;
     private readonly int _page;
     private readonly bool _admin;
@@ -16,7 +16,7 @@ public class GroupMembersComposer : IServerPacket
 
     public uint MessageId => ServerPacketHeader.GroupMembersComposer;
 
-    public GroupMembersComposer(Group group, ICollection<UserCache> members, int membersCount, int page, bool admin, int reqType, string searchVal)
+    public GroupMembersComposer(Group group, ICollection<CachedUser> members, int membersCount, int page, bool admin, int reqType, string searchVal)
     {
         _group = group;
         _members = members;

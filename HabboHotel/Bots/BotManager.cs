@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using Dapper;
 using Microsoft.Extensions.Logging;
 using Plus.HabboHotel.Rooms.AI;
 using Plus.HabboHotel.Rooms.AI.Responses;
@@ -20,28 +21,16 @@ public class BotManager : IBotManager
         _responses = new();
     }
 
-    public void Init()
+    // Todo: Task
+    public async void Init()
     {
-        if (_responses.Count > 0)
-            _responses.Clear();
-        using var dbClient = _database.GetQueryReactor();
-        dbClient.SetQuery("SELECT `bot_ai`,`chat_keywords`,`response_text`,`response_mode`,`response_beverage` FROM `bots_responses`");
-        var data = dbClient.GetTable();
-        if (data != null)
-        {
-            foreach (DataRow row in data.Rows)
-            {
-                _responses.Add(new(Convert.ToString(row["bot_ai"]), Convert.ToString(row["chat_keywords"]), Convert.ToString(row["response_text"]), row["response_mode"].ToString(),
-                    Convert.ToString(row["response_beverage"])));
-            }
-        }
+        _responses.Clear();
+        using var connection = _database.Connection();
+        var data = await connection.QueryAsync<(string BotAi, string Keywords, string ResponseText, string ResponseMode, string ResponseBeverage)>(
+            "SELECT `bot_ai`, `chat_keywords` as keywords, `response_text`,`response_mode`,`response_beverage` FROM `bots_responses`");
+        foreach (var row in data)
+            _responses.Add(new(row.BotAi, row.Keywords, row.ResponseText, row.ResponseMode, row.ResponseBeverage));
     }
 
-    public BotResponse GetResponse(BotAiType type, string message)
-    {
-        foreach (var response in _responses.Where(x => x.AiType == type).ToList())
-            if (response.KeywordMatched(message))
-                return response;
-        return null;
-    }
+    public BotResponse? GetResponse(BotAiType type, string message) => _responses.Where(x => x.AiType == type).FirstOrDefault(response => response.KeywordMatched(message));
 }

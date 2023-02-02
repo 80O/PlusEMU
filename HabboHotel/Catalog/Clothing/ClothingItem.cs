@@ -6,11 +6,7 @@ public class ClothingItem
     {
         Id = id;
         ClothingName = name;
-        PartIds = new();
-        if (partIds.Contains(","))
-            foreach (var partId in partIds.Split(','))
-                PartIds.Add(int.Parse(partId));
-        else if (!string.IsNullOrEmpty(partIds) && int.Parse(partIds) > 0) PartIds.Add(int.Parse(partIds));
+        PartIds = partIds.Split(",").Select(int.Parse).ToList();
     }
 
     public int Id { get; }

@@ -107,7 +107,7 @@ internal class RemoveGroupMemberEvent : IPacketEvent
                 group.TakeAdmin(userId);
             if (group.IsMember(userId))
                 group.DeleteMember(userId);
-            var members = new List<UserCache>();
+            var members = new List<CachedUser>();
             var memberIds = group.GetAllMembers;
             foreach (var id in memberIds.ToList())
             {

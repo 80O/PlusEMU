@@ -78,7 +78,7 @@ public sealed class ProcessComponent : IProcessComponent
                     {
                         if (cache == null)
                             continue;
-                        if (cache.IsExpired())
+                        if (cache.IsExpired)
                             PlusEnvironment.Game.CacheManager.TryRemoveUser(cache.Id, out _);
                     }
                     catch (Exception e)

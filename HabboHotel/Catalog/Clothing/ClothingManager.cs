@@ -1,4 +1,4 @@
-﻿using System.Data;
+﻿using Dapper;
 using Plus.Database;
 
 namespace Plus.HabboHotel.Catalog.Clothing;
@@ -16,21 +16,13 @@ public class ClothingManager : IClothingManager
 
     public ICollection<ClothingItem> GetClothingAllParts => _clothing.Values;
 
-    public void Init()
+    public async void Init()
     {
-        if (_clothing.Count > 0)
-            _clothing.Clear();
-        DataTable data = null;
-        using (var dbClient = _database.GetQueryReactor())
-        {
-            dbClient.SetQuery("SELECT `id`,`clothing_name`,`clothing_parts` FROM `catalog_clothing`");
-            data = dbClient.GetTable();
-        }
-        if (data != null)
-        {
-            foreach (DataRow row in data.Rows)
-                _clothing.Add(Convert.ToInt32(row["id"]), new(Convert.ToInt32(row["id"]), Convert.ToString(row["clothing_name"]), Convert.ToString(row["clothing_parts"])));
-        }
+        _clothing.Clear();
+        using var connection = _database.Connection();
+        var data = await connection.QueryAsync<(int Id, string ClothingName, string PartIds)>("SELECT `id`,`clothing_name`,`clothing_parts` FROM `catalog_clothing`");
+        foreach (var row in data)
+            _clothing.Add(row.Id, new(row.Id, row.ClothingName, row.PartIds));
     }
 
     public bool TryGetClothing(int itemId, out ClothingItem clothing) => _clothing.TryGetValue(itemId, out clothing);

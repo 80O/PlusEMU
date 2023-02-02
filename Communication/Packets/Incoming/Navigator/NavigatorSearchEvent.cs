@@ -28,7 +28,7 @@ internal class NavigatorSearchEvent : IPacketEvent
             if (categories.Count == 0)
             {
                 //Are we going in deep?!
-                categories = _navigatorManager.GetResultByIdentifier(category);
+                categories = _navigatorManager.GetResultByIdentifier(category).ToList();
                 if (categories.Count > 0)
                 {
                     session.Send(new NavigatorSearchResultSetComposer(category, search, categories, session, 2, 100));

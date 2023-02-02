@@ -5,12 +5,12 @@ namespace Plus.Communication.Packets.Outgoing.Navigator;
 
 public class UserFlatCatsComposer : IServerPacket
 {
-    private readonly ICollection<SearchResultList> _categories;
+    private readonly IReadOnlyCollection<SearchResultList> _categories;
     private readonly int _rank;
 
     public uint MessageId => ServerPacketHeader.UserFlatCatsComposer;
 
-    public UserFlatCatsComposer(ICollection<SearchResultList> categories, int rank)
+    public UserFlatCatsComposer(IReadOnlyCollection<SearchResultList> categories, int rank)
     {
         _categories = categories;
         _rank = rank;

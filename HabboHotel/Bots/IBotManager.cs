@@ -6,5 +6,5 @@ namespace Plus.HabboHotel.Bots;
 public interface IBotManager
 {
     void Init();
-    BotResponse GetResponse(BotAiType type, string message);
+    BotResponse? GetResponse(BotAiType type, string message);
 }

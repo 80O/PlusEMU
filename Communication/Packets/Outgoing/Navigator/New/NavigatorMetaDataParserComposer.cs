@@ -6,10 +6,10 @@ namespace Plus.Communication.Packets.Outgoing.Navigator.New;
 // TODO @80O: Implement
 public class NavigatorMetaDataParserComposer : IServerPacket
 {
-    private readonly ICollection<TopLevelItem> _topLevelItems;
+    private readonly IReadOnlyCollection<TopLevelItem> _topLevelItems;
     public uint MessageId => ServerPacketHeader.NavigatorMetaDataParserComposer;
 
-    public NavigatorMetaDataParserComposer(ICollection<TopLevelItem> topLevelItems)
+    public NavigatorMetaDataParserComposer(IReadOnlyCollection<TopLevelItem> topLevelItems)
     {
         _topLevelItems = topLevelItems;
     }

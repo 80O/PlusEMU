@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using Dapper;
 using Microsoft.Extensions.Logging;
 using Plus.Database;
 using Plus.HabboHotel.Cache.Process;
@@ -13,7 +14,7 @@ public class CacheManager : ICacheManager
     private readonly IProcessComponent _process;
     private readonly IDatabase _database;
     private readonly IGameClientManager _gameClientManager;
-    private readonly ConcurrentDictionary<int, UserCache> _usersCached;
+    private readonly ConcurrentDictionary<int, CachedUser> _usersCached;
 
     public CacheManager(IProcessComponent processComponent, IDatabase database, IGameClientManager gameClientManager, ILogger<CacheManager> logger)
     {
@@ -26,46 +27,38 @@ public class CacheManager : ICacheManager
 
     public void Init()
     {
-
         _process.Init();
         _logger.LogInformation("Cache Manager -> LOADED");
     }
 
     public bool ContainsUser(int id) => _usersCached.ContainsKey(id);
 
-    public UserCache GenerateUser(int id)
+    public CachedUser? GenerateUser(int id)
     {
-        UserCache user = null;
-        if (_usersCached.ContainsKey(id))
+        if (TryGetUser(id, out var cachedUser))
         {
-            if (TryGetUser(id, out user))
-                return user;
+            cachedUser.AddedTime = DateTime.UtcNow;
+            return cachedUser;
         }
+
         var client = _gameClientManager.GetClientByUserId(id);
-        if (client != null)
+        if (client?.GetHabbo() != null)
         {
-            if (client.GetHabbo() != null)
-            {
-                user = new(id, client.GetHabbo().Username, client.GetHabbo().Motto, client.GetHabbo().Look);
-                _usersCached.TryAdd(id, user);
-                return user;
-            }
+            cachedUser = new() { Id = id, Username = client.GetHabbo().Username, Motto = client.GetHabbo().Motto, Look = client.GetHabbo().Look};
+            _usersCached.TryAdd(id, cachedUser);
+            return cachedUser;
         }
-        using var dbClient = _database.GetQueryReactor();
-        dbClient.SetQuery("SELECT `username`, `motto`, `look` FROM users WHERE id = @id LIMIT 1");
-        dbClient.AddParameter("id", id);
-        var dRow = dbClient.GetRow();
-        if (dRow != null)
-        {
-            user = new(id, dRow["username"].ToString(), dRow["motto"].ToString(), dRow["look"].ToString());
-            _usersCached.TryAdd(id, user);
-        }
-        return user;
+
+        using var connection = _database.Connection();
+        cachedUser = connection.QuerySingleOrDefaultAsync<CachedUser>("SELECT id, `username`, `motto`, `look` FROM users WHERE id = @id LIMIT 1", new { id }).Result;
+        if (cachedUser != null)
+            _usersCached.TryAdd(id, cachedUser);
+        return cachedUser;
     }
 
-    public bool TryRemoveUser(int id, out UserCache user) => _usersCached.TryRemove(id, out user);
+    public bool TryRemoveUser(int id, out CachedUser cachedUser) => _usersCached.TryRemove(id, out cachedUser);
 
-    public bool TryGetUser(int id, out UserCache user) => _usersCached.TryGetValue(id, out user);
+    public bool TryGetUser(int id, out CachedUser cachedUser) => _usersCached.TryGetValue(id, out cachedUser);
 
-    public ICollection<UserCache> GetUserCache() => _usersCached.Values;
+    public ICollection<CachedUser> GetUserCache() => _usersCached.Values;
 }

@@ -24,7 +24,7 @@ internal class GetGroupMembersEvent : IPacketEvent
         var requestType = packet.ReadInt();
         if (!_groupManager.TryGetGroup(groupId, out var group))
             return Task.CompletedTask;
-        var members = new List<UserCache>();
+        var members = new List<CachedUser>();
         switch (requestType)
         {
             case 0:
