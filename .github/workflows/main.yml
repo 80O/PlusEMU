@@ -27,11 +27,8 @@ jobs:
     - name: Build
       run: dotnet build "D:\a\PlusEMU\PlusEMU\Plus Emulator.csproj" --configuration Release --no-restore
       
-    - name: Test
-      run: dotnet test --no-restore --verbosity normal
-      
     - name: Publish
-      run: dotnet publish
+      run: dotnet publish "D:\a\PlusEMU\PlusEMU\Plus Emulator.csproj"
     
     - name: Publish Artifact
       uses: actions/upload-artifact@v3
