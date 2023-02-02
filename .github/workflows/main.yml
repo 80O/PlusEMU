@@ -22,7 +22,7 @@ jobs:
         dotnet-version: 7.0.x
         
     - name: Install dependencies
-      run: dotnet restore
+      run: dotnet restore -s D:\a\PlusEMU\PlusEMU\
       
     - name: Build
       run: dotnet build --configuration Release --no-restore
