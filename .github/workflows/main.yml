@@ -25,7 +25,7 @@ jobs:
       run: dotnet restore "D:\a\PlusEMU\PlusEMU\Plus Emulator.csproj"
       
     - name: Build
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build "D:\a\PlusEMU\PlusEMU\Plus Emulator.csproj" --configuration Release --no-restore
       
     - name: Test
       run: dotnet test --no-restore --verbosity normal
