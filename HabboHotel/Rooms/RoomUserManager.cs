@@ -283,7 +283,7 @@ public class RoomUserManager
                         new
                         {
                             userId = session.GetHabbo().Id,
-                            roomId = session.GetHabbo().CurrentRoom!.Id,
+                            roomId = _room.RoomId,
                             exitTimestamp = UnixTimestamp.GetNow(),
                         });
 
