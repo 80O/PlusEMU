@@ -22,7 +22,7 @@ jobs:
         dotnet-version: 7.0.x
         
     - name: Install dependencies
-      run: dotnet restore -s D:\a\PlusEMU\PlusEMU\
+      run: dotnet restore "D:\a\PlusEMU\PlusEMU\Plus Emulator.csproj"
       
     - name: Build
       run: dotnet build --configuration Release --no-restore
