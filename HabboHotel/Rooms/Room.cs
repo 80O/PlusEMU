@@ -17,18 +17,26 @@ using Plus.HabboHotel.Rooms.Games.Freeze;
 using Plus.HabboHotel.Rooms.Games.Teams;
 using Plus.HabboHotel.Rooms.Instance;
 using Plus.Utilities;
+using Plus.Utilities.DependencyInjection;
 
 namespace Plus.HabboHotel.Rooms;
 
+[Scoped]
+public interface IRoomComponent
+{
+
+}
+
 public class Room : RoomData
 {
-    private readonly BansComponent _bansComponent;
+    public IEnumerable<IRoomComponent> Components { get; }
+    private BansComponent _bansComponent;
 
-    private readonly FilterComponent _filterComponent;
+    private FilterComponent _filterComponent;
 
-    private readonly Dictionary<uint, List<RoomUser>> _tents;
-    private readonly TradingComponent _tradingComponent;
-    private readonly WiredComponent _wiredComponent;
+    private Dictionary<uint, List<RoomUser>> _tents = new();
+    private TradingComponent _tradingComponent;
+    private WiredComponent _wiredComponent;
     private BattleBanzai _banzai;
     private Freeze _freeze;
     private GameItemHandler _gameItemHandler;
@@ -46,7 +54,7 @@ public class Room : RoomData
     public bool MDisposed;
     public MoodlightData MoodlightData;
 
-    public Dictionary<int, double> MutedUsers;
+    public Dictionary<int, double> MutedUsers = new();
 
     public Task ProcessTask;
     public bool RoomMuted;
@@ -58,22 +66,26 @@ public class Room : RoomData
 
     public List<int> UsersWithRights;
 
-    public Room(RoomData data)
-        : base(data)
+    public Room(IEnumerable<IRoomComponent> components)
     {
-        IsLagging = 0;
-        Unloaded = false;
-        IdleTime = 0;
-        RoomMuted = false;
-        MutedUsers = new();
-        _tents = new();
-        _gamemap = new(this, data.Model);
+        Components = components;
+        _bansComponent = Components.OfType<BansComponent>().First();
+        
+        LastRegeneration = DateTime.Now;
+    }
+
+    public override void SetData(RoomData data)
+    {
+        base.SetData(data);
+
+        // Temp
         _roomItemHandling = new(this);
         _roomUserManager = new(this);
         _filterComponent = new(this);
         _wiredComponent = new(this);
-        _bansComponent = new(this);
+        //_bansComponent = new(this);
         _tradingComponent = new(this);
+        _gamemap = new(this, data.Model);
         GetRoomItemHandler().LoadFurniture();
         GetGameMap().GenerateMaps();
         LoadPromotions();
@@ -81,7 +93,6 @@ public class Room : RoomData
         LoadFilter();
         InitBots();
         InitPets();
-        LastRegeneration = DateTime.Now;
     }
 
     public int IsLagging { get; set; }

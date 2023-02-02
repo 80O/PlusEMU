@@ -9,7 +9,7 @@ internal class GetGuestRoomEvent : IPacketEvent
     public Task Parse(GameClient session, IIncomingPacket packet)
     {
         var roomId = packet.ReadUInt();
-        if (!RoomFactory.TryGetData(roomId, out var data))
+        if (!RoomDataLoader.TryGetData(roomId, out var data))
             return Task.CompletedTask;
         var enter = packet.ReadInt() == 1;
         var forward = packet.ReadInt() == 1;

@@ -2,7 +2,7 @@
 
 namespace Plus.HabboHotel.Rooms;
 
-public static class RoomFactory
+public static class RoomDataLoader
 {
     public static List<RoomData> GetRoomsDataByOwnerSortByName(int ownerId)
     {

@@ -10,6 +10,10 @@ public class RoomData
 
     public List<string> Tags;
 
+    public RoomData()
+    {
+    }
+
     public RoomData(uint id, string caption, string modelName, string ownerName, int ownerId, string password, int score, string type, string access, int usersNow, int usersMax, int category,
         string description,
         string tags, string floor, string landscape, bool allowPets, bool allowPetsEating, bool roomBlockingEnabled, bool hidewall, int wallThickness, int floorThickness, string wallpaper,
@@ -65,7 +69,7 @@ public class RoomData
         Model = model;
     }
 
-    public RoomData(RoomData data)
+    public virtual void SetData(RoomData data)
     {
         Id = data.Id;
         Name = data.Name;

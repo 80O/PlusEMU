@@ -1,19 +1,89 @@
-﻿using System.Collections.Concurrent;
-using System.Data;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Plus.Core;
 using Plus.Core.Language;
 using Plus.Database;
 using Plus.HabboHotel.GameClients;
 using Plus.Utilities;
+using Plus.Utilities.DependencyInjection;
+using System.Collections.Concurrent;
+using System.Data;
 
 namespace Plus.HabboHotel.Rooms;
+
+public interface IRoomsRepository
+{
+    Task<Room> Create(uint roomId);
+    void Remove(uint roomId);
+}
+
+[Singleton]
+public interface ILoadRoomDataTask
+{
+    /// <summary>
+    /// Populate a room with data.
+    /// </summary>
+    /// <param name="room"></param>
+    Task Load(Room room);
+
+    Task Loaded(Room room);
+}
+
+
+public class RoomsRepository : IRoomsRepository
+{
+    private readonly IServiceProvider _serviceProvider;
+    private readonly IEnumerable<ILoadRoomDataTask> _loadTasks;
+
+    private readonly Dictionary<uint, RoomSessionScope> _sessionScopes = new();
+
+    public RoomsRepository(IServiceProvider serviceProvider, IEnumerable<ILoadRoomDataTask> loadTasks)
+    {
+        _serviceProvider = serviceProvider;
+        _loadTasks = loadTasks;
+    }
+
+    public async Task<Room> Create(uint roomId)
+    {
+        var scope = _serviceProvider.CreateScope();
+        var room = scope.ServiceProvider.GetRequiredService<Room>();
+        await Task.WhenAll(_loadTasks.Select(task => task.Load(room)));
+        await Task.WhenAll(_loadTasks.Select(task => task.Loaded(room)));
+        _sessionScopes.Add(roomId, new(room, scope));
+        return room;
+    }
+
+    public void Remove(uint roomId)
+    {
+        if (_sessionScopes.Remove(roomId, out var session))
+            session.Dispose();
+    }
+}
+
+public class RoomSessionScope : IDisposable
+{
+    public Room Room { get; }
+    public IServiceScope Scope { get; }
+
+    public RoomSessionScope(Room room, IServiceScope scope)
+    {
+        Room = room;
+        Scope = scope;
+    }
+
+    public void Dispose()
+    {
+        Scope.Dispose();
+    }
+}
+
 
 public class RoomManager : IRoomManager
 {
     private readonly ILogger<RoomManager> _logger;
     private readonly IDatabase _database;
     private readonly ILanguageManager _languageManager;
+    private readonly IRoomsRepository _roomsRepository;
 
     private readonly object _roomLoadingSync;
 
@@ -24,11 +94,12 @@ public class RoomManager : IRoomManager
     private DateTime _cycleLastExecution;
 
 
-    public RoomManager(ILogger<RoomManager> logger, IDatabase database, ILanguageManager languageManager)
+    public RoomManager(ILogger<RoomManager> logger, IDatabase database, ILanguageManager languageManager, IRoomsRepository roomsRepository)
     {
         _logger = logger;
         _database = database;
         _languageManager = languageManager;
+        _roomsRepository = roomsRepository;
         _roomModels = new();
         _rooms = new();
         _roomLoadingSync = new();
@@ -142,7 +213,11 @@ public class RoomManager : IRoomManager
 
     public void UnloadRoom(uint roomId)
     {
-        if (_rooms.TryRemove(roomId, out var room)) room.Dispose();
+        if (_rooms.TryRemove(roomId, out var room))
+        {
+            room.Dispose();
+            _roomsRepository.Remove(roomId);
+        }
     }
 
     public bool TryLoadRoom(uint roomId, out Room room)
@@ -170,12 +245,13 @@ public class RoomManager : IRoomManager
                 room = null;
                 return false;
             }
-            if (!RoomFactory.TryGetData(roomId, out var data))
+            if (!RoomDataLoader.TryGetData(roomId, out var data))
             {
                 room = null;
                 return false;
             }
-            var myInstance = new Room(data);
+            var myInstance = _roomsRepository.Create(data.Id).Result;
+            myInstance.SetData(data);
             if (_rooms.TryAdd(roomId, myInstance))
             {
                 room = myInstance;

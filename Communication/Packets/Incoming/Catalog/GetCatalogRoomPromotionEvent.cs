@@ -8,7 +8,7 @@ internal class GetCatalogRoomPromotionEvent : IPacketEvent
 {
     public Task Parse(GameClient session, IIncomingPacket packet)
     {
-        var rooms = RoomFactory.GetRoomsDataByOwnerSortByName(session.GetHabbo().Id);
+        var rooms = RoomDataLoader.GetRoomsDataByOwnerSortByName(session.GetHabbo().Id);
         session.Send(new GetCatalogRoomPromotionComposer(rooms));
         return Task.CompletedTask;
     }

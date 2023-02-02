@@ -24,7 +24,7 @@ internal class EditRoomPromotionEvent : IPacketEvent
         var roomId = packet.ReadUInt();
         var name = _wordFilterManager.CheckMessage(packet.ReadString());
         var desc = _wordFilterManager.CheckMessage(packet.ReadString());
-        if (!RoomFactory.TryGetData(roomId, out var data))
+        if (!RoomDataLoader.TryGetData(roomId, out var data))
             return Task.CompletedTask;
         if (data.OwnerId != session.GetHabbo().Id)
             return Task.CompletedTask;

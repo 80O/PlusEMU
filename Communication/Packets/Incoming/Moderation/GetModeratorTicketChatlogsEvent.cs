@@ -21,7 +21,7 @@ internal class GetModeratorTicketChatlogsEvent : IPacketEvent
         var ticketId = packet.ReadInt();
         if (!_moderationManager.TryGetTicket(ticketId, out var ticket) || ticket.Room == null)
             return Task.CompletedTask;
-        if (!RoomFactory.TryGetData(ticket.Room.Id, out var data))
+        if (!RoomDataLoader.TryGetData(ticket.Room.Id, out var data))
             return Task.CompletedTask;
         session.Send(new ModeratorTicketChatlogComposer(ticket, data, ticket.Timestamp));
         return Task.CompletedTask;

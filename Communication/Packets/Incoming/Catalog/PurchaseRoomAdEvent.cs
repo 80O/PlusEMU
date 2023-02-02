@@ -35,7 +35,7 @@ public class PurchaseRoomAdEvent : IPacketEvent
         packet.ReadBool(); //junk
         var desc = _wordFilterManager.CheckMessage(packet.ReadString());
         var categoryId = packet.ReadInt();
-        if (!RoomFactory.TryGetData(roomId, out var data))
+        if (!RoomDataLoader.TryGetData(roomId, out var data))
             return;
         if (data.OwnerId != session.GetHabbo().Id)
             return;

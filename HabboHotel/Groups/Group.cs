@@ -213,7 +213,7 @@ public class Group
     {
         if (_room == null)
         {
-            if (!RoomFactory.TryGetData(RoomId, out var data))
+            if (!RoomDataLoader.TryGetData(RoomId, out var data))
                 return null;
             _room = data;
             return data;

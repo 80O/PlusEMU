@@ -8,7 +8,7 @@ internal class UpdateNavigatorSettingsEvent : IPacketEvent
 {
     private readonly INavigatorManager _navigatorManager;
 
-    public UpdateNavigatorSettingsEvent(NavigatorManager navigatorManager)
+    public UpdateNavigatorSettingsEvent(INavigatorManager navigatorManager)
     {
         _navigatorManager = navigatorManager;
     }

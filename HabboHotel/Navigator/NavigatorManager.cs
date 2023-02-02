@@ -108,7 +108,7 @@ public sealed class NavigatorManager : INavigatorManager
     {
         habbo.HomeRoom = roomId;
 
-        if (!RoomFactory.TryGetData(roomId, out _))
+        if (!RoomDataLoader.TryGetData(roomId, out _))
             return;
 
         using var connection = _database.Connection();

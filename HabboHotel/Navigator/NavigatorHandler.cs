@@ -43,7 +43,7 @@ internal static class NavigatorHandler
                             foreach (DataRow row in getRooms.Rows)
                             {
                                 RoomData data = null;
-                                if (!RoomFactory.TryGetData(Convert.ToUInt32(row["id"]), out data))
+                                if (!RoomDataLoader.TryGetData(Convert.ToUInt32(row["id"]), out data))
                                     continue;
                                 if (!results.Contains(data))
                                     results.Add(data);
@@ -91,7 +91,7 @@ internal static class NavigatorHandler
                                 if (Convert.ToString(row["state"]) == "invisible")
                                     continue;
                                 RoomData data = null;
-                                if (!RoomFactory.TryGetData(Convert.ToUInt32(row["id"]), out data))
+                                if (!RoomDataLoader.TryGetData(Convert.ToUInt32(row["id"]), out data))
                                     continue;
                                 if (!results.Contains(data))
                                     results.Add(data);
@@ -131,7 +131,7 @@ internal static class NavigatorHandler
             }
             case NavigatorCategoryType.MyRooms:
             {
-                ICollection<RoomData> rooms = RoomFactory.GetRoomsDataByOwnerSortByName(session.GetHabbo().Id).OrderByDescending(x => x.UsersNow).ToList();
+                ICollection<RoomData> rooms = RoomDataLoader.GetRoomsDataByOwnerSortByName(session.GetHabbo().Id).OrderByDescending(x => x.UsersNow).ToList();
                 packet.WriteInteger(rooms.Count);
                 foreach (var data in rooms.ToList()) RoomAppender.WriteRoom(packet, data, data.Promotion);
                 break;
@@ -142,7 +142,7 @@ internal static class NavigatorHandler
                 foreach (var id in session.GetHabbo().FavoriteRooms.ToArray())
                 {
                     RoomData data = null;
-                    if (!RoomFactory.TryGetData((uint)id, out data))
+                    if (!RoomDataLoader.TryGetData((uint)id, out data))
                         continue;
                     if (!favourites.Contains(data))
                         favourites.Add(data);
@@ -159,7 +159,7 @@ internal static class NavigatorHandler
                 {
                     if (group == null)
                         continue;
-                    if (!RoomFactory.TryGetData((uint)group.RoomId, out var data))
+                    if (!RoomDataLoader.TryGetData((uint)group.RoomId, out var data))
                         continue;
                     if (!myGroups.Contains(data))
                         myGroups.Add(data);
@@ -200,7 +200,7 @@ internal static class NavigatorHandler
                     var getRights = dbClient.GetTable();
                     foreach (DataRow row in getRights.Rows)
                     {
-                        if (!RoomFactory.TryGetData(Convert.ToUInt32(row["room_id"]), out var data))
+                        if (!RoomDataLoader.TryGetData(Convert.ToUInt32(row["room_id"]), out var data))
                             continue;
                         if (!myRights.Contains(data))
                             myRights.Add(data);

@@ -39,7 +39,7 @@ internal class PurchaseGroupEvent : IPacketEvent
         }
         session.GetHabbo().Credits -= groupCost;
         session.Send(new CreditBalanceComposer(session.GetHabbo().Credits));
-        if (!RoomFactory.TryGetData(roomId, out var room))
+        if (!RoomDataLoader.TryGetData(roomId, out var room))
             return Task.CompletedTask;
         if (room == null || room.OwnerId != session.GetHabbo().Id || room.Group != null)
             return Task.CompletedTask;

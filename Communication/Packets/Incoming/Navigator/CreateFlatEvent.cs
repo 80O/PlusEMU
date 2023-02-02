@@ -21,7 +21,7 @@ internal class CreateFlatEvent : IPacketEvent
 
     public Task Parse(GameClient session, IIncomingPacket packet)
     {
-        var rooms = RoomFactory.GetRoomsDataByOwnerSortByName(session.GetHabbo().Id);
+        var rooms = RoomDataLoader.GetRoomsDataByOwnerSortByName(session.GetHabbo().Id);
         if (rooms.Count >= 500)
         {
             session.Send(new CanCreateRoomComposer(true, 500));

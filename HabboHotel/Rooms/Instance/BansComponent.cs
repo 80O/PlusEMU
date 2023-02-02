@@ -4,7 +4,7 @@ using Plus.Utilities;
 
 namespace Plus.HabboHotel.Rooms.Instance;
 
-public class BansComponent
+public class BansComponent : IRoomComponent
 {
     /// <summary>
     /// The bans collection for storing them for this room.
@@ -15,24 +15,28 @@ public class BansComponent
     /// </summary>
     private Room _instance;
 
+    public BansComponent()
+    {
+    }
+
     /// <summary>
     /// Create the BanComponent for the RoomInstance.
     /// </summary>
     /// <param name="instance">The instance that created this component.</param>
-    public BansComponent(Room instance)
-    {
-        if (instance == null)
-            return;
-        _instance = instance;
-        _bans = new();
-        DataTable getBans = null;
-        using var dbClient = PlusEnvironment.DatabaseManager.GetQueryReactor();
-        dbClient.SetQuery($"SELECT `user_id`, `expire` FROM `room_bans` WHERE `room_id` = {_instance.Id} AND `expire` > UNIX_TIMESTAMP();");
-        getBans = dbClient.GetTable();
-        if (getBans != null)
-            foreach (DataRow row in getBans.Rows)
-                _bans.TryAdd(Convert.ToInt32(row["user_id"]), Convert.ToDouble(row["expire"]));
-    }
+    //public BansComponent(Room instance)
+    //{
+    //    if (instance == null)
+    //        return;
+    //    _instance = instance;
+    //    _bans = new();
+    //    DataTable getBans = null;
+    //    using var dbClient = PlusEnvironment.DatabaseManager.GetQueryReactor();
+    //    dbClient.SetQuery($"SELECT `user_id`, `expire` FROM `room_bans` WHERE `room_id` = {_instance.Id} AND `expire` > UNIX_TIMESTAMP();");
+    //    getBans = dbClient.GetTable();
+    //    if (getBans != null)
+    //        foreach (DataRow row in getBans.Rows)
+    //            _bans.TryAdd(Convert.ToInt32(row["user_id"]), Convert.ToDouble(row["expire"]));
+    //}
 
     public int Count => _bans.Count;
 

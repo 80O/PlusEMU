@@ -35,7 +35,7 @@ internal class GetModeratorUserRoomVisitsEvent : IPacketEvent
             {
                 foreach (DataRow row in table.Rows)
                 {
-                    if (!RoomFactory.TryGetData(Convert.ToUInt32(row["room_id"]), out var data))
+                    if (!RoomDataLoader.TryGetData(Convert.ToUInt32(row["room_id"]), out var data))
                         continue;
                     if (!visits.ContainsKey(Convert.ToDouble(row["entry_timestamp"])))
                         visits.Add(Convert.ToDouble(row["entry_timestamp"]), data);

@@ -9,6 +9,7 @@ using Plus.Communication.Flash;
 using Plus.Communication.Nitro;
 using Plus.Communication.RCON;
 using Plus.Database;
+using Plus.HabboHotel.Rooms;
 using Plus.Plugins;
 using Plus.Utilities.DependencyInjection;
 using Scrutor;
@@ -43,6 +44,8 @@ public static class Program
         services.AddConfiguration<NitroServerConfiguration>(configuration.GetSection("Nitro"));
         services.AddConfiguration<DatabaseConfiguration>(configuration.GetSection("Database"));
         services.AddConfiguration<RconConfiguration>(configuration.GetSection("Rcon"));
+
+        services.AddScoped<Room>();
 
         // Dependency Injection
         services.AddDefaultRules(typeof(Program).Assembly);
@@ -106,16 +109,39 @@ public static class Program
 
     private static IServiceCollection AddDefaultRules(this IServiceCollection services, Assembly assembly)
     {
-        foreach (var type in assembly.GetTypes().Where(t => t.IsInterface && t.GetCustomAttributes<SingletonAttribute>().Any()).Concat(_defaultTypes[ServiceLifetime.Singleton]).Distinct())
-            services.AddAssignableTo(assembly, type, ServiceLifetime.Singleton);
-        foreach (var type in assembly.GetTypes().Where(t => t.IsInterface && t.GetCustomAttributes<ScopedAttribute>().Any()).Concat(_defaultTypes[ServiceLifetime.Scoped]).Distinct())
-            services.AddAssignableTo(assembly, type, ServiceLifetime.Scoped);
+        services.Scan(scan => scan.FromAssemblies(new[] { assembly })
+            .AddClasses(classes => classes.Where(t => !t.GetCustomAttributes<TransientAttribute>().Any() && !t.GetCustomAttributes<SingletonAttribute>().Any() && t.GetConstructors().Any()), false)
+            .AsMatchingInterface()
+            .WithScopedLifetime());
+        services.Scan(scan => scan.FromAssemblies(new[] { assembly })
+            .AddClasses(classes => classes.Where(t => t.GetCustomAttributes<TransientAttribute>().Any() && t.GetConstructors().Any()), false)
+            .AsMatchingInterface()
+            .WithTransientLifetime());
+        services.Scan(scan => scan.FromAssemblies(new[] { assembly })
+            .AddClasses(classes => classes.Where(t => t.GetCustomAttributes<SingletonAttribute>().Any() && t.GetConstructors().Any()), false)
+            .AsMatchingInterface()
+            .WithSingletonLifetime());
 
-        services.Scan(scan => scan.FromAssemblies(assembly)
-            .AddClasses(classes => classes.Where(c => c.GetInterface($"I{c.Name}") != null))
-            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+        var interfaces = assembly.GetTypes().SelectMany(t => t.GetInterfaces()).Distinct().ToList();
+
+        var transientInterfaces = interfaces.Where(t => t.GetCustomAttributes<TransientAttribute>().Any()).ToList();
+        services.Scan(scan => scan.FromAssemblies(new[] { assembly })
+            .AddClasses(classes => classes.Where(c => transientInterfaces.Any(i => c.IsAssignableTo(i))))
+            .As(c => c.GetInterfaces().Intersect(transientInterfaces))
+            .AsSelf()
+            .WithTransientLifetime());
+
+        var singletonInterfaces = interfaces.Where(t => t.GetCustomAttributes<SingletonAttribute>().Any()).ToList();
+        services.Scan(scan => scan.FromAssemblies(new[] { assembly })
+            .AddClasses(classes => classes.Where(c => singletonInterfaces.Any(i => c.IsAssignableTo(i))))
             .AsSelfWithInterfaces()
             .WithSingletonLifetime());
+
+        var scopedInterfaces = interfaces.Where(t => t.GetCustomAttributes<ScopedAttribute>().Any()).ToList();
+        services.Scan(scan => scan.FromAssemblies(new[] { assembly })
+            .AddClasses(classes => classes.Where(c => scopedInterfaces.Any(i => c.IsAssignableTo(i))))
+            .AsSelfWithInterfaces()
+            .WithScopedLifetime());
         return services;
     }
 

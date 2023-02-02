@@ -38,7 +38,7 @@ internal class GetModeratorUserChatlogEvent : IPacketEvent
         {
             foreach (DataRow row in getLogs.Rows)
             {
-                if (!RoomFactory.TryGetData(Convert.ToUInt32(row["room_id"]), out var roomData))
+                if (!RoomDataLoader.TryGetData(Convert.ToUInt32(row["room_id"]), out var roomData))
                     continue;
                 var timestampExit = Convert.ToDouble(row["exit_timestamp"]) <= 0 ? UnixTimestamp.GetNow() : Convert.ToDouble(row["exit_timestamp"]);
                 chatlogs.Add(new(roomData, GetChatlogs(roomData, Convert.ToDouble(row["entry_timestamp"]), timestampExit)));

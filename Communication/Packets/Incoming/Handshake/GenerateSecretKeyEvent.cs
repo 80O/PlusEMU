@@ -18,7 +18,11 @@ public class GenerateSecretKeyEvent : IPacketEvent
             session.Send(new SecretKeyComposer(HabboEncryptionV2.GetRsaDiffieHellmanPublicKey()));
         }
         else
-            session.SendNotification("There was an error logging you in, please try again!");
+            session.SendNotification("There was an " +
+                                     "error" +
+                                     "" +
+                                     "" +
+                                     " logging you in, please try again!");
         return Task.CompletedTask;
     }
 }

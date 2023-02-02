@@ -42,7 +42,7 @@ internal class DeleteGroupEvent : IPacketEvent
         }
         if (!_roomManager.TryGetRoom(group.RoomId, out var room))
             return Task.CompletedTask;
-        if (!RoomFactory.TryGetData(group.RoomId, out var _))
+        if (!RoomDataLoader.TryGetData(group.RoomId, out var _))
             return Task.CompletedTask;
         room.Group = null;
 

@@ -22,7 +22,7 @@ internal class GotoCommand : IChatCommand
             session.SendWhisper("You must enter a valid room ID");
         else
         {
-            if (!RoomFactory.TryGetData(roomId, out var data))
+            if (!RoomDataLoader.TryGetData(roomId, out var data))
             {
                 session.SendWhisper("This room does not exist!");
                 return;

@@ -17,7 +17,7 @@ public class AddFavouriteRoomEvent : IPacketEvent
     public Task Parse(GameClient session, IIncomingPacket packet)
     {
         var roomId = packet.ReadUInt();
-        if (!RoomFactory.TryGetData(roomId, out var data))
+        if (!RoomDataLoader.TryGetData(roomId, out var data))
             return Task.CompletedTask;
         if (data == null || session.GetHabbo().FavoriteRooms.Count >= 30 || session.GetHabbo().FavoriteRooms.Contains(roomId))
         {
