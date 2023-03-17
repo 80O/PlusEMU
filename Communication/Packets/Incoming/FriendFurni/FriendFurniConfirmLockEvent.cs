@@ -1,4 +1,5 @@
-﻿using Plus.Communication.Packets.Outgoing.Rooms.Furni.LoveLocks;
+﻿using Dapper;
+using Plus.Communication.Packets.Outgoing.Rooms.Furni.LoveLocks;
 using Plus.Database;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Items;
@@ -14,16 +15,16 @@ internal class FriendFurniConfirmLockEvent : IPacketEvent
         _database = database;
     }
 
-    public Task Parse(GameClient session, IIncomingPacket packet)
+    public async Task Parse(GameClient session, IIncomingPacket packet)
     {
         var pId = packet.ReadUInt();
         var isConfirmed = packet.ReadBool();
         var room = session.GetHabbo().CurrentRoom;
         if (room == null)
-            return Task.CompletedTask;
+            return;
         var item = room.GetRoomItemHandler().GetItem(pId);
         if (item == null || item.Definition == null || item.Definition.InteractionType != InteractionType.Lovelock)
-            return Task.CompletedTask;
+            return;
         var userOneId = item.InteractingUser;
         var userTwoId = item.InteractingUser2;
         var userOne = room.GetRoomUserManager().GetRoomUserByHabbo(userOneId);
@@ -33,14 +34,14 @@ internal class FriendFurniConfirmLockEvent : IPacketEvent
             item.InteractingUser = 0;
             item.InteractingUser2 = 0;
             session.SendNotification("Your partner has left the room or has cancelled the love lock.");
-            return Task.CompletedTask;
+            return;
         }
         if (userOne.GetClient() == null || userTwo.GetClient() == null)
         {
             item.InteractingUser = 0;
             item.InteractingUser2 = 0;
             session.SendNotification("Your partner has left the room or has cancelled the love lock.");
-            return Task.CompletedTask;
+            return;
         }
         if (userOne == null)
         {
@@ -49,7 +50,7 @@ internal class FriendFurniConfirmLockEvent : IPacketEvent
             userTwo.LlPartner = 0;
             item.InteractingUser = 0;
             item.InteractingUser2 = 0;
-            return Task.CompletedTask;
+            return;
         }
         if (userTwo == null)
         {
@@ -58,7 +59,7 @@ internal class FriendFurniConfirmLockEvent : IPacketEvent
             userOne.LlPartner = 0;
             item.InteractingUser = 0;
             item.InteractingUser2 = 0;
-            return Task.CompletedTask;
+            return;
         }
         if (item.ExtraData.Serialize().Contains(Convert.ToChar(5).ToString()))
         {
@@ -70,7 +71,7 @@ internal class FriendFurniConfirmLockEvent : IPacketEvent
             userOne.LlPartner = 0;
             item.InteractingUser = 0;
             item.InteractingUser2 = 0;
-            return Task.CompletedTask;
+            return;
         }
         if (!isConfirmed)
         {
@@ -80,7 +81,7 @@ internal class FriendFurniConfirmLockEvent : IPacketEvent
             userTwo.LlPartner = 0;
             userOne.CanWalk = true;
             userTwo.CanWalk = true;
-            return Task.CompletedTask;
+            return;
         }
         if (userOneId == session.GetHabbo().Id)
         {
@@ -93,7 +94,7 @@ internal class FriendFurniConfirmLockEvent : IPacketEvent
             userTwo.LlPartner = userOneId;
         }
         if (userOne.LlPartner == 0 || userTwo.LlPartner == 0)
-            return Task.CompletedTask;
+            return;
         item.ExtraData.Store(
             $"1{(char)5}{userOne.GetUsername()}{(char)5}{userTwo.GetUsername()}{(char)5}{userOne.GetClient().GetHabbo().Look}{(char)5}{userTwo.GetClient().GetHabbo().Look}{(char)5}{DateTime.Now:dd/MM/yyyy}");
         item.InteractingUser = 0;
@@ -101,19 +102,17 @@ internal class FriendFurniConfirmLockEvent : IPacketEvent
         userOne.LlPartner = 0;
         userTwo.LlPartner = 0;
         item.UpdateState(true, true);
-        using (var dbClient = _database.GetQueryReactor())
+        using var connection = _database.Connection();
+        await connection.ExecuteAsync("UPDATE `items` SET `extra_data` = @extraData WHERE `id` = @ID LIMIT 1", new
         {
-            dbClient.SetQuery("UPDATE `items` SET `extra_data` = @extraData WHERE `id` = @ID LIMIT 1");
-            dbClient.AddParameter("extraData", item.ExtraData);
-            dbClient.AddParameter("ID", item.Id);
-            dbClient.RunQuery();
-        }
+            extraData = item.ExtraData,
+            ID = item.Id
+        });
         userOne.GetClient().Send(new LoveLockDialogueCloseComposer(pId));
         userTwo.GetClient().Send(new LoveLockDialogueCloseComposer(pId));
         userOne.CanWalk = true;
         userTwo.CanWalk = true;
         userOne = null;
         userTwo = null;
-        return Task.CompletedTask;
     }
 }
