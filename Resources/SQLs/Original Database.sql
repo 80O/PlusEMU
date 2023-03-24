@@ -25103,4 +25103,36 @@ CHANGE `advertising_report_blocked` `advertising_report_blocked` BOOLEAN NULL DE
 CHANGE `ignore_invites` `ignore_invites` BOOLEAN NULL DEFAULT FALSE,
 CHANGE `allow_gifts` `allow_gifts` BOOLEAN NULL DEFAULT TRUE,
 CHANGE `disable_forced_effects` `disable_forced_effects` BOOLEAN NOT NULL DEFAULT FALSE,
-CHANGE `allow_mimic` `allow_mimic` BOOLEAN NOT NULL DEFAULT TRUE; 
+CHANGE `allow_mimic` `allow_mimic` BOOLEAN NOT NULL DEFAULT TRUE;
+
+-- 11_ChangeCatalogPagesEnumToBit
+ALTER TABLE `catalog_pages` DROP `visible`;
+ALTER TABLE `catalog_pages` ADD `visible` bit(1) NOT NULL DEFAULT b'1';
+ALTER TABLE `catalog_pages` DROP `enabled`;
+ALTER TABLE `catalog_pages` ADD `enabled` bit(1) NOT NULL DEFAULT b'1';
+
+-- 12_ChangeIntToBoolRoomData
+ALTER TABLE `rooms` 
+    CHANGE `allow_pets` `allow_pets_old` ENUM('0','1') NOT NULL DEFAULT '0',
+    CHANGE `allow_pets_eat` `allow_pets_eat_old` ENUM('0','1') NOT NULL DEFAULT '0',
+    CHANGE `room_blocking_disabled` `room_blocking_disabled_old` ENUM('0','1') NOT NULL DEFAULT '0',
+    CHANGE `allow_hidewall` `allow_hidewall_old` ENUM('0','1') NOT NULL DEFAULT '0';
+
+ALTER TABLE `rooms`
+    ADD `allow_pets` BOOLEAN NOT NULL DEFAULT 0,
+    ADD `allow_pets_eat` BOOLEAN NOT NULL DEFAULT 0,
+    ADD `room_blocking_disabled` BOOLEAN NOT NULL DEFAULT 0,
+    ADD `allow_hidewall` BOOLEAN NOT NULL DEFAULT 0;
+
+UPDATE `rooms`
+SET
+    `allow_pets` = `allow_pets_old` = '1',
+    `allow_pets_eat` = `allow_pets_eat_old` = '1',
+    `room_blocking_disabled` = `room_blocking_disabled_old` = '1',
+    `allow_hidewall` = `allow_hidewall_old` = '1';
+
+ALTER TABLE `rooms`
+    DROP `allow_pets_old`,
+    DROP `allow_pets_eat_old`,
+    DROP `room_blocking_disabled_old`,
+    DROP `allow_hidewall_old`;

@@ -5,27 +5,27 @@ namespace Plus.Communication.Packets.Outgoing.Inventory.Badges;
 
 public class BadgesComposer : IServerPacket
 {
-    private readonly GameClient _session;
+    private readonly int _userId;
+    private readonly IReadOnlyDictionary<string, Badge> _badges;
     public uint MessageId => ServerPacketHeader.BadgesComposer;
 
-    public BadgesComposer(GameClient session)
+    public BadgesComposer(int userId, IReadOnlyDictionary<string, Badge> badges)
     {
-        _session = session;
-        // TODO @80O: Pass badges instead of whole session object.
+        _userId = userId;
+        _badges = badges;
     }
 
     public void Compose(IOutgoingPacket packet)
     {
-        var equippedBadges = new List<Badge>();
-        var badges = _session.GetHabbo().Inventory.Badges.Badges;
-        packet.WriteInteger(badges.Count);
-        foreach (var (_, badge) in badges)
+        var equippedBadges = _badges.Values.Where(badge => badge.Slot > 0).OrderBy(badge => badge.Slot).ToList();
+
+        packet.WriteInteger(_badges.Count);
+        foreach (var badge in _badges.Values)
         {
             packet.WriteInteger(1);
             packet.WriteString(badge.Code);
-            if (badge.Slot > 0)
-                equippedBadges.Add(badge);
         }
+
         packet.WriteInteger(equippedBadges.Count);
         foreach (var badge in equippedBadges)
         {

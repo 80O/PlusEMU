@@ -15,10 +15,11 @@ public class HabboUserBadgesComposer : IServerPacket
 
     public void Compose(IOutgoingPacket packet)
     {
+        var equippedBadges = _habbo.Inventory.Badges.EquippedBadges.OrderBy(b => b.Slot).ToList();
+
         packet.WriteInteger(_habbo.Id);
-        var badges = _habbo.Inventory.Badges.EquippedBadges;
-        packet.WriteInteger(badges.Count);
-        foreach (var badge in badges)
+        packet.WriteInteger(equippedBadges.Count);
+        foreach (var badge in equippedBadges)
         {
             packet.WriteInteger(badge.Slot);
             packet.WriteString(badge.Code);

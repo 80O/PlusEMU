@@ -66,7 +66,7 @@
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition=" '$(OS)' == 'Windows_NT' ">
-	  <Exec Command="setx PLUS_EMULATOR_HOME $([System.IO.Path]::GetFullPath('$(OutDir)'))" />
+		<Exec Command="powershell -Command '[Environment]::SetEnvironmentVariable(&quot;PLUS_EMULATOR_HOME&quot;, &quot;$([System.IO.Path]::GetFullPath('$(OutDir)'))&quot;, [System.EnvironmentVariableTarget]::Machine)'" />
 	</Target>
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
 		<Exec Command="echo Configuration: $(Configuration)&#xD;&#xA;echo DevEnvDir: $(DevEnvDir)&#xD;&#xA;echo OutDir: $(OutDir)&#xD;&#xA;echo ProjectDir: $(ProjectDir)&#xD;&#xA;echo VisualStudioVersion: $(VisualStudioVersion)&#xD;&#xA;echo AssemblySearchPaths: $(AssemblySearchPaths)&#xD;&#xA;echo AssemblyName: $(AssemblyName)&#xD;&#xA;echo BaseIntermediateOutputPath: $(BaseIntermediateOutputPath)&#xD;&#xA;echo CscToolPath: $(CscToolPath)" />
