@@ -8,12 +8,9 @@ namespace Plus.Communication.Packets.Incoming.FriendFurni;
 
 internal class FriendFurniConfirmLockEvent : IPacketEvent
 {
-    private readonly IDatabase _database;
+    private readonly IItemDataManager _itemDataManager;
 
-    public FriendFurniConfirmLockEvent(IDatabase database)
-    {
-        _database = database;
-    }
+    public FriendFurniConfirmLockEvent(IItemDataManager itemDataManager) => _itemDataManager = itemDataManager;
 
     public async Task Parse(GameClient session, IIncomingPacket packet)
     {
@@ -102,12 +99,7 @@ internal class FriendFurniConfirmLockEvent : IPacketEvent
         userOne.LlPartner = 0;
         userTwo.LlPartner = 0;
         item.UpdateState(true, true);
-        using var connection = _database.Connection();
-        await connection.ExecuteAsync("UPDATE `items` SET `extra_data` = @extraData WHERE `id` = @ID LIMIT 1", new
-        {
-            extraData = item.ExtraData,
-            ID = item.Id
-        });
+        await _itemDataManager.UpdateItemExtradata(item);
         userOne.GetClient().Send(new LoveLockDialogueCloseComposer(pId));
         userTwo.GetClient().Send(new LoveLockDialogueCloseComposer(pId));
         userOne.CanWalk = true;

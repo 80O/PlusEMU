@@ -11,12 +11,12 @@ namespace Plus.Communication.Packets.Incoming.Catalog;
 public class RedeemVoucherEvent : IPacketEvent
 {
     private readonly IVoucherManager _voucherManager;
-    private readonly IDatabase _database;
+    private readonly IUserVoucherManager _userVoucherManager;
 
-    public RedeemVoucherEvent(IVoucherManager voucherManager, IDatabase database)
+    public RedeemVoucherEvent(IVoucherManager voucherManager, IUserVoucherManager userVoucherManager)
     {
         _voucherManager = voucherManager;
-        _database = database;
+        _userVoucherManager = userVoucherManager;
     }
 
     public async Task Parse(GameClient session, IIncomingPacket packet)
@@ -32,24 +32,13 @@ public class RedeemVoucherEvent : IPacketEvent
             session.SendNotification("Oops, this voucher has reached the maximum usage limit!");
             return;
         }
-        using var connection = _database.Connection();
-        var row = await connection.QueryFirstOrDefaultAsync<UserVoucher>("SELECT * FROM `user_vouchers` WHERE `user_id` = @userId AND `voucher` = @voucher LIMIT 1", new
-        {
-            userId = session.GetHabbo().Id,
-            voucher = code
-        });
+
+        var row = await _userVoucherManager.GetVoucherByUserIdAndCode(session.GetHabbo().Id, code);
         if (row != null)
-        {
             session.SendNotification("You've already used this voucher code, one per each user, sorry!");
-        }
         else
-        {
-            await connection.ExecuteAsync("INSERT INTO `user_vouchers` (`user_id`,`voucher`) VALUES (@userId, @voucher)", new
-            {
-                userId = session.GetHabbo().Id,
-                voucher = code
-            });
-        }
+            await _userVoucherManager.CreateVoucher(session.GetHabbo().Id, code);
+
         voucher.UpdateUses();
         if (voucher.Type == VoucherType.Credit)
         {

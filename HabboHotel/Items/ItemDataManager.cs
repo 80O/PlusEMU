@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using Dapper;
 using Microsoft.Extensions.Logging;
 using Plus.Database;
 using Plus.HabboHotel.Users.Inventory.Furniture;
@@ -16,6 +17,16 @@ public class ItemDataManager : IItemDataManager
     {
         _logger = logger;
         _database = database;
+    }
+
+    public async Task UpdateItemExtradata(Item item)
+    {
+        using var connection = _database.Connection();
+        await connection.ExecuteAsync("UPDATE `items` SET `extra_data` = @extraData WHERE `id` = @ID LIMIT 1", new
+        {
+            extraData = item.ExtraData,
+            ID = item.Id
+        });
     }
 
     public void Init()
