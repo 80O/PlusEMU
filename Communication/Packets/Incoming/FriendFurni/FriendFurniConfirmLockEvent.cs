@@ -1,6 +1,4 @@
-﻿using Dapper;
-using Plus.Communication.Packets.Outgoing.Rooms.Furni.LoveLocks;
-using Plus.Database;
+﻿using Plus.Communication.Packets.Outgoing.Rooms.Furni.LoveLocks;
 using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Items;
 
@@ -10,7 +8,8 @@ internal class FriendFurniConfirmLockEvent : IPacketEvent
 {
     private readonly IItemDataManager _itemDataManager;
 
-    public FriendFurniConfirmLockEvent(IItemDataManager itemDataManager) => _itemDataManager = itemDataManager;
+    public FriendFurniConfirmLockEvent(IItemDataManager itemDataManager) =>
+        _itemDataManager = itemDataManager;
 
     public async Task Parse(GameClient session, IIncomingPacket packet)
     {
@@ -104,7 +103,5 @@ internal class FriendFurniConfirmLockEvent : IPacketEvent
         userTwo.GetClient().Send(new LoveLockDialogueCloseComposer(pId));
         userOne.CanWalk = true;
         userTwo.CanWalk = true;
-        userOne = null;
-        userTwo = null;
     }
 }

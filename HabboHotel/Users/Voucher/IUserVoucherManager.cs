@@ -1,8 +1,8 @@
-﻿namespace Plus.HabboHotel.Users.Voucher;
+﻿using Plus.HabboHotel.GameClients;
+
+namespace Plus.HabboHotel.Users.Voucher;
 
 public interface IUserVoucherManager
 {
-    Task<UserVoucher?> GetVoucherByUserIdAndCode(int userId, string code);
-
-    Task CreateVoucher(int userId, string code);
+    Task PacketHandler(GameClient client, string code);
 }
