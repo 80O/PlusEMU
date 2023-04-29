@@ -25136,3 +25136,8 @@ ALTER TABLE `rooms`
     DROP `allow_pets_eat_old`,
     DROP `room_blocking_disabled_old`,
     DROP `allow_hidewall_old`;
+
+-- 13_DeletePrimaryKeyAuthTicket
+ALTER TABLE `users`
+    DROP PRIMARY KEY,
+    ADD PRIMARY KEY (`id`)
