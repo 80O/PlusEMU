@@ -23,5 +23,5 @@ public class LanguageManager : ILanguageManager
         _logger.LogInformation("Loaded " + _values.Count + " language locales.");
     }
 
-    public string TryGetValue(string value) => _values.ContainsKey(value) ? _values[value] : $"No language locale found for [{value}]";
+    public string TryGetValue(string key) => _values.TryGetValue(key, out string? value) ? value : $"No language locale found for [{key}]";
 }

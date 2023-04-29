@@ -1,7 +1,9 @@
 ﻿using System.Data;
 using Dapper;
 using Microsoft.Extensions.Logging;
+using Plus.Communication.Packets.Outgoing.Rooms.Furni.LoveLocks;
 using Plus.Database;
+using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Users.Inventory.Furniture;
 
 namespace Plus.HabboHotel.Items;
@@ -17,6 +19,95 @@ public class ItemDataManager : IItemDataManager
     {
         _logger = logger;
         _database = database;
+    }
+
+    public async Task ConfirmLockEvent(GameClient session, uint pId, bool isConfirmed)
+    {
+        var room = session.GetHabbo().CurrentRoom;
+        if (room == null)
+            return;
+
+        var item = room.GetRoomItemHandler().GetItem(pId);
+        if (item == null || item.Definition == null || item.Definition.InteractionType != InteractionType.Lovelock)
+            return;
+
+        var userOneId = item.InteractingUser;
+        var userTwoId = item.InteractingUser2;
+        var userOne = room.GetRoomUserManager().GetRoomUserByHabbo(userOneId);
+        var userTwo = room.GetRoomUserManager().GetRoomUserByHabbo(userTwoId);
+
+        if (userOne == null && userTwo == null && userOne.GetClient() == null && userTwo.GetClient() == null)
+        {
+            item.InteractingUser = 0;
+            item.InteractingUser2 = 0;
+            session.SendNotification("Your partner has left the room or has cancelled the love lock.");
+            return;
+        }
+        else if (userOne == null)
+        {
+            userTwo.CanWalk = true;
+            userTwo.GetClient().SendNotification("Your partner has left the room or has cancelled the love lock.");
+            userTwo.LlPartner = 0;
+            item.InteractingUser = 0;
+            item.InteractingUser2 = 0;
+            return;
+        }
+        else if (userTwo == null)
+        {
+            userOne.CanWalk = true;
+            userOne.GetClient().SendNotification("Your partner has left the room or has cancelled the love lock.");
+            userOne.LlPartner = 0;
+            item.InteractingUser = 0;
+            item.InteractingUser2 = 0;
+            return;
+        }
+        else if (item.ExtraData.Serialize().Contains(Convert.ToChar(5).ToString()))
+        {
+            userTwo.CanWalk = true;
+            userTwo.GetClient().SendNotification("It appears this love lock has already been locked.");
+            userTwo.LlPartner = 0;
+            userOne.CanWalk = true;
+            userOne.GetClient().SendNotification("It appears this love lock has already been locked.");
+            userOne.LlPartner = 0;
+            item.InteractingUser = 0;
+            item.InteractingUser2 = 0;
+            return;
+        }
+        else if (!isConfirmed)
+        {
+            item.InteractingUser = 0;
+            item.InteractingUser2 = 0;
+            userOne.LlPartner = 0;
+            userTwo.LlPartner = 0;
+            userOne.CanWalk = true;
+            userTwo.CanWalk = true;
+            return;
+        }
+        if (userOneId == session.GetHabbo().Id)
+        {
+            session.Send(new LoveLockDialogueSetLockedComposer(pId));
+            userOne.LlPartner = userTwoId;
+        }
+        else if (userTwoId == session.GetHabbo().Id)
+        {
+            session.Send(new LoveLockDialogueSetLockedComposer(pId));
+            userTwo.LlPartner = userOneId;
+        }
+
+        if (userOne.LlPartner == 0 || userTwo.LlPartner == 0)
+            return;
+
+        item.ExtraData.Store($"1{(char)5}{userOne.GetUsername()}{(char)5}{userTwo.GetUsername()}{(char)5}{userOne.GetClient().GetHabbo().Look}{(char)5}{userTwo.GetClient().GetHabbo().Look}{(char)5}{DateTime.Now:dd/MM/yyyy}");
+        item.InteractingUser = 0;
+        item.InteractingUser2 = 0;
+        userOne.LlPartner = 0;
+        userTwo.LlPartner = 0;
+        item.UpdateState(true, true);
+        await UpdateItemExtradata(item);
+        userOne.GetClient().Send(new LoveLockDialogueCloseComposer(pId));
+        userTwo.GetClient().Send(new LoveLockDialogueCloseComposer(pId));
+        userOne.CanWalk = true;
+        userTwo.CanWalk = true;
     }
 
     public async Task UpdateItemExtradata(Item item)
@@ -90,14 +181,14 @@ public class ItemDataManager : IItemDataManager
         _logger.LogInformation("Item Manager -> LOADED");
     }
 
-    public ItemDefinition GetItemByName(string name)
+    public ItemDefinition? GetItemByName(string name)
     {
-        foreach (var entry in Items)
+        foreach (var item in Items.Values)
         {
-            var item = entry.Value;
             if (item.ItemName == name)
                 return item;
         }
+
         return null;
     }
 }
