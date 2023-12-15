@@ -97,8 +97,6 @@ public class Habbo
 
     public int VipRank { get; set; }
 
-    public bool AllowTradingRequests { get; set; }
-
     public bool AllowUserFollowing { get; set; }
 
     public bool AllowMessengerInvites { get; set; }
