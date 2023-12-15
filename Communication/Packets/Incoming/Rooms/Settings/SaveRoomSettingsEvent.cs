@@ -80,7 +80,7 @@ internal class SaveRoomSettingsEvent : IPacketEvent
             tradeSettings = 0;
         if (whoMute < 0 || whoMute > 1)
             whoMute = 0;
-        if (whoKick < 0 || whoKick > 1)
+        if (whoKick < 0 || whoKick > 2)
             whoKick = 0;
         if (whoBan < 0 || whoBan > 1)
             whoBan = 0;
