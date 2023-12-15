@@ -65,7 +65,11 @@ internal class InitTradeEvent : IPacketEvent
             session.Send(new TradingErrorComposer(8, targetUser.GetUsername()));
             return Task.CompletedTask;
         }
-
+        if (!targetUser.GetClient().GetHabbo().AllowTradingRequests)
+        {
+            session.Send(new TradingErrorComposer(4, targetUser.GetUsername()));
+            return Task.CompletedTask;
+        }
         if (targetUser.GetClient().GetHabbo().TradingLockExpiry > 0)
         {
             session.Send(new TradingErrorComposer(4, targetUser.GetUsername()));
