@@ -1,7 +1,7 @@
 ﻿using Plus.Communication.Packets.Outgoing.Moderation;
 using Plus.Communication.Packets.Outgoing.Rooms.Avatar;
 using Plus.Communication.Packets.Outgoing.Rooms.Engine;
-using Plus.Core.FigureData;
+using Plus.HabboHotel.Users.Clothing;
 using Plus.Database;
 using Plus.HabboHotel.Achievements;
 using Plus.HabboHotel.GameClients;
@@ -27,7 +27,8 @@ internal class UpdateFigureDataEvent : IPacketEvent
     public Task Parse(GameClient session, IIncomingPacket packet)
     {
         var gender = packet.ReadString().ToUpper();
-        var look = _figureManager.ProcessFigure(packet.ReadString(), gender, session.GetHabbo().Clothing.GetClothingParts, true);
+        //TODO get habboclub status
+        var look = _figureManager.ValidateLookAsync(packet.ReadString(), gender, session.GetHabbo().Clothing.GetClothingParts, true).Result;
         if (look == session.GetHabbo().Look)
             return Task.CompletedTask;
         if ((DateTime.Now - session.GetHabbo().LastClothingUpdateTime).TotalSeconds <= 2.0)
@@ -47,7 +48,7 @@ internal class UpdateFigureDataEvent : IPacketEvent
             return Task.CompletedTask;
         }
         _questManager.ProgressUserQuest(session, QuestType.ProfileChangeLook);
-        session.GetHabbo().Look = _figureManager.FilterFigure(look);
+        session.GetHabbo().Look = look;
         session.GetHabbo().Gender = gender.ToLower();
         using (var dbClient = _database.GetQueryReactor())
         {

@@ -3,7 +3,7 @@
         "Hostname": "127.0.0.1",
         "Port": 3306,
         "Username": "root",
-        "Password": "",
+        "Password": "martin12",
         "Name": "plus",
         "MinimumPoolSize": 5,
         "MaximumPoolSize": 65

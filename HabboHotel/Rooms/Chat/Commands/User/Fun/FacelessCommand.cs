@@ -1,5 +1,5 @@
 ﻿using Plus.Communication.Packets.Outgoing.Rooms.Engine;
-using Plus.Core.FigureData;
+using Plus.HabboHotel.Users.Clothing;
 using Plus.Database;
 using Plus.HabboHotel.GameClients;
 
@@ -34,7 +34,7 @@ internal class FacelessCommand : IChatCommand
             if (part.StartsWith("hd"))
             {
                 headParts = part.Split('-');
-                if (!headParts[1].Equals("99999"))
+                if (!headParts[1].Equals("99999"))//TODO add it to item list since its not valid yet.
                     headParts[1] = "99999";
                 else
                     return;
@@ -42,7 +42,7 @@ internal class FacelessCommand : IChatCommand
                 break;
             }
         }
-        session.GetHabbo().Look = _figureDataManager.ProcessFigure(session.GetHabbo().Look, session.GetHabbo().Gender, session.GetHabbo().Clothing.GetClothingParts, true);
+        session.GetHabbo().Look = _figureDataManager.ValidateLookAsync(session.GetHabbo().Look, session.GetHabbo().Gender, session.GetHabbo().Clothing.GetClothingParts, true).Result;
         using (var dbClient = _database.GetQueryReactor())
         {
             dbClient.RunQuery($"UPDATE `users` SET `look` = '{session.GetHabbo().Look}' WHERE `id` = '{session.GetHabbo().Id}' LIMIT 1");

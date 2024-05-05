@@ -1,5 +1,5 @@
 ﻿using Plus.Communication.Packets.Outgoing.Catalog;
-using Plus.Core.FigureData;
+using Plus.HabboHotel.Users.Clothing;
 using Plus.Core.Settings;
 using Plus.HabboHotel.Achievements;
 using Plus.HabboHotel.Badges;
@@ -314,8 +314,8 @@ internal class UpdateCommand : IChatCommand
                     session.SendWhisper("Oops, you do not have the 'command_update_anti_mutant' permission.");
                     break;
                 }
-                _figureDataManager.Init();
-                session.SendWhisper("FigureData manager successfully reloaded.");
+                    _figureDataManager.UpdateFigureData().Wait();
+                    session.SendWhisper("FigureData manager successfully reloaded.");
                 break;
             }
             case "bots":

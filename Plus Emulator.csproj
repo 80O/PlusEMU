@@ -35,6 +35,7 @@
 		<PackageReference Include="NLog" Version="5.1.1" />
 		<PackageReference Include="NLog.Extensions.Logging" Version="5.2.1" />
 		<PackageReference Include="Scrutor" Version="4.2.0" />
+		<PackageReference Include="Z.Dapper.Plus" Version="6.0.2" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -50,7 +51,7 @@
 		<None Update="Config\config.json">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="Config\figuredata.xml">
+		<None Update="Config\FigureData.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Config\nlog.config">
