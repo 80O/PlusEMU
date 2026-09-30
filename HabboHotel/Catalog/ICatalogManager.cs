@@ -8,6 +8,7 @@ namespace Plus.HabboHotel.Catalog;
 public interface ICatalogManager
 {
     Dictionary<int, int> ItemOffers { get; }
+    IReadOnlyCollection<CatalogClubOffer> ClubOffers { get; }
     Task Init();
     bool TryGetBot(uint itemId, out CatalogBot bot);
     bool TryGetPage(int pageId, out CatalogPage page);

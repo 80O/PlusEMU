@@ -18,6 +18,7 @@ public class CatalogManager : ICatalogManager, IStartable
     private readonly Dictionary<int, Dictionary<int, CatalogItem>> _items;
     private readonly Dictionary<int, CatalogPage> _pages;
     private readonly Dictionary<int, CatalogPromotion> _promotions;
+    private readonly List<CatalogClubOffer> _clubOffers;
     private readonly Dictionary<int, int> _itemOffers;
 
     private readonly IClothingManager _clothingManager;
@@ -42,9 +43,11 @@ public class CatalogManager : ICatalogManager, IStartable
         _items = new();
         _deals = new();
         _promotions = new();
+        _clubOffers = new();
     }
 
     public Dictionary<int, int> ItemOffers => _itemOffers;
+    public IReadOnlyCollection<CatalogClubOffer> ClubOffers => _clubOffers;
 
     public async Task Start() => await Init();
 
@@ -64,6 +67,10 @@ public class CatalogManager : ICatalogManager, IStartable
             _promotions.Clear();
 
         using var connection = _database.Connection();
+
+        _clubOffers.Clear();
+        var clubOffers = await connection.QueryAsync<CatalogClubOffer>("SELECT `id` AS `Id`, `name` AS `Name`, `days` AS `Days`, `credits` AS `Credits`, `points` AS `Points`, `points_type` AS `PointsType`, `type` AS `Type`, (`deal` = '1') AS `Deal` FROM `catalog_club_offers` WHERE `enabled` = '1' ORDER BY `days`, `id`");
+        _clubOffers.AddRange(clubOffers);
 
         var items = await connection.QueryAsync<CatalogItem>("SELECT `id`,`item_id`,`catalog_name`,`cost_credits`,`cost_pixels`,`cost_diamonds`,`amount`,`page_id`,`limited_sells`,`limited_stack`,`offer_active`,`extradata`,`badge`,`offer_id` FROM `catalog_items`");
         foreach(CatalogItem item in items)

@@ -281,6 +281,7 @@ public static class ServerPacketHeader
     public const uint RoomEntryInfoComposer = 3675; //3378
     public const uint RoomNotificationComposer = 3152; //2419
     public const uint ClubGiftsComposer = 2992; //1549
+    public const uint HabboClubOffersComposer = 4002; //2405
     public const uint MotdNotificationComposer = 1368; //1829
     public const uint PopularRoomTagsResultComposer = 1002; //234
     public const uint NewConsoleMessageComposer = 984; //2121
