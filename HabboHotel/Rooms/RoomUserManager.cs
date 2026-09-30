@@ -859,18 +859,17 @@ public class RoomUserManager
                     user.UpdateNeeded = true;
                 }
             }
-            if (user.Statusses.ContainsKey("lay") && !user.IsLying || user.Statusses.ContainsKey("sit") && !user.IsSitting)
-            {
-                if (user.Statusses.ContainsKey("lay"))
-                    user.Statusses.Remove("lay");
-                if (user.Statusses.ContainsKey("sit"))
-                    user.Statusses.Remove("sit");
+            var itemsOnSquare = _room.GetGameMap().GetAllRoomItemForSquare(user.X, user.Y);
+            var model = _room.GetGameMap().Model;
+            var hasSeat = model.SqState[user.X, user.Y] == SquareState.Seat || itemsOnSquare.Any(item => item?.Definition.IsSeat == true);
+            var hasBed = itemsOnSquare.Any(item => item?.Definition.InteractionType == InteractionType.Bed || item?.Definition.InteractionType == InteractionType.TentSmall);
+            if (user.IsLying && !hasBed && user.Statusses.Remove("lay"))
                 user.UpdateNeeded = true;
-            }
-            else if (user.IsLying || user.IsSitting)
+            if (user.IsSitting && !hasSeat && user.Statusses.Remove("sit"))
+                user.UpdateNeeded = true;
+            if (user.IsLying || user.IsSitting)
                 return;
             double newZ;
-            var itemsOnSquare = _room.GetGameMap().GetAllRoomItemForSquare(user.X, user.Y);
             if (itemsOnSquare != null || itemsOnSquare.Count != 0)
             {
                 if (user.RidingHorse && user.IsPet == false)
@@ -885,7 +884,6 @@ public class RoomUserManager
                 user.Z = newZ;
                 user.UpdateNeeded = true;
             }
-            var model = _room.GetGameMap().Model;
             if (model.SqState[user.X, user.Y] == SquareState.Seat)
             {
                 if (!user.Statusses.ContainsKey("sit"))
