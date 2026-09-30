@@ -48,6 +48,8 @@ public static class ItemTypeExtensions
     public static IFurniObjectData CreateData(this ItemDefinition definition)
     {
         if (definition.InteractionType == InteractionType.Gift) return new MapDataFormat();
+        if (definition.InteractionType == InteractionType.CrackableEgg)
+            return new CrackableDataFormat { Target = (uint)Math.Max(definition.Modes, 1) };
         return EmptyDataFormat.Empty;
     }
 }

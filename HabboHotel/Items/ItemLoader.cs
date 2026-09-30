@@ -27,7 +27,7 @@ public static class ItemLoader
                         Id = Convert.ToUInt32(row["id"]),
                         UserId = Convert.ToInt32(row["user_id"]),
                         Definition = data,
-                        ExtraData = FurniObjectData.Empty,
+                        ExtraData = LoadExtraData(data, row),
                         GetX = Convert.ToInt32(row["x"]),
                         GetY = Convert.ToInt32(row["y"]),
                         GetZ = Convert.ToDouble(row["z"]),
@@ -63,7 +63,7 @@ public static class ItemLoader
                         Id = Convert.ToUInt32(row["id"]),
                         OwnerId = userId,
                         Definition = data,
-                        ExtraData = FurniObjectData.Empty, // TODO @80O: Load object data based on interaction type.
+                        ExtraData = LoadExtraData(data, row),
                         UniqueNumber = Convert.ToUInt32(row["limited_number"]),
                         UniqueSeries = Convert.ToUInt32(row["limited_stack"])
                     });
@@ -77,5 +77,17 @@ public static class ItemLoader
     {
         using var dbClient = PlusEnvironment.DatabaseManager.GetQueryReactor();
         dbClient.RunQuery($"DELETE FROM items WHERE room_id='0' AND user_id = {userId}"); //Do join
+    }
+
+    private static IFurniObjectData LoadExtraData(ItemDefinition definition, DataRow row)
+    {
+        if (definition.InteractionType != InteractionType.CrackableEgg)
+            return FurniObjectData.Empty;
+
+        var data = definition.CreateData();
+        var serialized = Convert.ToString(row["extra_data"]);
+        if (!string.IsNullOrEmpty(serialized))
+            data.Store(serialized);
+        return data;
     }
 }

@@ -248,6 +248,8 @@ public class Item
                     return new InteractorCannon();
                 case InteractionType.Counter:
                     return new InteractorCounter();
+                case InteractionType.CrackableEgg:
+                    return new InteractorCrackable();
                 case InteractionType.None:
                 default:
                     return new InteractorGenericSwitch();
