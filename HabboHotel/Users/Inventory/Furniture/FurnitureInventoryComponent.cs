@@ -48,6 +48,18 @@ public static class ItemTypeExtensions
     public static IFurniObjectData CreateData(this ItemDefinition definition)
     {
         if (definition.InteractionType == InteractionType.Gift) return new MapDataFormat();
+        if (definition.InteractionType == InteractionType.Background)
+        {
+            return new MapDataFormat(new Dictionary<string, string>
+            {
+                ["state"] = "0",
+                ["imageUrl"] = string.Empty,
+                ["clickUrl"] = string.Empty,
+                ["offsetX"] = "0",
+                ["offsetY"] = "0",
+                ["offsetZ"] = "0"
+            });
+        }
         return EmptyDataFormat.Empty;
     }
 }

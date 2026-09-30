@@ -1,5 +1,6 @@
 ﻿using Plus.HabboHotel.GameClients;
 using Plus.HabboHotel.Items;
+using Plus.HabboHotel.Items.DataFormat;
 
 namespace Plus.Communication.Packets.Incoming.Rooms.Furni;
 
@@ -21,9 +22,12 @@ internal class SaveBrandingItemEvent : IPacketEvent
         if (item.Definition.InteractionType == InteractionType.Background)
         {
             var data = packet.ReadInt();
-            var brandData = $"state{Convert.ToChar(9)}0";
-            for (var i = 1; i <= data; i++) brandData = brandData + Convert.ToChar(9) + packet.ReadString();
-            item.LegacyDataString = brandData;
+            var values = new List<string> { "state", "0" };
+            for (var i = 1; i <= data; i++) values.Add(packet.ReadString());
+            var serialized = string.Join("\n", Enumerable.Range(0, values.Count / 2)
+                .Select(index => $"{values[index * 2]}\t{values[index * 2 + 1]}"));
+            if (item.ExtraData is MapDataFormat mapData)
+                mapData.Store(serialized);
         }
         else if (item.Definition.InteractionType == InteractionType.FxProvider)
         {

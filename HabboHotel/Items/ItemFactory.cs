@@ -1,6 +1,7 @@
-﻿using Plus.Database;
+using Plus.Database;
 using Plus.HabboHotel.Items.DataFormat;
 using Plus.HabboHotel.Users;
+using Plus.HabboHotel.Users.Inventory.Furniture;
 
 namespace Plus.HabboHotel.Items;
 
@@ -21,10 +22,7 @@ public class ItemFactory : IItemFactory
         {
             OwnerId = (uint)habbo.Id,
             Definition = definition,
-            ExtraData = new LegacyDataFormat()
-            {
-                Data = extraData
-            },
+            ExtraData = CreateExtraData(definition, extraData),
             UniqueNumber = limitedNumber,
             UniqueSeries = limitedStack,
             GroupId = groupId
@@ -63,10 +61,7 @@ public class ItemFactory : IItemFactory
             Id = itemId,
             OwnerId = (uint)habbo.Id,
             Definition = definition,
-            ExtraData = new LegacyDataFormat()
-            {
-                Data = extraData
-            },
+            ExtraData = CreateExtraData(definition, extraData),
             UniqueNumber = limitedNumber,
             UniqueSeries = limitedStack
         }; using var dbClient = PlusEnvironment.DatabaseManager.GetQueryReactor();
@@ -144,10 +139,7 @@ public class ItemFactory : IItemFactory
                 Id = Convert.ToUInt32(dbClient.InsertQuery()),
                 OwnerId = (uint)habbo.Id,
                 Definition = definition,
-                ExtraData = new LegacyDataFormat()
-                {
-                    Data = extraData
-                },
+                ExtraData = CreateExtraData(definition, extraData),
                 GroupId = groupId
             };
             if (groupId > 0)
@@ -227,5 +219,18 @@ public class ItemFactory : IItemFactory
         dbClient.SetQuery("INSERT INTO `room_items_toner` (`id`, `data1`, `data2`, `data3`, `enabled`) VALUES (@id, 0, 0, 0, '0')");
         dbClient.AddParameter("id", item.Id);
         dbClient.RunQuery();
+    }
+
+    private static IFurniObjectData CreateExtraData(ItemDefinition definition, string data)
+    {
+        if (definition.InteractionType == InteractionType.Background)
+        {
+            var mapData = (MapDataFormat)definition.CreateData();
+            if (!string.IsNullOrEmpty(data))
+                mapData.Store(data);
+            return mapData;
+        }
+
+        return new LegacyDataFormat { Data = data };
     }
 }
