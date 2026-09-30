@@ -23,6 +23,7 @@ public static class ClientPacketHeader
     public const uint GetCatalogIndexEvent = 3226; //1294
     public const uint GetCatalogPageEvent = 60; //39
     public const uint GetClubOffersEvent = 362; //2180
+    public const uint GetKickbackInfoEvent = 4001; //869
     public const uint GetClubGiftInfoEvent = 3127; //3302
     public const uint PurchaseFromCatalogEvent = 3492; //2830
     public const uint PurchaseFromCatalogAsGiftEvent = 1555; //21
