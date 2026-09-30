@@ -48,7 +48,10 @@ internal class MoveAndRotateBox : IWiredItem, IWiredCycle
                     continue;
                 Item toRemove = null;
                 if (Instance.GetWired().OtherBoxHasItem(this, item.Id))
+                {
                     SetItems.TryRemove(item.Id, out toRemove);
+                    continue;
+                }
                 var point = HandleMovement(Convert.ToInt32(StringData.Split(';')[0]), new(item.GetX, item.GetY));
                 var newRot = HandleRotation(Convert.ToInt32(StringData.Split(';')[1]), item.Rotation);
                 Instance.GetWired().OnUserFurniCollision(Instance, item);
