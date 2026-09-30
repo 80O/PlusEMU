@@ -95,6 +95,7 @@ public enum InteractionType
 
     Badge,
     CrackableEgg,
+    Skateboard,
     Effect,
     Deal,
     Roomdeal,

@@ -50,7 +50,7 @@ public class ItemDataManager : IItemDataManager
                             AllowMarketplaceSell = row["allow_marketplace_sell"].ToString() == "1",
                             AllowGift = row["allow_gift"].ToString() == "1",
                             AllowInventoryStack = row["allow_inventory_stack"].ToString() == "1",
-                            InteractionType = InteractionTypes.GetTypeFromString(row["interaction_type"].ToString()),
+                            InteractionType = GetInteractionType(row),
                             BehaviourData = Convert.ToInt32(row["behaviour_data"]),
                             Modes = Convert.ToInt32(row["interaction_modes_count"]),
                             VendingIds = (!string.IsNullOrEmpty(Convert.ToString(row["vending_ids"])) && Convert.ToString(row["vending_ids"]) != "0")
@@ -88,5 +88,14 @@ public class ItemDataManager : IItemDataManager
                 return item;
         }
         return null;
+    }
+
+    private static InteractionType GetInteractionType(DataRow row)
+    {
+        var itemName = Convert.ToString(row["item_name"]);
+        if (itemName is "sb_rail" or "sb_ramp" or "sb_block")
+            return InteractionType.Skateboard;
+
+        return InteractionTypes.GetTypeFromString(Convert.ToString(row["interaction_type"]));
     }
 }

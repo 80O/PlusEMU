@@ -246,6 +246,8 @@ public class Item
                     return new InteractorLoveLock();
                 case InteractionType.Cannon:
                     return new InteractorCannon();
+                case InteractionType.Skateboard:
+                    return new InteractorSkateboard();
                 case InteractionType.Counter:
                     return new InteractorCounter();
                 case InteractionType.None:

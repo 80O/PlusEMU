@@ -637,6 +637,7 @@ public class RoomUserManager
                         var items = _room.GetGameMap().GetCoordinatedItems(new(user.X, user.Y));
                         foreach (var item in items.ToList()) item.UserWalksOnFurni(user);
                         UpdateUserStatus(user, true);
+                        foreach (var item in items.ToList()) item.Interactor.OnWalkOn(user);
                     }
                     else
                         invalidStep = true;
