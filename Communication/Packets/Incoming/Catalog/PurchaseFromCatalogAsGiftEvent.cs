@@ -54,8 +54,8 @@ public class PurchaseFromCatalogAsGiftEvent : IPacketEvent
         var giftUser = StringCharFilter.Escape(packet.ReadString());
         var giftMessage = StringCharFilter.Escape(packet.ReadString().Replace(Convert.ToChar(5), ' '));
         var spriteId = packet.ReadInt();
-        var ribbon = packet.ReadInt();
-        var colour = packet.ReadInt();
+        var boxId = packet.ReadInt();
+        var ribbonId = packet.ReadInt();
         packet.ReadBool();
         if (_settingsManager.TryGetValue("room.item.gifts.enabled") != "1")
         {
@@ -112,8 +112,8 @@ public class PurchaseFromCatalogAsGiftEvent : IPacketEvent
         }
         if (session.GetHabbo().SessionGiftBlocked)
             return Task.CompletedTask;
-        var extra_data = giftUser + Convert.ToChar(5) + giftMessage + Convert.ToChar(5) + session.GetHabbo().Id + Convert.ToChar(5) + item.Definition.Id + Convert.ToChar(5) + spriteId + Convert.ToChar(5) + ribbon +
-                 Convert.ToChar(5) + colour;
+        var extra_data = giftUser + Convert.ToChar(5) + giftMessage + Convert.ToChar(5) + session.GetHabbo().Id + Convert.ToChar(5) + item.Definition.Id + Convert.ToChar(5) + spriteId + Convert.ToChar(5) + ribbonId +
+                 Convert.ToChar(5) + boxId;
         int newItemId;
         using (var connection = _database.Connection())
         {
