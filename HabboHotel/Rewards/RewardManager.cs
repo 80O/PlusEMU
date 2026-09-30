@@ -96,7 +96,7 @@ public class RewardManager : IRewardManager
                     }
                     case RewardType.Credits:
                     {
-                        session.GetHabbo().Credits += Convert.ToInt32(reward.RewardData);
+                        session.GetHabbo().AdjustCredits(Convert.ToInt32(reward.RewardData));
                         session.Send(new CreditBalanceComposer(session.GetHabbo().Credits));
                         break;
                     }

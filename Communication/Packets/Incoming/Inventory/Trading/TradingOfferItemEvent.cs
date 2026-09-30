@@ -26,24 +26,27 @@ internal class TradingOfferItemEvent : IPacketEvent
             session.Send(new TradingClosedComposer(session.GetHabbo().Id));
             return Task.CompletedTask;
         }
-        var item = session.GetHabbo().Inventory.Furniture.GetItem(itemId);
-        if (item == null)
-            return Task.CompletedTask;
-        if (!trade.CanChange)
-            return Task.CompletedTask;
-        var tradeUser = trade.Users[0];
-        if (tradeUser.RoomUser != roomUser)
-            tradeUser = trade.Users[1];
-        if (tradeUser.OfferedItems.ContainsKey(item.Id))
-            return Task.CompletedTask;
-        trade.RemoveAccepted();
-        if (tradeUser.OfferedItems.Count <= 499)
+        lock (trade.SyncRoot)
         {
-            var totalLtDs = tradeUser.OfferedItems.Count(x => x.Value.UniqueNumber > 0);
-            if (totalLtDs < 9)
-                tradeUser.OfferedItems.Add(item.Id, item);
+            var item = session.GetHabbo().Inventory.Furniture.GetItem(itemId);
+            if (item == null)
+                return Task.CompletedTask;
+            if (!trade.CanChange)
+                return Task.CompletedTask;
+            var tradeUser = trade.Users[0];
+            if (tradeUser.RoomUser != roomUser)
+                tradeUser = trade.Users[1];
+            if (tradeUser.OfferedItems.ContainsKey(item.Id))
+                return Task.CompletedTask;
+            trade.RemoveAccepted();
+            if (tradeUser.OfferedItems.Count <= 499)
+            {
+                var totalLtDs = tradeUser.OfferedItems.Count(x => x.Value.UniqueNumber > 0);
+                if (totalLtDs < 9)
+                    tradeUser.OfferedItems.Add(item.Id, item);
+            }
+            trade.SendPacket(new TradingUpdateComposer(trade));
         }
-        trade.SendPacket(new TradingUpdateComposer(trade));
         return Task.CompletedTask;
     }
 }

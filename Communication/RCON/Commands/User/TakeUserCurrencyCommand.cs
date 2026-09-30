@@ -40,16 +40,21 @@ internal class TakeUserCurrencyCommand : IRconCommand
             case "coins":
             case "credits":
             {
-                client.GetHabbo().Credits -= amount;
-                using (var dbClient = _database.GetQueryReactor())
+                lock (client.GetHabbo().CreditsSyncRoot)
                 {
-                    dbClient.SetQuery("UPDATE `users` SET `credits` = @credits WHERE `id` = @id LIMIT 1");
-                    dbClient.AddParameter("credits", client.GetHabbo().Credits);
-                    dbClient.AddParameter("id", userId);
-                    dbClient.RunQuery();
+                    if (client.GetHabbo().CreditsRequireReload)
+                        return Task.FromResult(false);
+                    client.GetHabbo().AdjustCredits(-(amount));
+                    using (var dbClient = _database.GetQueryReactor())
+                    {
+                        dbClient.SetQuery("UPDATE `users` SET `credits` = @credits WHERE `id` = @id LIMIT 1");
+                        dbClient.AddParameter("credits", client.GetHabbo().Credits);
+                        dbClient.AddParameter("id", userId);
+                        dbClient.RunQuery();
+                    }
+                    client.Send(new CreditBalanceComposer(client.GetHabbo().Credits));
+                    break;
                 }
-                client.Send(new CreditBalanceComposer(client.GetHabbo().Credits));
-                break;
             }
             case "pixels":
             case "duckets":

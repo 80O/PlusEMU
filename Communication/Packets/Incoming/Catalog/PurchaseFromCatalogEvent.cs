@@ -177,7 +177,7 @@ public class PurchaseFromCatalogEvent : IPacketEvent
         }
         if (item.CostCredits > 0)
         {
-            session.GetHabbo().Credits -= totalCreditsCost;
+            session.GetHabbo().AdjustCredits(-(totalCreditsCost));
             session.Send(new CreditBalanceComposer(session.GetHabbo().Credits));
         }
         if (item.CostPixels > 0)

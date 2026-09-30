@@ -27,23 +27,26 @@ internal class TradingOfferItemsEvent : IPacketEvent
             session.Send(new TradingClosedComposer(session.GetHabbo().Id));
             return Task.CompletedTask;
         }
-        var item = session.GetHabbo().Inventory.Furniture.GetItem(itemId);
-        if (item == null)
-            return Task.CompletedTask;
-        if (!trade.CanChange)
-            return Task.CompletedTask;
-        var tradeUser = trade.Users[0];
-        if (tradeUser.RoomUser != roomUser)
-            tradeUser = trade.Users[1];
-        var allItems = session.GetHabbo().Inventory.Furniture.AllItems.Where(x => x.Definition.Id == item.Definition.Id).Take(amount).ToList();
-        foreach (var I in allItems)
+        lock (trade.SyncRoot)
         {
-            if (tradeUser.OfferedItems.ContainsKey(I.Id))
+            var item = session.GetHabbo().Inventory.Furniture.GetItem(itemId);
+            if (item == null)
                 return Task.CompletedTask;
-            trade.RemoveAccepted();
-            tradeUser.OfferedItems.Add(I.Id, I);
+            if (!trade.CanChange)
+                return Task.CompletedTask;
+            var tradeUser = trade.Users[0];
+            if (tradeUser.RoomUser != roomUser)
+                tradeUser = trade.Users[1];
+            var allItems = session.GetHabbo().Inventory.Furniture.AllItems.Where(x => x.Definition.Id == item.Definition.Id).Take(amount).ToList();
+            foreach (var I in allItems)
+            {
+                if (tradeUser.OfferedItems.ContainsKey(I.Id))
+                    return Task.CompletedTask;
+                trade.RemoveAccepted();
+                tradeUser.OfferedItems.Add(I.Id, I);
+            }
+            trade.SendPacket(new TradingUpdateComposer(trade));
         }
-        trade.SendPacket(new TradingUpdateComposer(trade));
         return Task.CompletedTask;
     }
 }

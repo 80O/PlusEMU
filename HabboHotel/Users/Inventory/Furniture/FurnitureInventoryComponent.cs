@@ -67,6 +67,7 @@ public class InventoryItem
 
 public class FurnitureInventoryComponent
 {
+    public object SyncRoot { get; } = new();
     private readonly ConcurrentDictionary<uint, InventoryItem> _floorItems;
     private readonly ConcurrentDictionary<uint, InventoryItem> _wallItems;
 
@@ -100,15 +101,22 @@ public class FurnitureInventoryComponent
 
     public bool AddItem(InventoryItem item)
     {
-        if (item.IsFloorItem)
-            return _floorItems.TryAdd(item.Id, item);
-        else if (item.IsWallItem)
-            return _wallItems.TryAdd(item.Id, item);
-        else
-            throw new InvalidOperationException("Item did not match neither floor or wall item");
+        lock (SyncRoot)
+        {
+            if (item.IsFloorItem)
+                return _floorItems.TryAdd(item.Id, item);
+            else if (item.IsWallItem)
+                return _wallItems.TryAdd(item.Id, item);
+            else
+                throw new InvalidOperationException("Item did not match neither floor or wall item");
+        }
     }
 
     public bool HasItem(uint itemId) => _floorItems.ContainsKey(itemId) || _wallItems.ContainsKey(itemId);
 
-    public bool RemoveItem(uint itemId) => _floorItems.TryRemove(itemId, out _) || _wallItems.TryRemove(itemId, out _);
+    public bool RemoveItem(uint itemId)
+    {
+        lock (SyncRoot)
+            return _floorItems.TryRemove(itemId, out _) || _wallItems.TryRemove(itemId, out _);
+    }
 }

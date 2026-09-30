@@ -36,7 +36,7 @@ internal class GiveCommand : ITargetChatCommand
                 }
                 if (int.TryParse(parameters[2], out var amount))
                 {
-                    target.Credits = target.Credits += amount;
+                    target.AdjustCredits(amount);
                     target.Client.Send(new CreditBalanceComposer(target.Credits));
                     if (target.Id != session.GetHabbo().Id)
                         target.Client.SendNotification($"{session.GetHabbo().Username} has given you {amount} Credit(s)!");

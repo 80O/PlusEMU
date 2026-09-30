@@ -20,13 +20,16 @@ internal class TradingModifyEvent : IPacketEvent
             session.Send(new TradingClosedComposer(session.GetHabbo().Id));
             return Task.CompletedTask;
         }
-        if (!trade.CanChange)
-            return Task.CompletedTask;
-        var user = trade.Users[0];
-        if (user.RoomUser != roomUser)
-            user = trade.Users[1];
-        user.HasAccepted = false;
-        trade.SendPacket(new TradingAcceptComposer(session.GetHabbo().Id, false));
+        lock (trade.SyncRoot)
+        {
+            if (!trade.CanChange)
+                return Task.CompletedTask;
+            var user = trade.Users[0];
+            if (user.RoomUser != roomUser)
+                user = trade.Users[1];
+            user.HasAccepted = false;
+            trade.SendPacket(new TradingAcceptComposer(session.GetHabbo().Id, false));
+        }
         return Task.CompletedTask;
     }
 }

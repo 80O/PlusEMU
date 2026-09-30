@@ -38,16 +38,21 @@ internal class ReloadUserCurrencyCommand : IRconCommand
             case "coins":
             case "credits":
             {
-                int credits;
-                using (var dbClient = _database.GetQueryReactor())
+                lock (client.GetHabbo().CreditsSyncRoot)
                 {
-                    dbClient.SetQuery("SELECT `credits` FROM `users` WHERE `id` = @id LIMIT 1");
-                    dbClient.AddParameter("id", userId);
-                    credits = dbClient.GetInteger();
+                    if (client.GetHabbo().CreditsRequireReload)
+                        return Task.FromResult(false);
+                    int credits;
+                    using (var dbClient = _database.GetQueryReactor())
+                    {
+                        dbClient.SetQuery("SELECT `credits` FROM `users` WHERE `id` = @id LIMIT 1");
+                        dbClient.AddParameter("id", userId);
+                        credits = dbClient.GetInteger();
+                    }
+                    client.GetHabbo().Credits = credits;
+                    client.Send(new CreditBalanceComposer(client.GetHabbo().Credits));
+                    break;
                 }
-                client.GetHabbo().Credits = credits;
-                client.Send(new CreditBalanceComposer(client.GetHabbo().Credits));
-                break;
             }
             case "pixels":
             case "duckets":

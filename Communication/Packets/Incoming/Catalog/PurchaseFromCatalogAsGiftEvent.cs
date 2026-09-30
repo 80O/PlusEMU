@@ -217,7 +217,7 @@ public class PurchaseFromCatalogAsGiftEvent : IPacketEvent
         session.Send(new PurchaseOkComposer(item, presentData));
         if (item.CostCredits > 0)
         {
-            session.GetHabbo().Credits -= item.CostCredits;
+            session.GetHabbo().AdjustCredits(-(item.CostCredits));
             session.Send(new CreditBalanceComposer(session.GetHabbo().Credits));
         }
         if (item.CostPixels > 0)

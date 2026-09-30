@@ -14,6 +14,7 @@
 
 	<ItemGroup>
 		<Compile Remove="PluginExample\**" />
+		<Compile Remove="Tests\**" />
 		<EmbeddedResource Remove="PluginExample\**" />
 		<None Remove="PluginExample\**" />
 	</ItemGroup>

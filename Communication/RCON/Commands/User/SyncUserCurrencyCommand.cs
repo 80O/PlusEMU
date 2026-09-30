@@ -37,12 +37,17 @@ internal class SyncUserCurrencyCommand : IRconCommand
             case "coins":
             case "credits":
             {
-                using var dbClient = _database.GetQueryReactor();
-                dbClient.SetQuery("UPDATE `users` SET `credits` = @credits WHERE `id` = @id LIMIT 1");
-                dbClient.AddParameter("credits", client.GetHabbo().Credits);
-                dbClient.AddParameter("id", userId);
-                dbClient.RunQuery();
-                break;
+                lock (client.GetHabbo().CreditsSyncRoot)
+                {
+                    if (client.GetHabbo().CreditsRequireReload)
+                        return Task.FromResult(false);
+                    using var dbClient = _database.GetQueryReactor();
+                    dbClient.SetQuery("UPDATE `users` SET `credits` = @credits WHERE `id` = @id LIMIT 1");
+                    dbClient.AddParameter("credits", client.GetHabbo().Credits);
+                    dbClient.AddParameter("id", userId);
+                    dbClient.RunQuery();
+                    break;
+                }
             }
             case "pixels":
             case "duckets":

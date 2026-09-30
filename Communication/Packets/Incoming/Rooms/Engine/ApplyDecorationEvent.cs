@@ -25,57 +25,60 @@ internal class ApplyDecorationEvent : RoomPacketEvent
 
     public override Task Parse(Room room, GameClient session, IIncomingPacket packet)
     {
-        if (!room.CheckRights(session, true))
-            return Task.CompletedTask;
-        var item = session.GetHabbo().Inventory.Furniture.GetItem(packet.ReadUInt());
-        if (item == null)
-            return Task.CompletedTask;
-        if (item.Definition == null)
-            return Task.CompletedTask;
-        var decorationKey = string.Empty;
-        switch (item.Definition.InteractionType)
+        lock (session.GetHabbo().Inventory.Furniture.SyncRoot)
         {
-            case InteractionType.Floor:
-                decorationKey = "floor";
-                break;
-            case InteractionType.Wallpaper:
-                decorationKey = "wallpaper";
-                break;
-            case InteractionType.Landscape:
-                decorationKey = "landscape";
-                break;
-        }
-        var data = (item.ExtraData is LegacyDataFormat legacyData ? legacyData.Data : string.Empty);
-        if (string.IsNullOrWhiteSpace(data))
-            return Task.CompletedTask;
+            if (!room.CheckRights(session, true))
+                return Task.CompletedTask;
+            var item = session.GetHabbo().Inventory.Furniture.GetItem(packet.ReadUInt());
+            if (item == null)
+                return Task.CompletedTask;
+            if (item.Definition == null)
+                return Task.CompletedTask;
+            var decorationKey = string.Empty;
+            switch (item.Definition.InteractionType)
+            {
+                case InteractionType.Floor:
+                    decorationKey = "floor";
+                    break;
+                case InteractionType.Wallpaper:
+                    decorationKey = "wallpaper";
+                    break;
+                case InteractionType.Landscape:
+                    decorationKey = "landscape";
+                    break;
+            }
+            var data = (item.ExtraData is LegacyDataFormat legacyData ? legacyData.Data : string.Empty);
+            if (string.IsNullOrWhiteSpace(data))
+                return Task.CompletedTask;
 
-        switch (decorationKey)
-        {
-            case "floor":
-                room.Floor = data;
-                _questManager.ProgressUserQuest(session, QuestType.FurniDecoFloor);
-                _achievementManager.ProgressAchievement(session, "ACH_RoomDecoFloor", 1);
-                break;
-            case "wallpaper":
-                room.Wallpaper = data;
-                _questManager.ProgressUserQuest(session, QuestType.FurniDecoWall);
-                _achievementManager.ProgressAchievement(session, "ACH_RoomDecoWallpaper", 1);
-                break;
-            case "landscape":
-                room.Landscape = data;
-                _achievementManager.ProgressAchievement(session, "ACH_RoomDecoLandscape", 1);
-                break;
+            switch (decorationKey)
+            {
+                case "floor":
+                    room.Floor = data;
+                    _questManager.ProgressUserQuest(session, QuestType.FurniDecoFloor);
+                    _achievementManager.ProgressAchievement(session, "ACH_RoomDecoFloor", 1);
+                    break;
+                case "wallpaper":
+                    room.Wallpaper = data;
+                    _questManager.ProgressUserQuest(session, QuestType.FurniDecoWall);
+                    _achievementManager.ProgressAchievement(session, "ACH_RoomDecoWallpaper", 1);
+                    break;
+                case "landscape":
+                    room.Landscape = data;
+                    _achievementManager.ProgressAchievement(session, "ACH_RoomDecoLandscape", 1);
+                    break;
+            }
+            using (var dbClient = _database.GetQueryReactor())
+            {
+                dbClient.SetQuery($"UPDATE `rooms` SET `{decorationKey}` = @extradata WHERE `id` = '{room.RoomId}' LIMIT 1");
+                dbClient.AddParameter("extradata", item.ExtraData);
+                dbClient.RunQuery();
+                dbClient.RunQuery($"DELETE FROM `items` WHERE `id` = '{item.Id}' LIMIT 1");
+            }
+            session.GetHabbo().Inventory.Furniture.RemoveItem(item.Id);
+            session.Send(new FurniListRemoveComposer(item.Id));
+            room.SendPacket(new RoomPropertyComposer(decorationKey, data));
+            return Task.CompletedTask;
         }
-        using (var dbClient = _database.GetQueryReactor())
-        {
-            dbClient.SetQuery($"UPDATE `rooms` SET `{decorationKey}` = @extradata WHERE `id` = '{room.RoomId}' LIMIT 1");
-            dbClient.AddParameter("extradata", item.ExtraData);
-            dbClient.RunQuery();
-            dbClient.RunQuery($"DELETE FROM `items` WHERE `id` = '{item.Id}' LIMIT 1");
-        }
-        session.GetHabbo().Inventory.Furniture.RemoveItem(item.Id);
-        session.Send(new FurniListRemoveComposer(item.Id));
-        room.SendPacket(new RoomPropertyComposer(decorationKey, data));
-        return Task.CompletedTask;
     }
 }

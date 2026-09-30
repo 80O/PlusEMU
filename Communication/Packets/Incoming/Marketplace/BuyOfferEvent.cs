@@ -71,7 +71,7 @@ internal class BuyOfferEvent : IPacketEvent
                 session.SendNotification("Oops, you do not have enough credits for this.");
                 return Task.CompletedTask;
             }
-            session.GetHabbo().Credits -= Convert.ToInt32(row["total_price"]);
+            session.GetHabbo().AdjustCredits(-(Convert.ToInt32(row["total_price"])));
             session.Send(new CreditBalanceComposer(session.GetHabbo().Credits));
             var giveItem = _itemFactory.CreateSingleItem(item, session.GetHabbo(), Convert.ToString(row["extra_data"]), Convert.ToString(row["extra_data"]), Convert.ToUInt32(row["furni_id"]),
                 Convert.ToUInt32(row["limited_number"]), Convert.ToUInt32(row["limited_stack"])).ToInventoryItem();

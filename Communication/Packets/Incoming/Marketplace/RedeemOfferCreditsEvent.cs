@@ -28,7 +28,7 @@ internal class RedeemOfferCreditsEvent : IPacketEvent
             foreach (DataRow row in table.Rows) creditsOwed += Convert.ToInt32(row["asking_price"]);
             if (creditsOwed >= 1)
             {
-                session.GetHabbo().Credits += creditsOwed;
+                session.GetHabbo().AdjustCredits(creditsOwed);
                 session.Send(new CreditBalanceComposer(session.GetHabbo().Credits));
             }
             using var dbClient = _database.GetQueryReactor();

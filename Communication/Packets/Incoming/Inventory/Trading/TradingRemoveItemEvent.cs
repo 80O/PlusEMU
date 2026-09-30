@@ -21,19 +21,22 @@ internal class TradingRemoveItemEvent : IPacketEvent
             session.Send(new TradingClosedComposer(session.GetHabbo().Id));
             return Task.CompletedTask;
         }
-        var item = session.GetHabbo().Inventory.Furniture.GetItem(itemId);
-        if (item == null)
-            return Task.CompletedTask;
-        if (!trade.CanChange)
-            return Task.CompletedTask;
-        var user = trade.Users[0];
-        if (user.RoomUser != roomUser)
-            user = trade.Users[1];
-        if (!user.OfferedItems.ContainsKey(item.Id))
-            return Task.CompletedTask;
-        trade.RemoveAccepted();
-        user.OfferedItems.Remove(item.Id);
-        trade.SendPacket(new TradingUpdateComposer(trade));
+        lock (trade.SyncRoot)
+        {
+            var item = session.GetHabbo().Inventory.Furniture.GetItem(itemId);
+            if (item == null)
+                return Task.CompletedTask;
+            if (!trade.CanChange)
+                return Task.CompletedTask;
+            var user = trade.Users[0];
+            if (user.RoomUser != roomUser)
+                user = trade.Users[1];
+            if (!user.OfferedItems.ContainsKey(item.Id))
+                return Task.CompletedTask;
+            trade.RemoveAccepted();
+            user.OfferedItems.Remove(item.Id);
+            trade.SendPacket(new TradingUpdateComposer(trade));
+        }
         return Task.CompletedTask;
     }
 }

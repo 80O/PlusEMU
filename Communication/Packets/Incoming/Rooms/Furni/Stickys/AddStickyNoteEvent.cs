@@ -10,28 +10,31 @@ internal class AddStickyNoteEvent : RoomPacketEvent
 {
     public override Task Parse(Room room, GameClient session, IIncomingPacket packet)
     {
-        var itemId = packet.ReadUInt();
-        var locationData = packet.ReadString();
-        if (!room.CheckRights(session))
-            return Task.CompletedTask;
-        var item = session.GetHabbo().Inventory.Furniture.GetItem(itemId);
-        if (item == null)
-            return Task.CompletedTask;
-        try
+        lock (session.GetHabbo().Inventory.Furniture.SyncRoot)
         {
-            var wallPossition = room.GetRoomItemHandler().WallPositionCheck($":{locationData.Split(':')[1]}");
-            var roomItem = item.ToRoomObject();
-            roomItem.WallCoordinates = wallPossition;
-            if (room.GetRoomItemHandler().SetWallItem(session, roomItem))
+            var itemId = packet.ReadUInt();
+            var locationData = packet.ReadString();
+            if (!room.CheckRights(session))
+                return Task.CompletedTask;
+            var item = session.GetHabbo().Inventory.Furniture.GetItem(itemId);
+            if (item == null)
+                return Task.CompletedTask;
+            try
             {
-                session.GetHabbo().Inventory.Furniture.RemoveItem(itemId);
-                session.Send(new FurniListRemoveComposer(itemId));
+                var wallPossition = room.GetRoomItemHandler().WallPositionCheck($":{locationData.Split(':')[1]}");
+                var roomItem = item.ToRoomObject();
+                roomItem.WallCoordinates = wallPossition;
+                if (room.GetRoomItemHandler().SetWallItem(session, roomItem))
+                {
+                    session.GetHabbo().Inventory.Furniture.RemoveItem(itemId);
+                    session.Send(new FurniListRemoveComposer(itemId));
+                }
             }
+            catch
+            {
+                //TODO: Send a packet
+            }
+            return Task.CompletedTask;
         }
-        catch
-        {
-            //TODO: Send a packet
-        }
-        return Task.CompletedTask;
     }
 }

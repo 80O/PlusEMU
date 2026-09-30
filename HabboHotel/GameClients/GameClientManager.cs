@@ -194,7 +194,8 @@ public class GameClientManager : IGameClientManager
                 {
                     using (var dbClient = _database.GetQueryReactor())
                     {
-                        dbClient.RunQuery(client.GetHabbo().GetQueryString);
+                        lock (client.GetHabbo().CreditsSyncRoot)
+                            dbClient.RunQuery(client.GetHabbo().GetQueryString);
                     }
                     Console.Clear();
                     _logger.LogInformation("<<- SERVER SHUTDOWN ->> IVNENTORY IS SAVING");

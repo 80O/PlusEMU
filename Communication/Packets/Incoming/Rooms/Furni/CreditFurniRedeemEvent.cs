@@ -36,7 +36,7 @@ internal class CreditFurniRedeemEvent : RoomPacketEvent
         var value = exchange.Definition.BehaviourData;
         if (value > 0)
         {
-            session.GetHabbo().Credits += value;
+            session.GetHabbo().AdjustCredits(value);
             session.Send(new CreditBalanceComposer(session.GetHabbo().Credits));
         }
         using (var dbClient = _database.GetQueryReactor())
