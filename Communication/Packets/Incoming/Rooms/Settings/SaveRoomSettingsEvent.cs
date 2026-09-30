@@ -98,9 +98,8 @@ internal class SaveRoomSettingsEvent : IPacketEvent
             maxUsers = 10;
         if (maxUsers > 50)
             maxUsers = 50;
-        if (!_navigationManager.TryGetSearchResultList(categoryId, out var searchResultList))
-            categoryId = 36;
-        if (searchResultList.CategoryType != NavigatorCategoryType.Category || searchResultList.RequiredRank > session.GetHabbo().Rank ||
+        if (!_navigationManager.TryGetSearchResultList(categoryId, out var searchResultList) ||
+            searchResultList.CategoryType != NavigatorCategoryType.Category || searchResultList.RequiredRank > session.GetHabbo().Rank ||
             session.GetHabbo().Id != room.OwnerId && session.GetHabbo().Rank >= searchResultList.RequiredRank)
             categoryId = 36;
         if (tagCount > 2)
