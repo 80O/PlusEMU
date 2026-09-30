@@ -24547,6 +24547,7 @@ CREATE TABLE `server_settings` (
 -- Records of server_settings
 -- ----------------------------
 INSERT INTO `server_settings` VALUES ('catalog.enabled', '1', 'If set to 0 the catalog will be disabled.');
+INSERT INTO `server_settings` VALUES ('catalog.marketplace.rares_only', '0', 'If set to 1, only rare and LTD furniture can be listed in the Marketplace.');
 INSERT INTO `server_settings` VALUES ('catalog.group.purchase.cost', '150', 'How much a group costs to purchase.');
 INSERT INTO `server_settings` VALUES ('group.delete.member.limit', '500', 'If the group has more members than this value allows, it cannot be deleted.');
 INSERT INTO `server_settings` VALUES ('messenger.buddy_limit', '5000', 'The amount of friends a user can have.');

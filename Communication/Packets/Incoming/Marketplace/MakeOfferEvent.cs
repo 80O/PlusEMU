@@ -1,5 +1,6 @@
 ﻿using Plus.Communication.Packets.Outgoing.Inventory.Furni;
 using Plus.Communication.Packets.Outgoing.Marketplace;
+using Plus.Core.Settings;
 using Plus.Database;
 using Plus.HabboHotel.Catalog.Marketplace;
 using Plus.HabboHotel.GameClients;
@@ -12,11 +13,13 @@ internal class MakeOfferEvent : IPacketEvent
 {
     private readonly IMarketplaceManager _marketplaceManager;
     private readonly IDatabase _database;
+    private readonly ISettingsManager _settingsManager;
 
-    public MakeOfferEvent(IMarketplaceManager marketplaceManager, IDatabase database)
+    public MakeOfferEvent(IMarketplaceManager marketplaceManager, IDatabase database, ISettingsManager settingsManager)
     {
         _marketplaceManager = marketplaceManager;
         _database = database;
+        _settingsManager = settingsManager;
     }
 
     public Task Parse(GameClient session, IIncomingPacket packet)
@@ -30,12 +33,12 @@ internal class MakeOfferEvent : IPacketEvent
             session.Send(new MarketplaceMakeOfferResultComposer(0));
             return Task.CompletedTask;
         }
-        // TODO @80O: Add configuration option to limit Marketplace to rares & LTD
-        //if (!ItemUtility.IsRare(item))
-        //{
-        //    session.SendNotification("Sorry, only Rares & LTDs can go be auctioned off in the Marketplace!");
-        //    return Task.CompletedTask;
-        //}
+        if (_settingsManager.TryGetValue("catalog.marketplace.rares_only") == "1" && !ItemUtility.IsRare(item))
+        {
+            session.SendNotification("Sorry, only Rares & LTDs can be auctioned in the Marketplace!");
+            session.Send(new MarketplaceMakeOfferResultComposer(0));
+            return Task.CompletedTask;
+        }
         if (sellingPrice > 70000000 || sellingPrice == 0)
         {
             session.Send(new MarketplaceMakeOfferResultComposer(0));
