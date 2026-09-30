@@ -125,16 +125,16 @@ public class PlusEnvironment : IPlusEnvironment
             //Make sure Rcon is connected before we allow clients to Connect.
             _rcon.Init(_rconConfiguration.Hostname, _rconConfiguration.Port, _rconConfiguration.AllowedAddresses);
 
-            //Accept connections.
-            _flashServer.Start();
-            _nitroServer.Start();
-
             _itemDataManager.Init();
-            // Allow services to self initialize
-            foreach (var task in _startableTasks)
-                await task.Start();
+
+            // Load independent services concurrently before accepting client connections.
+            await Task.WhenAll(_startableTasks.Select(task => task.Start()));
 
             await _game.Init();
+
+            // Accept connections only after all required game data is ready.
+            _flashServer.Start();
+            _nitroServer.Start();
             _game.StartGameLoop();
             var timeUsed = DateTime.Now - ServerStarted;
             Console.WriteLine();
