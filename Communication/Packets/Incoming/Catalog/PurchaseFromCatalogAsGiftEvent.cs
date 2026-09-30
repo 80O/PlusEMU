@@ -117,10 +117,6 @@ public class PurchaseFromCatalogAsGiftEvent : IPacketEvent
         int newItemId;
         using (var connection = _database.Connection())
         {
-            //Insert the dummy item.
-            var InsertQuery = connection.Execute("INSERT INTO `items` (`base_item`,`user_id`,`extra_data`) VALUES (@baseId, @habboId, @extra_data)",
-                new { baseId = presentData.Id, habboId = habbo.Id, extra_data = extra_data });
-            newItemId = Convert.ToInt32(InsertQuery);
             string itemExtraData = null;
             switch (item.Definition.InteractionType)
             {
@@ -185,6 +181,11 @@ public class PurchaseFromCatalogAsGiftEvent : IPacketEvent
                     itemExtraData = data;
                     break;
             }
+
+            // Insert the gift record only after item-specific data has passed validation.
+            connection.Execute("INSERT INTO `items` (`base_item`,`user_id`,`extra_data`) VALUES (@baseId, @habboId, @extra_data)",
+                new { baseId = presentData.Id, habboId = habbo.Id, extra_data = extra_data });
+            newItemId = connection.ExecuteScalar<int>("SELECT LAST_INSERT_ID()");
 
             //Insert the present, forever.
             connection.Execute("INSERT INTO `user_presents` (`item_id`,`base_id`,`extra_data`) VALUES (@itemId, @baseId, @extra_data)",
