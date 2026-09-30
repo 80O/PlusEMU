@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using Microsoft.Extensions.Logging;
 using Plus.Database;
+using Plus.HabboHotel.Items.Wired;
 using Plus.HabboHotel.Users.Inventory.Furniture;
 
 namespace Plus.HabboHotel.Items;
@@ -51,6 +52,7 @@ public class ItemDataManager : IItemDataManager
                             AllowGift = row["allow_gift"].ToString() == "1",
                             AllowInventoryStack = row["allow_inventory_stack"].ToString() == "1",
                             InteractionType = InteractionTypes.GetTypeFromString(row["interaction_type"].ToString()),
+                            WiredType = WiredBoxTypeUtility.FromWiredId(Convert.ToInt32(row["wired_id"])),
                             BehaviourData = Convert.ToInt32(row["behaviour_data"]),
                             Modes = Convert.ToInt32(row["interaction_modes_count"]),
                             VendingIds = (!string.IsNullOrEmpty(Convert.ToString(row["vending_ids"])) && Convert.ToString(row["vending_ids"]) != "0")
