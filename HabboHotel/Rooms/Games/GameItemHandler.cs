@@ -98,7 +98,7 @@ public class GameItemHandler
             {
                 i.LegacyDataString = "1";
                 i.UpdateNeeded = true;
-                _room.GetGameMap().TeleportToItem(user, item);
+                _room.GetGameMap().TeleportToItem(user, i);
                 i.LegacyDataString = "1";
                 i.UpdateNeeded = true;
                 i.UpdateState();
